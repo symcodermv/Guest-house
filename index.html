@@ -327,6 +327,47 @@
     .booking-flow { padding: clamp(22px, 4vw, 38px); }
     .booking-flow h3 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.15rem, 6vw, 3.6rem); font-weight: 500; line-height: 1; text-align: center; }
     .booking-flow > .lead { max-width: 540px; margin: 10px auto 0; text-align: center; font-size: 1rem; line-height: 1.6; }
+    .booking-room-select-field { display: none; }
+    .available-rooms {
+      grid-column: 1 / -1;
+      display: none;
+      gap: 12px;
+      margin-top: 2px;
+    }
+    .available-rooms.show { display: grid; }
+    .available-room-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+    .available-room-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .available-room {
+      position: relative;
+      min-height: 190px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      border-radius: 18px;
+      color: #fff;
+      background: var(--teal-dark);
+      cursor: pointer;
+      isolation: isolate;
+      text-align: left;
+      box-shadow: var(--soft-shadow);
+    }
+    .available-room.selected { border-color: var(--mango); box-shadow: 0 16px 40px rgba(244,197,111,.28); }
+    .available-room img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .available-room::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(5,36,42,.12), rgba(5,36,42,.9)); }
+    .available-room-copy { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 15px; }
+    .available-room-copy strong { display: block; color: var(--mango); font-family: Georgia, "Times New Roman", serif; font-size: 1.35rem; font-weight: 600; line-height: 1.05; }
+    .available-room-copy span { display: inline-flex; margin-top: 8px; padding: 6px 9px; border-radius: 999px; color: var(--teal-dark); background: rgba(255,255,255,.9); font-size: .78rem; font-weight: 950; }
     .booking-status {
       margin-top: 14px;
       padding: 14px;
@@ -866,6 +907,11 @@
       .booking-flow .field { padding: 10px 12px; border-radius: 14px; }
       .booking-flow .field label { margin-bottom: 5px; }
       .booking-flow .field-row { gap: 8px; }
+      .available-room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .available-room { min-height: 160px; border-radius: 14px; }
+      .available-room-copy { padding: 12px; }
+      .available-room-copy strong { font-size: 1.08rem; }
+      .available-room-copy span { font-size: .72rem; }
       .booking-flow .submit-booking { min-height: 52px; }
       .booking-status { font-size: .9rem; }
       .booking-form, .experience-grid, .review-grid, .comfort-grid, .other-rooms { grid-template-columns: 1fr; }
@@ -945,6 +991,8 @@
       .booking-flow .field { padding: 9px 10px; }
       .booking-flow .field input,
       .booking-flow .field select { min-height: 28px; }
+      .available-room { min-height: 145px; }
+      .available-room-copy strong { font-size: 1rem; }
       .field, .contact-card { padding: 20px; }
       .room-card, .room-card.wide { min-height: 220px; }
       .activity-grid { gap: 14px; }
@@ -1188,7 +1236,7 @@
           <h3>Make a Reservation</h3>
           <p class="lead">Fast replies by WhatsApp. Email is saved for payment details.</p>
           <div class="booking-form">
-            <div class="field"><label for="bookingRoom">Room</label><div class="field-row"><i data-lucide="bed-double" class="icon" aria-hidden="true"></i><select id="bookingRoom" name="room" required></select></div></div>
+            <div class="field booking-room-select-field"><label for="bookingRoom">Room</label><div class="field-row"><i data-lucide="bed-double" class="icon" aria-hidden="true"></i><select id="bookingRoom" name="room"></select></div></div>
             <div class="field"><label for="bookingNationality">Nationality</label><div class="field-row"><i data-lucide="flag" class="icon" aria-hidden="true"></i><input id="bookingNationality" name="nationality" type="text" placeholder="Nationality" required /></div></div>
             <div class="field"><label for="bookingCheckin">Check In</label><div class="field-row"><i data-lucide="calendar" class="icon" aria-hidden="true"></i><input id="bookingCheckin" name="checkin" type="date" required /></div></div>
             <div class="field"><label for="bookingCheckout">Check Out</label><div class="field-row"><i data-lucide="calendar" class="icon" aria-hidden="true"></i><input id="bookingCheckout" name="checkout" type="date" required /></div></div>
@@ -1197,7 +1245,11 @@
             <div class="field"><label for="bookingPhone">Contact</label><div class="field-row"><i data-lucide="phone" class="icon" aria-hidden="true"></i><input id="bookingPhone" name="phone" type="tel" placeholder="+960..." required /></div></div>
             <div class="field"><label for="bookingAdults">Adults</label><div class="field-row"><i data-lucide="users" class="icon" aria-hidden="true"></i><select id="bookingAdults" name="adults"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div></div>
             <div class="field"><label for="bookingChildren">Children</label><div class="field-row"><i data-lucide="baby" class="icon" aria-hidden="true"></i><select id="bookingChildren" name="children"><option selected>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div></div>
-            <button class="btn btn-primary submit-booking" type="submit"><i data-lucide="send" class="icon"></i>Check Availability & Continue</button>
+            <div class="available-rooms" id="availableRooms">
+              <div class="available-room-head"><strong>Available Rooms</strong><span>Select one room to continue</span></div>
+              <div class="available-room-grid" id="availableRoomGrid"></div>
+            </div>
+            <button class="btn btn-primary submit-booking" id="reservationSubmit" type="submit"><i data-lucide="search" class="icon"></i>Check Available Rooms</button>
           </div>
           <div class="booking-status" id="bookingStatus">Choose your room and travel dates.</div>
         </form>
@@ -1965,7 +2017,17 @@
     document.addEventListener("click", (event) => {
       const roomButton = event.target.closest("[data-room-index]");
       const activityButton = event.target.closest("[data-activity-index]");
-      if (roomButton) {
+      const availableRoomButton = event.target.closest("[data-select-room]");
+      if (availableRoomButton) {
+        selectedBookingRoomIndex = Number(availableRoomButton.dataset.selectRoom);
+        document.getElementById("bookingRoom").value = String(selectedBookingRoomIndex);
+        document.querySelectorAll("[data-select-room]").forEach((button) => button.classList.toggle("selected", button === availableRoomButton));
+        const rooms = window.currentSiteContent?.rooms?.items || window.DEFAULT_SITE_CONTENT.rooms.items;
+        const room = rooms[selectedBookingRoomIndex];
+        setBookingStatus(`${room.title} selected. Fill guest details and send reservation request.`, "success");
+        reservationSubmit.innerHTML = `<i data-lucide="send" class="icon"></i>Send Reservation Request`;
+        renderIcons();
+      } else if (roomButton) {
         const index = Number(roomButton.dataset.roomIndex);
         history.pushState(null, "", `#room-${index}`);
         renderRoomDetail(index);
@@ -1992,6 +2054,10 @@
     const bookingCheckin = document.getElementById("bookingCheckin");
     const bookingCheckout = document.getElementById("bookingCheckout");
     const bookingStatus = document.getElementById("bookingStatus");
+    const availableRooms = document.getElementById("availableRooms");
+    const availableRoomGrid = document.getElementById("availableRoomGrid");
+    const reservationSubmit = document.getElementById("reservationSubmit");
+    let selectedBookingRoomIndex = null;
     checkin.min = toDateValue(today);
     checkout.min = toDateValue(tomorrow);
     checkin.value = toDateValue(today);
@@ -2029,6 +2095,36 @@
       bookingStatus.textContent = message;
       bookingStatus.className = `booking-status ${type}`.trim();
     };
+    const resetRoomSelection = () => {
+      selectedBookingRoomIndex = null;
+      if (availableRooms) availableRooms.classList.remove("show");
+      if (availableRoomGrid) availableRoomGrid.innerHTML = "";
+      if (reservationSubmit) reservationSubmit.innerHTML = `<i data-lucide="search" class="icon"></i>Check Available Rooms`;
+      renderIcons();
+    };
+    [bookingCheckin, bookingCheckout].forEach((input) => input.addEventListener("change", resetRoomSelection));
+    const showAvailableRooms = () => {
+      const rooms = window.currentSiteContent?.rooms?.items || window.DEFAULT_SITE_CONTENT.rooms.items;
+      const available = rooms
+        .map((room, index) => ({ room, index }))
+        .filter(({ room }) => isRoomAvailable(room.title, bookingCheckin.value, bookingCheckout.value));
+      availableRooms.classList.add("show");
+      if (!available.length) {
+        availableRoomGrid.innerHTML = `<div class="booking-status error" style="grid-column:1/-1">No rooms are available for ${bookingCheckin.value} to ${bookingCheckout.value}. Please change dates.</div>`;
+        setBookingStatus("No rooms are available for those dates.", "error");
+        return;
+      }
+      availableRoomGrid.innerHTML = available.map(({ room, index }) => `
+        <button class="available-room" type="button" data-select-room="${index}" aria-label="Select ${escapeHtml(room.title)}">
+          <img src="${escapeHtml(room.image)}" alt="${escapeHtml(room.title)}" />
+          <div class="available-room-copy">
+            <strong>${escapeHtml(room.title)}</strong>
+            <span>${escapeHtml(room.price || "Ask")} per night</span>
+          </div>
+        </button>`).join("");
+      setBookingStatus(`${available.length} room${available.length === 1 ? "" : "s"} available. Select a room to continue.`, "success");
+      renderIcons();
+    };
     document.getElementById("book").addEventListener("submit", (event) => {
       event.preventDefault();
       window.location.hash = "#booking";
@@ -2037,7 +2133,11 @@
       event.preventDefault();
       const site = window.currentSiteContent?.site || window.DEFAULT_SITE_CONTENT.site;
       const rooms = window.currentSiteContent?.rooms?.items || window.DEFAULT_SITE_CONTENT.rooms.items;
-      const room = rooms[Number(document.getElementById("bookingRoom").value)] || rooms[0];
+      if (selectedBookingRoomIndex === null) {
+        showAvailableRooms();
+        return;
+      }
+      const room = rooms[selectedBookingRoomIndex] || rooms[0];
       if (!room) return;
       if (!isRoomAvailable(room.title, bookingCheckin.value, bookingCheckout.value)) {
         setBookingStatus(`Sorry, ${room.title} is not available from ${bookingCheckin.value} to ${bookingCheckout.value}. Please select another room or dates.`, "error");
