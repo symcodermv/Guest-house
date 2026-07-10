@@ -74,9 +74,9 @@
       right: 0;
       z-index: 50;
       min-height: 82px;
-      background: rgba(89, 157, 197, 0.82);
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, rgba(5, 36, 42, 0.18), rgba(5, 36, 42, 0));
+      box-shadow: none;
+      backdrop-filter: none;
       pointer-events: none;
     }
     .nav-shell {
@@ -195,12 +195,13 @@
       position: relative;
       min-height: 100svh;
       display: grid;
-      align-items: end;
+      align-items: center;
       overflow: hidden;
       isolation: isolate;
-      padding: 122px 0 44px;
+      padding: 112px 0 64px;
       color: var(--white);
-      background: linear-gradient(180deg, rgba(5, 36, 42, 0.24), rgba(5, 36, 42, 0.82)), var(--hero-image) center / cover;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(5, 36, 42, 0.08), rgba(5, 36, 42, 0.42) 48%, rgba(5, 36, 42, 0.44)), var(--hero-image) center / cover;
     }
     .hero::after {
       content: "";
@@ -208,43 +209,55 @@
       left: 0;
       right: 0;
       bottom: -1px;
-      height: 110px;
+      height: 92px;
       z-index: -1;
-      background: linear-gradient(180deg, rgba(255, 250, 242, 0), var(--paper));
+      background:
+        radial-gradient(90% 82px at 48% 100%, var(--paper) 0 55%, rgba(255, 250, 242, 0) 56%),
+        linear-gradient(180deg, rgba(255, 250, 242, 0), var(--paper));
     }
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.08fr) minmax(330px, 0.72fr);
-      align-items: end;
-      gap: 34px;
+      grid-template-columns: 1fr;
+      place-items: center;
+      gap: 0;
+    }
+    .hero-copy {
+      max-width: 980px;
+      display: grid;
+      place-items: center;
     }
     .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 9px;
       max-width: 100%;
-      padding: 10px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.30);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.13);
-      font-size: 0.88rem;
-      font-weight: 800;
-      backdrop-filter: blur(12px);
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--mango);
+      font-size: 0.86rem;
+      font-weight: 950;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      backdrop-filter: none;
     }
+    .hero-badge .icon { display: none; }
     .hero h1 {
-      margin-top: 24px;
-      max-width: 870px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 7.1rem;
-      font-weight: 500;
-      line-height: 0.86;
+      margin-top: 16px;
+      max-width: 980px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      font-size: clamp(3.8rem, 7vw, 6.6rem);
+      font-weight: 950;
+      line-height: 0.96;
       text-shadow: 0 18px 60px rgba(0, 0, 0, 0.26);
     }
     .hero h1 span { display: block; }
     .hero h1 .mobile-break { display: none; }
-    .hero-text { margin-top: 22px; max-width: 650px; color: rgba(255, 255, 255, 0.88); font-size: 1.18rem; line-height: 1.72; }
-    .hero-actions, .contact-actions { margin-top: 28px; display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .hero-text { margin-top: 22px; max-width: 920px; color: rgba(255, 255, 255, 0.92); font-size: clamp(1.1rem, 2vw, 1.55rem); line-height: 1.55; text-shadow: 0 10px 36px rgba(0,0,0,.28); }
+    .hero-actions, .contact-actions { margin-top: 30px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px; }
     .quick-facts { margin-top: 38px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; max-width: 670px; }
+    .hero .quick-facts { display: none; }
     .fact { min-height: 92px; padding: 16px; border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 20px; background: rgba(255, 255, 255, 0.11); backdrop-filter: blur(12px); }
     .fact strong { display: block; color: var(--mango); font-family: Georgia, "Times New Roman", serif; font-size: 1.55rem; font-weight: 600; line-height: 1; }
     .fact span { display: block; margin-top: 7px; color: rgba(255, 255, 255, 0.82); font-size: 0.84rem; line-height: 1.35; }
@@ -268,9 +281,63 @@
     .field-row .icon { color: var(--teal); }
     .field input, .field select { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); background: transparent; }
     .field select { appearance: none; }
+    .field-row select { overflow: hidden; text-overflow: ellipsis; }
     .submit-booking, .booking-note { grid-column: 1 / -1; }
     .submit-booking { width: 100%; min-height: 54px; margin-top: 2px; }
     .booking-note { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
+    .hero .booking-card { display: none; }
+    .booking-page {
+      display: none;
+      min-height: 100vh;
+      padding: 126px 0 72px;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(244,197,111,.28), transparent 34%),
+        radial-gradient(circle at 88% 18%, rgba(0,127,141,.22), transparent 32%),
+        linear-gradient(135deg, rgba(255,250,242,.94), rgba(237,248,251,.92)),
+        var(--hero-image) center / cover fixed;
+    }
+    .booking-page.active-detail { display: block; }
+    body.detail-mode .booking-page.active-detail { display: block; }
+    .booking-shell {
+      display: block;
+      max-width: 820px;
+    }
+    .booking-flow {
+      border: 1px solid rgba(255,255,255,.58);
+      border-radius: 30px;
+      background: rgba(255,255,255,.86);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+    .booking-hero-panel { display: none; }
+    .booking-hero-panel { padding: 34px; }
+    .booking-hero-panel h2 {
+      margin-top: 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      font-weight: 500;
+      line-height: .95;
+    }
+    .booking-hero-panel p { margin-top: 18px; max-width: 660px; color: var(--muted); font-size: 1.05rem; line-height: 1.75; }
+    .booking-steps { margin-top: 26px; display: grid; gap: 12px; }
+    .booking-step { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.64); }
+    .booking-step span { width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 50%; color: var(--teal-dark); background: var(--mango); font-weight: 950; }
+    .booking-step strong { display: block; }
+    .booking-step small { display: block; margin-top: 4px; color: var(--muted); line-height: 1.45; }
+    .booking-flow { padding: clamp(22px, 4vw, 38px); }
+    .booking-flow h3 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.15rem, 6vw, 3.6rem); font-weight: 500; line-height: 1; text-align: center; }
+    .booking-flow > .lead { max-width: 540px; margin: 10px auto 0; text-align: center; font-size: 1rem; line-height: 1.6; }
+    .booking-status {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      color: var(--teal-dark);
+      background: rgba(0,127,141,.1);
+      line-height: 1.5;
+      font-weight: 800;
+    }
+    .booking-status.error { color: #8d2b1f; background: rgba(232,120,98,.16); }
+    .booking-status.success { color: #145844; background: rgba(71,123,91,.16); }
 
     .intro-grid, .dining-grid, .contact-grid { display: grid; grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr); gap: 58px; align-items: center; }
     .intro-copy .lead, .dining-copy .lead, .contact .lead { margin-top: 22px; }
@@ -482,7 +549,7 @@
     .activities {
       position: relative;
       overflow: hidden;
-      background: #edf8fb;
+      background: #eef9f7;
       isolation: isolate;
     }
     .activities::before {
@@ -499,28 +566,43 @@
       position: absolute;
       inset: 0;
       z-index: -1;
-      background: rgba(237, 248, 251, 0.84);
+      background: rgba(238, 249, 247, 0.86);
     }
-    .activity-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; }
+    .activities .center-head {
+      max-width: none;
+      margin: 0 0 34px;
+      text-align: left;
+    }
+    .activities .center-head .eyebrow { justify-content: flex-start; }
+    .activities .center-head .eyebrow::after { display: none; }
+    .activities .center-head .section-title { max-width: 850px; }
+    .activities .center-head .lead { max-width: 680px; }
+    .activity-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
     .activity-card {
+      position: relative;
+      min-height: 430px;
       overflow: hidden;
       border: 0;
-      border-radius: 18px;
-      background: var(--white);
-      box-shadow: var(--soft-shadow);
+      border-radius: 28px;
+      color: var(--white);
+      background: var(--teal-dark);
+      box-shadow: var(--shadow);
+      isolation: isolate;
       cursor: pointer;
       text-align: left;
       transition: transform .22s ease, box-shadow .22s ease;
     }
     .activity-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-    .activity-card img { width: 100%; height: 220px; object-fit: cover; }
-    .activity-card-copy { padding: 24px; }
-    .activity-card h3 { font-size: 1.4rem; line-height: 1.2; }
-    .activity-card p { margin-top: 14px; color: var(--muted); line-height: 1.65; }
-    .activity-price { margin-top: 18px; display: flex; align-items: baseline; gap: 9px; color: var(--teal); font-weight: 900; }
-    .activity-price strong { font-family: Georgia, "Times New Roman", serif; font-size: 2rem; font-weight: 600; }
-    .activity-price span { color: var(--muted); font-size: .9rem; font-weight: 700; }
-    .activity-discover { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; color: var(--teal-dark); font-weight: 950; }
+    .activity-card:hover img { transform: scale(1.07); }
+    .activity-card::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(5, 36, 42, 0.08), rgba(5, 36, 42, 0.88)); }
+    .activity-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.65s ease; }
+    .activity-card-copy { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 26px; }
+    .activity-card h3 { font-family: Georgia, "Times New Roman", serif; font-size: 2.05rem; font-weight: 500; line-height: 1.05; color: var(--mango); }
+    .activity-card p { margin-top: 10px; max-width: 390px; color: rgba(255, 255, 255, 0.82); line-height: 1.58; }
+    .activity-price { margin-top: 15px; display: flex; align-items: baseline; flex-wrap: wrap; gap: 9px; color: var(--white); font-weight: 900; }
+    .activity-price strong { color: var(--mango); font-family: Georgia, "Times New Roman", serif; font-size: 1.8rem; font-weight: 600; }
+    .activity-price span { color: rgba(255, 255, 255, 0.78); font-size: .86rem; font-weight: 750; }
+    .activity-discover { margin-top: 14px; display: inline-flex; align-items: center; gap: 8px; color: var(--mango); font-weight: 950; }
     .activity-detail { display: none; background: #fffdf8; }
     .activity-detail.active-detail { display: block; }
     .activity-detail-hero {
@@ -716,58 +798,50 @@
       .nav-links a { width: min(100%, 320px); padding: 13px 14px; border-radius: 16px; text-align: center; font-size: 1.65rem; font-family: Georgia, "Times New Roman", serif; color: #fff; }
       .nav-cta { justify-content: center; }
       .hero {
-        min-height: auto;
-        display: block;
-        padding: 0 0 44px;
-        background-position: center top;
+        min-height: 100svh;
+        display: grid;
+        align-items: center;
+        padding: 92px 0 72px;
+        background-position: center center;
       }
-      .hero::after { height: 95px; }
+      .hero::after { height: 70px; }
       .hero-grid {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
+        width: min(100% - 28px, var(--max));
+        display: grid;
+        grid-template-columns: 1fr;
+        place-items: center;
         gap: 0;
       }
       .hero-copy {
-        min-height: 100svh;
-        width: min(100% - 28px, var(--max));
+        min-height: 0;
+        width: 100%;
         margin-inline: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 96px 0 84px;
+        display: grid;
+        place-items: center;
+        padding: 0;
         text-align: center;
       }
-      .hero-badge,
-      .hero-text,
-      .quick-facts,
-      .hero-actions .btn-ghost { display: none; }
-      .hero-actions { width: 100%; justify-content: center; margin-top: 0; }
-      .hero-actions .btn-sun { display: none; }
+      .quick-facts { display: none; }
+      .hero-actions { width: 100%; justify-content: center; margin-top: 26px; }
+      .hero-actions .btn { width: auto; min-width: 168px; }
       .hero h1 {
-        max-width: 540px;
-        margin-top: 320px;
-        font-size: 3.05rem;
-        line-height: 1.05;
+        max-width: 620px;
+        margin-top: 14px;
+        font-size: 3.45rem;
+        line-height: 0.98;
         text-align: center;
         text-shadow: 0 10px 30px rgba(0,0,0,.18);
       }
       .hero h1 .desktop-break { display: none; }
       .hero h1 .mobile-break { display: block; }
-      .booking-card {
-        width: min(100% - 34px, 560px);
-        max-width: none;
-        margin: -64px auto 0;
-        padding: 28px 26px;
-        border: 0;
-        border-radius: 22px 22px 0 0;
-        background: #fff;
-        box-shadow: 0 -12px 40px rgba(8,42,48,.16);
-      }
       .booking-card h2,
       .booking-card p { text-align: center; }
       .booking-card h2 { color: var(--teal-dark); }
+      .booking-page { padding: 96px 0 34px; }
+      .booking-shell { width: min(100% - 22px, 620px); }
+      .booking-flow { border-radius: 24px; padding: 24px 18px; }
+      .booking-flow h3 { font-size: 2.55rem; }
+      .booking-flow > .lead { font-size: .95rem; }
       .room-detail-copy h2 { font-size: 3.35rem; }
       .quick-facts, .island-points { grid-template-columns: 1fr; }
       .section-head { display: block; }
@@ -778,11 +852,22 @@
       .section { padding: 70px 0; }
       .section-title { font-size: 2.45rem; }
       .lead, .hero-text { font-size: 1rem; }
-      .hero h1 { font-size: 2.8rem; }
-      .hero-badge { white-space: normal; border-radius: 20px; }
+      .hero h1 { font-size: 2.85rem; }
+      .hero-badge { white-space: normal; }
       .hero-actions, .contact-actions { align-items: stretch; flex-direction: column; }
       .hero-actions .btn, .contact-actions .btn { width: 100%; }
       .booking-card { padding: 26px 22px; border-radius: 22px 22px 0 0; }
+      .booking-page { padding: 88px 0 22px; }
+      .booking-shell { width: min(100% - 16px, 560px); }
+      .booking-flow { padding: 18px 13px; border-radius: 18px; }
+      .booking-flow h3 { font-size: 2.05rem; }
+      .booking-flow > .lead { margin-top: 8px; line-height: 1.45; }
+      .booking-flow .booking-form { grid-template-columns: 1fr; gap: 8px; margin-top: 16px; }
+      .booking-flow .field { padding: 10px 12px; border-radius: 14px; }
+      .booking-flow .field label { margin-bottom: 5px; }
+      .booking-flow .field-row { gap: 8px; }
+      .booking-flow .submit-booking { min-height: 52px; }
+      .booking-status { font-size: .9rem; }
       .booking-form, .experience-grid, .review-grid, .comfort-grid, .other-rooms { grid-template-columns: 1fr; }
       .room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
       .room-card, .room-card.wide { grid-column: auto; min-height: 260px; border-radius: 8px; }
@@ -821,7 +906,21 @@
       .restaurant-hero h2 { font-size: 2.85rem; }
       .restaurant-photo-grid { grid-template-columns: 1fr; grid-auto-rows: 220px; }
       .restaurant-photo-grid img:first-child { grid-row: auto; }
-      .activity-grid { grid-template-columns: 1fr; }
+      .activity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+      .activity-card { min-height: 430px; border-radius: 22px; }
+      .activity-card-copy { padding: 26px; text-align: left; }
+      .activity-card h3 { font-size: 2rem; }
+      .activity-card p, .activity-price { display: flex; }
+      .activity-card p { display: block; }
+      .activity-discover {
+        position: static;
+        width: auto;
+        height: auto;
+        display: inline-flex;
+        color: var(--mango);
+        background: transparent;
+        font-size: inherit;
+      }
       .activity-photo-grid { grid-template-columns: 1fr; grid-auto-rows: 220px; }
       .activity-photo-grid img:first-child { grid-row: auto; }
       .detail-gallery { grid-template-columns: 1fr; grid-auto-rows: 220px; }
@@ -836,9 +935,22 @@
       .nav-shell { min-height: 54px; padding: 0 20px; }
       .menu-toggle { width: 44px; min-width: 44px; height: 44px; }
       .section-title { font-size: 2.2rem; }
-      .hero h1 { margin-top: 260px; font-size: 2.32rem; }
+      .hero h1 { margin-top: 14px; font-size: 2.45rem; }
+      .booking-page { padding-top: 78px; }
+      .booking-shell { width: calc(100% - 12px); }
+      .booking-flow { padding: 15px 10px; border-radius: 16px; }
+      .booking-flow h3 { font-size: 1.86rem; }
+      .booking-flow > .lead { font-size: .86rem; }
+      .booking-flow .field label { font-size: .68rem; }
+      .booking-flow .field { padding: 9px 10px; }
+      .booking-flow .field input,
+      .booking-flow .field select { min-height: 28px; }
       .field, .contact-card { padding: 20px; }
       .room-card, .room-card.wide { min-height: 220px; }
+      .activity-grid { gap: 14px; }
+      .activity-card { min-height: 430px; }
+      .activity-card-copy { padding: 20px 14px; }
+      .activity-card h3 { font-size: 1.72rem; }
       .gallery-track img, .gallery-track img:nth-child(3n + 1), .gallery-track img:nth-child(4n + 2) { width: 230px; height: 155px; }
       .footer-links { grid-template-columns: 1fr; }
       .footer-logo { width: 140px; }
@@ -849,7 +961,7 @@
   <nav class="site-nav" aria-label="Main navigation">
     <div class="nav-shell">
       <a class="brand" href="#home" aria-label="Feeali Buddies Inn home">
-        <span class="brand-mark" aria-hidden="true"><img class="brand-logo" src="assets/feeali-buddies-logo-nav.png" alt=""></span>
+        <span class="brand-mark" aria-hidden="true"><img class="brand-logo" src="feeali-buddies-logo-nav.png" alt=""></span>
         <span data-brand-name>Feeali Buddies Inn</span>
       </a>
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
@@ -863,7 +975,7 @@
         <a href="#activities">Activities</a>
         <a href="#restaurant-detail">Restaurant</a>
         <a href="#gallery">Gallery</a>
-        <a href="#contact" class="nav-cta"><i data-lucide="calendar-check" class="icon"></i>Book Now</a>
+        <a href="#booking" class="nav-cta"><i data-lucide="calendar-check" class="icon"></i>Book Now</a>
       </div>
     </div>
   </nav>
@@ -875,8 +987,8 @@
         <h1 id="heroTitle"></h1>
         <p class="hero-text" id="heroText"></p>
         <div class="hero-actions">
-          <a class="btn btn-sun" href="#book"><i data-lucide="calendar-days" class="icon"></i>Check Availability</a>
-          <a class="btn btn-ghost" href="#rooms-detail"><i data-lucide="bed-double" class="icon"></i>View Rooms</a>
+          <a class="btn btn-sun" href="#booking"><i data-lucide="calendar-days" class="icon"></i>Plan your visit</a>
+          <a class="btn btn-ghost" href="#about"><i data-lucide="map" class="icon"></i>Discover Feeali</a>
         </div>
         <div class="quick-facts" id="heroFacts" aria-label="Guest house highlights"></div>
       </div>
@@ -1070,6 +1182,28 @@
       <div class="gallery-strip" id="galleryStrip" aria-label="Island photo gallery"></div>
     </section>
 
+    <section class="booking-page" id="bookingPage" aria-live="polite">
+      <div class="container booking-shell">
+        <form class="booking-flow" id="reservationForm" aria-label="Room availability and reservation form">
+          <h3>Make a Reservation</h3>
+          <p class="lead">Fast replies by WhatsApp. Email is saved for payment details.</p>
+          <div class="booking-form">
+            <div class="field"><label for="bookingRoom">Room</label><div class="field-row"><i data-lucide="bed-double" class="icon" aria-hidden="true"></i><select id="bookingRoom" name="room" required></select></div></div>
+            <div class="field"><label for="bookingNationality">Nationality</label><div class="field-row"><i data-lucide="flag" class="icon" aria-hidden="true"></i><input id="bookingNationality" name="nationality" type="text" placeholder="Nationality" required /></div></div>
+            <div class="field"><label for="bookingCheckin">Check In</label><div class="field-row"><i data-lucide="calendar" class="icon" aria-hidden="true"></i><input id="bookingCheckin" name="checkin" type="date" required /></div></div>
+            <div class="field"><label for="bookingCheckout">Check Out</label><div class="field-row"><i data-lucide="calendar" class="icon" aria-hidden="true"></i><input id="bookingCheckout" name="checkout" type="date" required /></div></div>
+            <div class="field"><label for="bookingName">Full Name</label><div class="field-row"><i data-lucide="user" class="icon" aria-hidden="true"></i><input id="bookingName" name="name" type="text" placeholder="Full name" required /></div></div>
+            <div class="field"><label for="bookingEmail">Email</label><div class="field-row"><i data-lucide="mail" class="icon" aria-hidden="true"></i><input id="bookingEmail" name="email" type="email" placeholder="name@email.com" required /></div></div>
+            <div class="field"><label for="bookingPhone">Contact</label><div class="field-row"><i data-lucide="phone" class="icon" aria-hidden="true"></i><input id="bookingPhone" name="phone" type="tel" placeholder="+960..." required /></div></div>
+            <div class="field"><label for="bookingAdults">Adults</label><div class="field-row"><i data-lucide="users" class="icon" aria-hidden="true"></i><select id="bookingAdults" name="adults"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div></div>
+            <div class="field"><label for="bookingChildren">Children</label><div class="field-row"><i data-lucide="baby" class="icon" aria-hidden="true"></i><select id="bookingChildren" name="children"><option selected>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div></div>
+            <button class="btn btn-primary submit-booking" type="submit"><i data-lucide="send" class="icon"></i>Check Availability & Continue</button>
+          </div>
+          <div class="booking-status" id="bookingStatus">Choose your room and travel dates.</div>
+        </form>
+      </div>
+    </section>
+
     <section class="section reviews reveal" id="reviews">
       <div class="container">
         <div class="section-head">
@@ -1088,7 +1222,7 @@
           <p class="lead" id="contactText"></p>
           <div class="contact-actions">
             <a class="btn btn-primary" id="whatsappLink" href="#" target="_blank" rel="noopener"><i data-lucide="message-circle" class="icon"></i>WhatsApp Now</a>
-            <a class="btn btn-sun" href="#home"><i data-lucide="calendar-check" class="icon"></i>Use Booking Form</a>
+            <a class="btn btn-sun" href="#booking"><i data-lucide="calendar-check" class="icon"></i>Use Booking Form</a>
           </div>
         </div>
         <div class="contact-card" id="contactCard" aria-label="Contact information"></div>
@@ -1099,14 +1233,14 @@
   <footer class="site-footer">
     <div class="container">
       <div class="footer-brand">
-        <img class="footer-logo" src="assets/feeali-buddies-logo.png" alt="Feeali Buddies Inn logo">
+        <img class="footer-logo" src="feeali-buddies-logo.png" alt="Feeali Buddies Inn logo">
       </div>
       <p id="footerText">Feeali Buddies Inn provides comfortable guest house accommodation in F. Feeali, close to island beaches, local dining, and lagoon experiences.</p>
       <nav class="footer-links" aria-label="Footer navigation">
         <a href="#home">Home</a>
         <a href="#contact">Contact Us</a>
         <a href="#rooms-detail">Rooms</a>
-        <a href="#book">Book Now</a>
+        <a href="#booking">Book Now</a>
         <a href="#about">About Us</a>
         <a href="#restaurant-detail">Restaurant</a>
         <a href="#activities">Activities</a>
@@ -1137,9 +1271,9 @@
         menuOpacity: "0.78"
       },
       hero: {
-        badge: "Guest house in F. Feeali, Maldives",
-        titleLines: ["Island calm,", "warm smiles,", "blue lagoon days."],
-        text: "Feeali Buddies Inn welcomes travelers to an easy, beautiful stay on F. Feeali with fresh rooms, island dining, and memorable sea adventures.",
+        badge: "Slow island days",
+        titleLines: ["Real Maldivian Life"],
+        text: "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.",
         facts: [
           { title: "F. Feeali", text: "Peaceful local island setting" },
           { title: "Lagoon", text: "Snorkeling, sandbank and boat trips" },
@@ -1425,7 +1559,13 @@
           { image: "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=900&q=86", alt: "Palm beach by blue water" },
           { image: "https://images.unsplash.com/photo-1540202404-a2f29016b523?auto=format&fit=crop&w=900&q=86", alt: "Clear tropical lagoon" },
           { image: "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=1200&q=86", alt: "Tropical shoreline and blue ocean" },
-          { image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=900&q=86", alt: "Resort bedroom with white bedding" }
+          { image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=900&q=86", alt: "Resort bedroom with white bedding" },
+          { image: "https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?auto=format&fit=crop&w=1000&q=86", alt: "Snorkeling over clear reef water" },
+          { image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=86", alt: "Warm restaurant seating" },
+          { image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?auto=format&fit=crop&w=900&q=86", alt: "Tropical drink by the water" },
+          { image: "https://images.unsplash.com/photo-1498654200943-1088dd4438ae?auto=format&fit=crop&w=1000&q=86", alt: "Fishing trip on blue water" },
+          { image: "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?auto=format&fit=crop&w=1200&q=86", alt: "Aerial Maldives lagoon" },
+          { image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=86", alt: "Comfortable guest room" }
         ]
       },
       reviews: {
@@ -1459,6 +1599,14 @@
     const navLinks = document.getElementById("navLinks");
     const menuToggle = document.getElementById("menuToggle");
     const menuClose = document.getElementById("menuClose");
+    const mainEl = document.querySelector("main");
+    const roomsSection = document.getElementById("rooms");
+    const activitiesSection = document.getElementById("activities");
+    const gallerySection = document.getElementById("gallery");
+    if (mainEl && roomsSection && activitiesSection && gallerySection) {
+      roomsSection.after(activitiesSection);
+      activitiesSection.after(gallerySection);
+    }
     const renderIcons = () => window.lucide && window.lucide.createIcons();
     const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
     const mergeContent = (base, remote) => {
@@ -1486,6 +1634,9 @@
 
     const applyContent = (content) => {
       const c = mergeContent(window.DEFAULT_SITE_CONTENT, content);
+      c.hero.badge = "Slow island days";
+      c.hero.titleLines = ["Real Maldivian Life"];
+      c.hero.text = "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.";
       c.rooms.items = mergeList(window.DEFAULT_SITE_CONTENT.rooms.items, c.rooms.items);
       c.activities.items = mergeList(window.DEFAULT_SITE_CONTENT.activities.items, c.activities.items);
       c.island.sliderImages = mergeList(window.DEFAULT_SITE_CONTENT.island.sliderImages, c.island.sliderImages);
@@ -1503,7 +1654,7 @@
       setText("heroBadge", c.hero.badge);
       document.getElementById("heroTitle").innerHTML = `
         <span class="desktop-break">${c.hero.titleLines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</span>
-        <span class="mobile-break"><span>Where Sun, Sand &</span><span>Waves Unite</span></span>`;
+        <span class="mobile-break">${c.hero.titleLines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</span>`;
       setText("heroText", c.hero.text);
       setText("bookingTitle", c.hero.bookingTitle);
       setText("bookingText", c.hero.bookingText);
@@ -1535,6 +1686,12 @@
             <span class="room-link">View room details <i data-lucide="arrow-right" class="icon"></i></span>
           </div>
         </button>`).join("");
+      const roomSelect = document.getElementById("bookingRoom");
+      if (roomSelect) {
+        const currentRoom = roomSelect.value;
+        roomSelect.innerHTML = c.rooms.items.map((item, index) => `<option value="${index}">${escapeHtml(item.title)} - ${escapeHtml(item.price || "Ask")}</option>`).join("");
+        if (currentRoom && [...roomSelect.options].some((option) => option.value === currentRoom)) roomSelect.value = currentRoom;
+      }
       renderRoomsPage(c);
 
       setText("diningEyebrow", c.dining.eyebrow);
@@ -1637,7 +1794,7 @@
               <div class="mini-gallery">${gallery.map((image, photoIndex) => `<img src="${escapeHtml(image)}" alt="${escapeHtml(room.title)} preview ${photoIndex + 1}" />`).join("")}</div>
               <div class="contact-actions">
                 <a class="btn btn-primary" href="#room-${index}"><i data-lucide="arrow-right" class="icon"></i>View Details</a>
-                <a class="btn btn-sun" href="#book"><i data-lucide="calendar-check" class="icon"></i>Reserve</a>
+                <a class="btn btn-sun" href="#booking"><i data-lucide="calendar-check" class="icon"></i>Reserve</a>
               </div>
             </div>
           </article>`;
@@ -1651,6 +1808,7 @@
       document.getElementById("roomDetail").classList.remove("active", "active-detail");
       document.getElementById("restaurantDetail").classList.remove("active-detail");
       document.getElementById("activityDetail").classList.remove("active-detail");
+      document.getElementById("bookingPage").classList.remove("active-detail");
       document.getElementById("roomsPage").scrollIntoView({ behavior: "smooth", block: "start" });
       renderIcons();
     };
@@ -1667,6 +1825,7 @@
       document.getElementById("roomDetail").classList.add("active-detail");
       document.getElementById("restaurantDetail").classList.remove("active-detail");
       document.getElementById("activityDetail").classList.remove("active-detail");
+      document.getElementById("bookingPage").classList.remove("active-detail");
       setText("roomDetailTag", room.tag || "Room");
       setText("roomDetailTitle", room.title);
       setText("roomDetailText", room.detailText || room.text);
@@ -1711,6 +1870,7 @@
       document.getElementById("roomDetail").classList.remove("active", "active-detail");
       document.getElementById("restaurantDetail").classList.add("active-detail");
       document.getElementById("activityDetail").classList.remove("active-detail");
+      document.getElementById("bookingPage").classList.remove("active-detail");
       document.getElementById("restaurantDetail").scrollIntoView({ behavior: "smooth", block: "start" });
       renderIcons();
     };
@@ -1727,6 +1887,7 @@
       document.getElementById("roomDetail").classList.remove("active", "active-detail");
       document.getElementById("restaurantDetail").classList.remove("active-detail");
       document.getElementById("activityDetail").classList.add("active-detail");
+      document.getElementById("bookingPage").classList.remove("active-detail");
       setText("activityDetailTag", "Ocean Adventure");
       setText("activityDetailTitle", activity.title);
       setText("activityDetailText", activity.detailText || activity.shortText);
@@ -1746,6 +1907,18 @@
       document.getElementById("roomDetail").classList.remove("active", "active-detail");
       document.getElementById("restaurantDetail").classList.remove("active-detail");
       document.getElementById("activityDetail").classList.remove("active-detail");
+      document.getElementById("bookingPage").classList.remove("active-detail");
+    };
+
+    const showBookingPage = () => {
+      document.body.classList.add("detail-mode");
+      document.getElementById("roomsPage").classList.remove("active-detail");
+      document.getElementById("roomDetail").classList.remove("active", "active-detail");
+      document.getElementById("restaurantDetail").classList.remove("active-detail");
+      document.getElementById("activityDetail").classList.remove("active-detail");
+      document.getElementById("bookingPage").classList.add("active-detail");
+      document.getElementById("bookingPage").scrollIntoView({ behavior: "smooth", block: "start" });
+      renderIcons();
     };
 
     const renderRoomDetailFromHash = () => {
@@ -1765,6 +1938,8 @@
         requestAnimationFrame(showRoomsPage);
       } else if (window.location.hash === "#restaurant-detail") {
         requestAnimationFrame(showRestaurantDetail);
+      } else if (window.location.hash === "#booking") {
+        requestAnimationFrame(showBookingPage);
       } else {
         closeDetailViews();
       }
@@ -1814,10 +1989,17 @@
     const guestPhone = document.getElementById("guestPhone");
     const adults = document.getElementById("adults");
     const children = document.getElementById("children");
+    const bookingCheckin = document.getElementById("bookingCheckin");
+    const bookingCheckout = document.getElementById("bookingCheckout");
+    const bookingStatus = document.getElementById("bookingStatus");
     checkin.min = toDateValue(today);
     checkout.min = toDateValue(tomorrow);
     checkin.value = toDateValue(today);
     checkout.value = toDateValue(tomorrow);
+    bookingCheckin.min = toDateValue(today);
+    bookingCheckout.min = toDateValue(tomorrow);
+    bookingCheckin.value = toDateValue(today);
+    bookingCheckout.value = toDateValue(tomorrow);
     checkin.addEventListener("change", () => {
       const selected = new Date(checkin.value);
       const nextDay = new Date(selected);
@@ -1825,32 +2007,73 @@
       checkout.min = toDateValue(nextDay);
       if (!checkout.value || new Date(checkout.value) <= selected) checkout.value = toDateValue(nextDay);
     });
+    const syncCheckout = (startEl, endEl) => {
+      const selected = new Date(startEl.value);
+      const nextDay = new Date(selected);
+      nextDay.setDate(selected.getDate() + 1);
+      endEl.min = toDateValue(nextDay);
+      if (!endEl.value || new Date(endEl.value) <= selected) endEl.value = toDateValue(nextDay);
+    };
+    bookingCheckin.addEventListener("change", () => syncCheckout(bookingCheckin, bookingCheckout));
+    const datesOverlap = (startA, endA, startB, endB) => new Date(startA) < new Date(endB) && new Date(endA) > new Date(startB);
+    const isRoomAvailable = (roomTitle, start, end) => {
+      const bookings = Object.values(window.currentBookings || {});
+      return !bookings.some((booking) =>
+        booking.roomTitle === roomTitle &&
+        !["cancelled", "rejected"].includes(String(booking.status || "").toLowerCase()) &&
+        booking.checkin && booking.checkout &&
+        datesOverlap(start, end, booking.checkin, booking.checkout)
+      );
+    };
+    const setBookingStatus = (message, type = "") => {
+      bookingStatus.textContent = message;
+      bookingStatus.className = `booking-status ${type}`.trim();
+    };
     document.getElementById("book").addEventListener("submit", (event) => {
       event.preventDefault();
+      window.location.hash = "#booking";
+    });
+    document.getElementById("reservationForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
       const site = window.currentSiteContent?.site || window.DEFAULT_SITE_CONTENT.site;
+      const rooms = window.currentSiteContent?.rooms?.items || window.DEFAULT_SITE_CONTENT.rooms.items;
+      const room = rooms[Number(document.getElementById("bookingRoom").value)] || rooms[0];
+      if (!room) return;
+      if (!isRoomAvailable(room.title, bookingCheckin.value, bookingCheckout.value)) {
+        setBookingStatus(`Sorry, ${room.title} is not available from ${bookingCheckin.value} to ${bookingCheckout.value}. Please select another room or dates.`, "error");
+        return;
+      }
       const booking = {
-        guestName: guestName.value.trim(),
-        guestPhone: guestPhone.value.trim(),
-        checkin: checkin.value,
-        checkout: checkout.value,
-        adults: adults.value,
-        children: children.value,
-        status: "new",
+        roomTitle: room.title,
+        roomPrice: room.price || "",
+        guestName: document.getElementById("bookingName").value.trim(),
+        guestEmail: document.getElementById("bookingEmail").value.trim(),
+        guestPhone: document.getElementById("bookingPhone").value.trim(),
+        nationality: document.getElementById("bookingNationality").value.trim(),
+        checkin: bookingCheckin.value,
+        checkout: bookingCheckout.value,
+        adults: document.getElementById("bookingAdults").value,
+        children: document.getElementById("bookingChildren").value,
+        status: "pending_payment",
         source: "index.html"
       };
       const message = [
-        `Hello ${site.name}, I want to check room availability.`,
+        `Hello ${site.name}, I want to reserve ${booking.roomTitle}.`,
         "",
+        `Room: ${booking.roomTitle} (${booking.roomPrice || "price on request"})`,
         `Name: ${booking.guestName}`,
-        `Phone: ${booking.guestPhone || "Not provided"}`,
-        `Check in: ${checkin.value}`,
-        `Check out: ${checkout.value}`,
-        `Adults: ${adults.value}`,
-        `Children: ${children.value}`,
+        `Email: ${booking.guestEmail}`,
+        `Phone: ${booking.guestPhone}`,
+        `Nationality: ${booking.nationality}`,
+        `Check in: ${booking.checkin}`,
+        `Check out: ${booking.checkout}`,
+        `Adults: ${booking.adults}`,
+        `Children: ${booking.children}`,
         "",
-        "Please share room options and transfer details."
+        "The room showed available on the website. Please send payment details to confirm."
       ].join("\n");
-      if (window.saveBookingRequest) window.saveBookingRequest(booking);
+      if (window.saveBookingRequest) await window.saveBookingRequest(booking);
+      setBookingStatus(`${room.title} is available. Your request was saved and WhatsApp is opening now.`, "success");
       window.open(`https://wa.me/${String(site.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(message)}`, "_blank", "noopener");
     });
 
@@ -1883,6 +2106,7 @@
     const db = getDatabase(app);
     const siteRef = ref(db, "feealiBuddiesInn/siteContent");
     const bookingsRef = ref(db, "feealiBuddiesInn/bookings");
+    window.currentBookings = {};
 
     window.saveBookingRequest = async (booking) => {
       await push(bookingsRef, {
@@ -1899,6 +2123,9 @@
       }
     }, () => {
       applyContent(window.DEFAULT_SITE_CONTENT);
+    });
+    onValue(bookingsRef, (snapshot) => {
+      window.currentBookings = snapshot.val() || {};
     });
   </script>
 </body>
