@@ -517,10 +517,19 @@
     .dining-list { margin-top: 28px; display: grid; gap: 12px; }
     .dining-item { display: flex; align-items: center; gap: 12px; color: var(--teal-dark); font-weight: 850; }
     .dining-item span, .contact-row span { width: 42px; height: 42px; }
-    .dining-mosaic { display: grid; grid-template-columns: 0.92fr 1.08fr; grid-auto-rows: 190px; gap: 16px; }
+    .dining-mosaic { position: relative; overflow: hidden; display: grid; gap: 16px; }
+    .dining-slider { width: 100%; overflow: hidden; border-radius: 28px; }
+    .dining-track { display: flex; width: max-content; gap: 16px; animation: diningSlide 42s linear infinite; }
+    .dining-slider:hover .dining-track { animation-play-state: paused; }
     .dining-photo, .feature-tile { overflow: hidden; border-radius: 26px; box-shadow: var(--soft-shadow); }
-    .dining-photo img { width: 100%; height: 100%; object-fit: cover; }
-    .dining-photo.tall { grid-row: span 2; }
+    .dining-photo { width: clamp(250px, 28vw, 410px); height: 310px; flex: 0 0 auto; }
+    .dining-photo:nth-child(3n + 1) { width: clamp(280px, 34vw, 520px); }
+    .dining-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .75s ease; }
+    .dining-photo:hover img { transform: scale(1.06); }
+    @keyframes diningSlide {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
     .feature-tile { padding: 24px; display: flex; flex-direction: column; justify-content: end; background: #f7efe3; }
     .feature-tile span { width: 48px; height: 48px; margin-bottom: 20px; background: var(--white); }
     .feature-tile h3 { font-family: Georgia, "Times New Roman", serif; font-size: 1.45rem; font-weight: 500; }
@@ -682,15 +691,63 @@
       to { transform: translateX(0); }
     }
 
-    .reviews { background: var(--teal-dark); color: var(--white); }
-    .reviews .eyebrow { color: var(--mango); }
-    .reviews .lead { color: rgba(255, 255, 255, 0.72); }
-    .review-grid { margin-top: 36px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-    .review-card { min-height: 250px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.13); border-radius: 24px; background: rgba(255, 255, 255, 0.07); }
+    .reviews { overflow: hidden; background: var(--paper); color: var(--ink); text-align: center; }
+    .reviews .section-head { display: block; margin-bottom: 0; }
+    .reviews .eyebrow { justify-content: center; color: var(--teal); }
+    .reviews .lead { max-width: 760px; margin: 18px auto 0; color: var(--muted); }
+    .review-grid { margin-top: 40px; display: flex; width: max-content; gap: 18px; animation: reviewSlide 38s linear infinite; }
+    .reviews:hover .review-grid { animation-play-state: paused; }
+    .review-card { width: min(580px, calc(100vw - 28px)); min-height: 280px; flex: 0 0 auto; padding: 34px; border: 1px solid rgba(16,47,50,.08); border-radius: 24px; background: #fff; box-shadow: var(--soft-shadow); text-align: left; }
     .stars { display: flex; gap: 5px; color: var(--mango); }
     .stars .icon { width: 17px; height: 17px; fill: currentColor; }
-    .review-card p { margin-top: 18px; color: rgba(255, 255, 255, 0.78); line-height: 1.75; }
+    .review-card p { margin-top: 22px; color: var(--muted); font-size: 1.02rem; line-height: 1.85; }
     .review-card h3 { margin-top: 18px; font-size: 1rem; }
+    .review-actions { margin-top: 30px; display: flex; justify-content: center; }
+    .review-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(5, 36, 42, .62);
+      backdrop-filter: blur(12px);
+    }
+    .review-modal.open { display: grid; }
+    .review-form {
+      width: min(100%, 540px);
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,.42);
+      border-radius: 28px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 28px 80px rgba(5,36,42,.34);
+      text-align: left;
+    }
+    .review-form-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .review-form h3 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.75rem, 5vw, 2.45rem); font-weight: 500; line-height: 1.02; }
+    .review-form p { margin-top: 8px; color: var(--muted); line-height: 1.55; }
+    .review-form-grid { display: grid; gap: 13px; }
+    .review-form textarea { min-height: 130px; }
+    .review-form .field { display: grid; gap: 8px; }
+    .review-form .field > label { color: var(--teal-dark); font-size: .78rem; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; }
+    .review-form input,
+    .review-form select,
+    .review-form textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      outline: 0;
+      color: var(--ink);
+      background: #fff;
+    }
+    .review-form input,
+    .review-form select { min-height: 52px; padding: 0 14px; }
+    .review-form textarea { padding: 14px; resize: vertical; line-height: 1.55; }
+    .review-form-status { min-height: 24px; margin-top: 12px; color: var(--muted); font-weight: 800; }
+    @keyframes reviewSlide {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
 
     .contact { position: relative; overflow: hidden; padding: 88px 0; background: linear-gradient(135deg, #ffffff, #fff4df 52%, #e7fbf9); }
     .contact-grid { grid-template-columns: minmax(0, 1fr) minmax(330px, 0.74fr); }
@@ -940,9 +997,8 @@
       .reviews { background: var(--paper); color: var(--ink); text-align: center; }
       .reviews .eyebrow { color: var(--teal); justify-content: center; }
       .reviews .lead { color: var(--muted); }
-      .review-grid { display: block; }
-      .review-card { display: none; min-height: 280px; text-align: left; color: var(--ink); background: #fff; border-color: transparent; box-shadow: var(--soft-shadow); }
-      .review-card:first-child { display: block; }
+      .review-grid { display: flex; }
+      .review-card { display: block; min-height: 280px; text-align: left; color: var(--ink); background: #fff; border-color: transparent; box-shadow: var(--soft-shadow); }
       .review-card p { color: var(--muted); }
       .stars { margin-top: 22px; color: var(--mango); }
       .rooms-page-hero, .room-detail-hero, .activity-detail-hero { min-height: auto; padding: 112px 0 44px; }
@@ -1263,8 +1319,31 @@
           <p class="lead" id="reviewsText"></p>
         </div>
         <div class="review-grid" id="reviewsGrid"></div>
+        <div class="review-actions">
+          <button class="btn btn-sun" id="openReviewForm" type="button"><i data-lucide="star" class="icon"></i>Give a Review</button>
+        </div>
       </div>
     </section>
+
+    <div class="review-modal" id="reviewModal" aria-hidden="true">
+      <form class="review-form" id="guestReviewForm">
+        <div class="review-form-head">
+          <div>
+            <span class="eyebrow">Guest Review</span>
+            <h3>Share your stay</h3>
+            <p>Your note will be saved for the admin team to approve and show on the website.</p>
+          </div>
+          <button class="menu-close" id="closeReviewForm" type="button" aria-label="Close review form"><i data-lucide="x" class="icon"></i></button>
+        </div>
+        <div class="review-form-grid">
+          <div class="field"><label for="reviewName">Name</label><input id="reviewName" name="name" type="text" placeholder="Guest name" required></div>
+          <div class="field"><label for="reviewRating">Rating</label><select id="reviewRating" name="rating"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select></div>
+          <div class="field"><label for="reviewText">Review</label><textarea id="reviewText" name="text" placeholder="Write a short note about your stay..." required></textarea></div>
+          <button class="btn btn-primary" type="submit"><i data-lucide="send" class="icon"></i>Save Review</button>
+        </div>
+        <div class="review-form-status" id="reviewFormStatus"></div>
+      </form>
+    </div>
 
     <section class="contact reveal" id="contact">
       <div class="container contact-grid">
@@ -1464,7 +1543,10 @@
         photos: [
           { image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=86", alt: "Restaurant seating with warm lights" },
           { image: "https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=900&q=86", alt: "Fresh seafood meal served at a table" },
-          { image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?auto=format&fit=crop&w=900&q=86", alt: "Tropical drink on a table" }
+          { image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?auto=format&fit=crop&w=900&q=86", alt: "Tropical drink on a table" },
+          { image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=86", alt: "Colourful dinner dishes" },
+          { image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=86", alt: "Fresh pizza and island meal" },
+          { image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=900&q=86", alt: "Warm restaurant bar lights" }
         ]
       },
       island: {
@@ -1625,9 +1707,9 @@
         title: "The kind of stay guests remember.",
         text: "Warm service, clean rooms, good food, and simple island planning create the Feeali Buddies Inn experience.",
         items: [
-          { title: "Couple Stay", text: "Clean room, kind staff, and easy help with island activities. The stay felt peaceful from the first day." },
-          { title: "Family Holiday", text: "Great food, comfortable air conditioning, and friendly local recommendations for snorkeling and beaches." },
-          { title: "Island Explorer", text: "A beautiful local island base with warm people, clear water nearby, and a relaxed guest house atmosphere." }
+          { title: "Couple Stay", rating: 5, text: "Clean room, kind staff, and easy help with island activities. The stay felt peaceful from the first day." },
+          { title: "Family Holiday", rating: 5, text: "Great food, comfortable air conditioning, and friendly local recommendations for snorkeling and beaches." },
+          { title: "Island Explorer", rating: 5, text: "A beautiful local island base with warm people, clear water nearby, and a relaxed guest house atmosphere." }
         ]
       },
       contact: {
@@ -1750,10 +1832,13 @@
       setText("diningTitle", c.dining.title);
       setText("diningText", c.dining.text);
       document.getElementById("diningItems").innerHTML = c.dining.items.map((item) => `<div class="dining-item"><span><i data-lucide="${escapeHtml(item.icon || "utensils")}" class="icon"></i></span>${escapeHtml(item.text)}</div>`).join("");
+      const diningPhotos = [...(c.dining.photos || []), ...(c.dining.photos || [])];
       document.getElementById("diningMosaic").innerHTML = `
-        <div class="dining-photo tall"><img src="${escapeHtml(c.dining.photos[0]?.image || "")}" alt="${escapeHtml(c.dining.photos[0]?.alt || "Restaurant photo")}" /></div>
+        <div class="dining-slider"><div class="dining-track">
+          ${diningPhotos.map((photo) => `<div class="dining-photo"><img src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || "Restaurant photo")}" /></div>`).join("")}
+        </div></div>
         <div class="feature-tile"><span><i data-lucide="chef-hat" class="icon"></i></span><h3>${escapeHtml(c.dining.featureTitle)}</h3><p>${escapeHtml(c.dining.featureText)}</p></div>
-        ${(c.dining.photos || []).slice(1).map((photo) => `<div class="dining-photo"><img src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt)}" /></div>`).join("")}`;
+      `;
       renderRestaurantDetail(c);
 
       setText("islandEyebrow", c.island.eyebrow);
@@ -1789,9 +1874,10 @@
       setText("reviewsEyebrow", c.reviews.eyebrow);
       setText("reviewsTitle", c.reviews.title);
       setText("reviewsText", c.reviews.text);
-      document.getElementById("reviewsGrid").innerHTML = c.reviews.items.map((item) => `
+      const reviewItems = [...(c.reviews.items || []), ...(c.reviews.items || [])];
+      document.getElementById("reviewsGrid").innerHTML = reviewItems.map((item) => `
         <article class="review-card">
-          <div class="stars" aria-label="5 stars">${Array.from({ length: 5 }, () => '<i data-lucide="star" class="icon"></i>').join("")}</div>
+          <div class="stars" aria-label="${escapeHtml(item.rating || 5)} stars">${Array.from({ length: Number(item.rating || 5) }, () => '<i data-lucide="star" class="icon"></i>').join("")}</div>
           <p>${escapeHtml(item.text)}</p>
           <h3>${escapeHtml(item.title)}</h3>
         </article>`).join("");
@@ -2177,6 +2263,45 @@
       window.open(`https://wa.me/${String(site.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(message)}`, "_blank", "noopener");
     });
 
+    const reviewModal = document.getElementById("reviewModal");
+    const reviewForm = document.getElementById("guestReviewForm");
+    const reviewStatus = document.getElementById("reviewFormStatus");
+    const setReviewModal = (open) => {
+      reviewModal.classList.toggle("open", open);
+      reviewModal.setAttribute("aria-hidden", open ? "false" : "true");
+      document.body.style.overflow = open ? "hidden" : "";
+      if (open) document.getElementById("reviewName").focus();
+    };
+    document.getElementById("openReviewForm").addEventListener("click", () => setReviewModal(true));
+    document.getElementById("closeReviewForm").addEventListener("click", () => setReviewModal(false));
+    reviewModal.addEventListener("click", (event) => {
+      if (event.target === reviewModal) setReviewModal(false);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && reviewModal.classList.contains("open")) setReviewModal(false);
+    });
+    reviewForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const review = {
+        title: document.getElementById("reviewName").value.trim(),
+        rating: Number(document.getElementById("reviewRating").value),
+        text: document.getElementById("reviewText").value.trim(),
+        status: "pending"
+      };
+      if (!review.title || !review.text) {
+        reviewStatus.textContent = "Please add your name and review note.";
+        return;
+      }
+      try {
+        if (window.saveGuestReview) await window.saveGuestReview(review);
+        reviewStatus.textContent = "Thank you. Your review was saved for admin approval.";
+        reviewForm.reset();
+        setTimeout(() => setReviewModal(false), 1200);
+      } catch {
+        reviewStatus.textContent = "Review could not be saved. Please try again.";
+      }
+    });
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add("show"); });
     }, { threshold: 0.14 });
@@ -2206,11 +2331,20 @@
     const db = getDatabase(app);
     const siteRef = ref(db, "feealiBuddiesInn/siteContent");
     const bookingsRef = ref(db, "feealiBuddiesInn/bookings");
+    const reviewSubmissionsRef = ref(db, "feealiBuddiesInn/reviewSubmissions");
     window.currentBookings = {};
 
     window.saveBookingRequest = async (booking) => {
       await push(bookingsRef, {
         ...booking,
+        createdAt: serverTimestamp()
+      });
+    };
+
+    window.saveGuestReview = async (review) => {
+      await push(reviewSubmissionsRef, {
+        ...review,
+        source: "index.html",
         createdAt: serverTimestamp()
       });
     };
