@@ -1568,6 +1568,16 @@
         animation: planeMoveMobile 8s linear infinite;
       }
       .flight-map { padding: 18px; }
+      .airport-card {
+        padding: 22px;
+        border-radius: 22px;
+      }
+      .airport-card strong {
+        font-size: 1.25rem;
+        line-height: 1.22;
+        overflow-wrap: anywhere;
+      }
+      .airport-card small { font-size: .92rem; }
       .boat-options-head { display: block; }
       .boat-options-head p { margin-top: 10px; }
       .boat-options-grid { grid-template-columns: 1fr; }
@@ -1670,23 +1680,12 @@
     <section class="section travel reveal" id="travel" style="--travel-bg-one:url('https://images.unsplash.com/photo-1512100356356-de1b84283e18?auto=format&fit=crop&w=1800&q=82'); --travel-bg-two:url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=82'); --travel-bg-three:url('https://images.unsplash.com/photo-1540202404-a2f29016b523?auto=format&fit=crop&w=1800&q=82');">
       <div class="container">
         <div class="center-head">
-          <span class="eyebrow">Travel Planning</span>
-          <h2 class="section-title">Plan your route to F. Feeali.</h2>
-          <p class="lead">Choose a route and see guide prices, timing, and arrival notes. Our team can confirm the latest schedule before you travel.</p>
+          <span class="eyebrow" id="travelEyebrow">Travel Planning</span>
+          <h2 class="section-title" id="travelTitle">Plan your route to F. Feeali.</h2>
+          <p class="lead" id="travelText">Choose a route and see guide prices, timing, and arrival notes. Our team can confirm the latest schedule before you travel.</p>
         </div>
         <div class="travel-layout">
-          <div class="travel-options" aria-label="Travel route options">
-            <button class="travel-option active" type="button" data-travel-route="male-feeali">
-              <span><i data-lucide="ship" class="icon"></i></span>
-              <div><strong>Speed Boat</strong><small>Male to Feeali direct transfer</small></div>
-              <em class="price-pill">from $65</em>
-            </button>
-            <button class="travel-option" type="button" data-travel-route="velana-maamigili">
-              <span><i data-lucide="plane" class="icon"></i></span>
-              <div><strong>Airplane</strong><small>Velana Airport to Maamigili Airport</small></div>
-              <em class="price-pill">from $160</em>
-            </button>
-          </div>
+          <div class="travel-options" id="travelOptions" aria-label="Travel route options"></div>
 
           <div class="travel-inline-details" aria-hidden="true">
             <article class="travel-detail active" data-travel-detail="male-feeali" style="--travel-image:url('https://images.unsplash.com/photo-1512100356356-de1b84283e18?auto=format&fit=crop&w=1600&q=86')">
@@ -2958,6 +2957,11 @@
     const showTravelPage = (route = "male-feeali") => {
       const travelPage = document.getElementById("travelPage");
       const travelPageContent = document.getElementById("travelPageContent");
+      const content = window.currentSiteContent || window.DEFAULT_SITE_CONTENT;
+      const travel = mergeContent(window.DEFAULT_SITE_CONTENT.travel, content.travel || {});
+      travel.routes = mergeList(window.DEFAULT_SITE_CONTENT.travel.routes, travel.routes);
+      travel.speedboats = mergeList(window.DEFAULT_SITE_CONTENT.travel.speedboats, travel.speedboats);
+      const airplane = travel.airplane || window.DEFAULT_SITE_CONTENT.travel.airplane;
       document.body.classList.add("detail-mode");
       document.getElementById("roomsPage").classList.remove("active-detail");
       document.getElementById("roomDetail").classList.remove("active", "active-detail");
@@ -2967,13 +2971,13 @@
       travelPage.classList.add("active-detail");
 
       if (route === "velana-maamigili") {
-        travelPage.style.setProperty("--travel-page-image", "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=86')");
+        travelPage.style.setProperty("--travel-page-image", `url('${airplane.heroImage || window.DEFAULT_SITE_CONTENT.travel.airplane.heroImage}')`);
         travelPageContent.innerHTML = `
           <div class="travel-page-hero">
             <div class="container">
               <span class="eyebrow">Airplane Route</span>
-              <h2>Velana Airport to Maamigili Airport</h2>
-              <p>Domestic flight planning from Velana International Airport to Villa International Airport Maamigili, with onward transfer support to F. Feeali.</p>
+              <h2>${escapeHtml(airplane.title || "Velana Airport to Maamigili Airport")}</h2>
+              <p>${escapeHtml(airplane.text || "")}</p>
               <div class="room-detail-actions">
                 <a class="btn btn-sun" href="#contact"><i data-lucide="message-circle" class="icon"></i>Ask Flight Timing</a>
                 <a class="btn btn-ghost" href="#travel"><i data-lucide="arrow-left" class="icon"></i>Back to Travel</a>
@@ -2984,8 +2988,8 @@
             <div class="container">
               <div class="travel-page-head">
                 <span class="eyebrow">Live Route Style</span>
-                <h3>Male to Maamigili by air.</h3>
-                <p>Use this route when you want a faster island connection before the final sea transfer to Feeali.</p>
+                <h3>${escapeHtml(airplane.routeTitle || "Male to Maamigili by air.")}</h3>
+                <p>${escapeHtml(airplane.routeText || "")}</p>
               </div>
               <div class="flight-map">
                 <div class="flight-route">
@@ -2996,16 +3000,16 @@
                 </div>
               </div>
               <div class="travel-facts">
-                <div class="travel-fact"><span><i data-lucide="badge-dollar-sign" class="icon"></i>Guide Price</span><strong>from $160</strong><small>per person</small></div>
-                <div class="travel-fact"><span><i data-lucide="clock" class="icon"></i>Flight Time</span><strong>20-30 min</strong><small>plus check-in time</small></div>
-                <div class="travel-fact"><span><i data-lucide="waves" class="icon"></i>Next Route</span><strong>Sea Transfer</strong><small>Maamigili to Feeali</small></div>
+                <div class="travel-fact"><span><i data-lucide="badge-dollar-sign" class="icon"></i>Guide Price</span><strong>${escapeHtml(airplane.price || "from $160")}</strong><small>per person</small></div>
+                <div class="travel-fact"><span><i data-lucide="clock" class="icon"></i>Flight Time</span><strong>${escapeHtml(airplane.flightTime || "20-30 min")}</strong><small>plus check-in time</small></div>
+                <div class="travel-fact"><span><i data-lucide="waves" class="icon"></i>Next Route</span><strong>${escapeHtml(airplane.nextRoute || "Sea Transfer")}</strong><small>Maamigili to Feeali</small></div>
               </div>
               <p class="travel-note"><strong>Planning tip:</strong> Share your international flight number, arrival date, number of guests, and luggage count. Our team can help confirm the latest domestic timing and onward transfer plan.</p>
               <div class="travel-actions"><a class="btn btn-primary" href="#contact"><i data-lucide="send" class="icon"></i>Request Travel Plan</a></div>
             </div>
           </div>`;
       } else {
-        travelPage.style.setProperty("--travel-page-image", "url('https://images.unsplash.com/photo-1512100356356-de1b84283e18?auto=format&fit=crop&w=1800&q=86')");
+        travelPage.style.setProperty("--travel-page-image", `url('${travel.speedboatHeroImage || window.DEFAULT_SITE_CONTENT.travel.speedboatHeroImage}')`);
         travelPageContent.innerHTML = `
           <div class="travel-page-hero">
             <div class="container">
@@ -3025,7 +3029,7 @@
                 <h3>All Speedboat Options</h3>
                 <p>Guide prices and arrival times are shown for planning. Final schedule depends on weather, seat availability, and your flight arrival time.</p>
               </div>
-              <div class="boat-options-grid">${travelBoatOptions.map(boatCardHtml).join("")}</div>
+              <div class="boat-options-grid">${(travel.speedboats || travelBoatOptions).map(boatCardHtml).join("")}</div>
               <p class="travel-note"><strong>Important:</strong> These are guide prices for planning. Message us with your flight number, arrival date, number of guests, and luggage count so we can confirm the latest boat name, seat availability, exact departure time, and final price.</p>
             </div>
           </div>`;
