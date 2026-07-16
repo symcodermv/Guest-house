@@ -202,7 +202,15 @@
       padding: 112px 0 64px;
       color: var(--white);
       text-align: center;
-      background: linear-gradient(180deg, rgba(5, 36, 42, 0.08), rgba(5, 36, 42, 0.42) 48%, rgba(5, 36, 42, 0.44)), var(--hero-image) center / cover;
+      background: var(--hero-image) center / cover;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(5, 36, 42, 0.10), rgba(5, 36, 42, 0.42) 48%, rgba(5, 36, 42, 0.48));
+      pointer-events: none;
     }
     .hero::after {
       content: "";
@@ -211,12 +219,40 @@
       right: 0;
       bottom: -1px;
       height: 92px;
-      z-index: -1;
+      z-index: 0;
       background:
         radial-gradient(90% 82px at 48% 100%, var(--paper) 0 55%, rgba(255, 250, 242, 0) 56%),
         linear-gradient(180deg, rgba(255, 250, 242, 0), var(--paper));
+      pointer-events: none;
+    }
+    .hero-media {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      overflow: hidden;
+      background: var(--hero-image) center / cover;
+    }
+    .hero-media-item {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: scale(1.04);
+      transition: opacity 1.2s ease, transform 7s ease;
+    }
+    .hero-media-item.active {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    .hero-media img,
+    .hero-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
     }
     .hero-grid {
+      position: relative;
+      z-index: 1;
       display: grid;
       grid-template-columns: 1fr;
       place-items: center;
@@ -428,54 +464,85 @@
       36%, 64% { background-image: var(--travel-bg-two); }
       70%, 100% { background-image: var(--travel-bg-three); }
     }
-    .travel .center-head { margin-bottom: 38px; }
+    .travel .center-head {
+      max-width: 980px;
+      margin-bottom: 42px;
+      padding: 18px 20px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.26);
+      backdrop-filter: blur(8px);
+    }
     .travel-layout {
       display: block;
     }
     .travel-options {
       display: grid;
       grid-template-columns: repeat(2, minmax(260px, 1fr));
-      gap: 18px;
-      max-width: 900px;
+      gap: 20px;
+      max-width: 980px;
       margin: 0 auto;
     }
     .travel-option {
+      position: relative;
       display: grid;
-      grid-template-columns: 58px minmax(0, 1fr);
+      grid-template-columns: 64px minmax(0, 1fr);
       align-items: center;
       gap: 16px;
       width: 100%;
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: 20px;
+      min-height: 168px;
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.62);
+      border-radius: 22px;
       color: var(--ink);
-      background: rgba(255,255,255,.82);
-      box-shadow: var(--soft-shadow);
+      background: linear-gradient(135deg, rgba(255,255,255,.78), rgba(255,255,255,.48));
+      box-shadow: 0 22px 60px rgba(8, 42, 48, 0.12);
+      backdrop-filter: blur(16px);
       cursor: pointer;
       text-align: left;
       transition: transform .2s ease, border-color .2s ease, background .2s ease;
+      isolation: isolate;
+      overflow: hidden;
     }
+    .travel-option::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background: var(--travel-card-image) center / cover;
+      opacity: .18;
+      transform: scale(1.05);
+      transition: opacity .2s ease, transform .45s ease;
+    }
+    .travel-option::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,255,255,.56));
+    }
+    .travel-option:hover::before { opacity: .28; transform: scale(1.1); }
     .travel-option:hover,
     .travel-option.active {
       transform: translateY(-2px);
       border-color: rgba(0,127,141,.32);
-      background: #fff;
+      background: rgba(255,255,255,.88);
     }
     .travel-option.active { box-shadow: 0 18px 42px rgba(0,127,141,.14); }
     .travel-option span:first-child {
-      width: 58px;
-      height: 58px;
+      width: 64px;
+      height: 64px;
       display: grid;
       place-items: center;
-      border-radius: 15px;
+      border-radius: 18px;
       color: var(--teal);
       background: rgba(0,127,141,.10);
     }
-    .travel-option strong { display: block; font-size: 1.25rem; line-height: 1.25; }
-    .travel-option small { display: block; margin-top: 4px; color: var(--muted); line-height: 1.35; }
+    .travel-option strong { display: block; font-size: 1.42rem; line-height: 1.15; }
+    .travel-option small { display: block; margin-top: 7px; color: var(--muted); line-height: 1.4; }
     .travel-option .price-pill {
       grid-column: 2;
       justify-self: start;
+      margin-top: 4px;
       padding: 7px 10px;
       border-radius: 999px;
       color: var(--teal-dark);
@@ -680,6 +747,57 @@
       width: 100%;
       margin-top: 16px;
     }
+    .speedboat-schedule-panel {
+      display: none;
+      margin-top: 28px;
+      padding: clamp(18px, 3vw, 28px);
+      border: 1px solid rgba(0,127,141,.18);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(244,197,111,.22), transparent 34%),
+        linear-gradient(135deg, rgba(255,255,255,.94), rgba(238,249,247,.9));
+      box-shadow: var(--soft-shadow);
+    }
+    .speedboat-schedule-panel.show { display: block; }
+    .schedule-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .schedule-head h4 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 500;
+      line-height: 1;
+    }
+    .schedule-head p { margin-top: 8px; color: var(--muted); line-height: 1.55; }
+    .schedule-close {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--teal-dark);
+      background: #fff;
+      cursor: pointer;
+    }
+    .schedule-form {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .schedule-form .field { background: rgba(255,255,255,.9); }
+    .schedule-form .btn { min-height: 58px; }
+    .schedule-note {
+      margin-top: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: .94rem;
+    }
     .travel-note {
       margin-top: 16px;
       padding: 16px;
@@ -824,19 +942,33 @@
     .airport-card small { display: block; margin-top: 8px; color: var(--muted); line-height: 1.5; }
     .travel-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
 
-    .rooms { background: #eef9f7; }
+    .rooms {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, #eef9f7, #fffaf2);
+    }
+    .rooms::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .42;
+      background: radial-gradient(circle at 18% 16%, rgba(244,197,111,.22), transparent 32%), radial-gradient(circle at 84% 54%, rgba(0,127,141,.16), transparent 35%);
+      pointer-events: none;
+    }
+    .rooms > .container { position: relative; z-index: 1; }
     .section-head { display: flex; align-items: end; justify-content: space-between; gap: 36px; margin-bottom: 34px; }
     .section-head .lead { max-width: 520px; }
-    .room-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+    .room-grid { display: grid; grid-template-columns: 1.35fr .95fr .95fr; gap: 18px; align-items: stretch; }
     .room-card { position: relative; min-height: 440px; overflow: hidden; border: 0; border-radius: 28px; background: var(--teal-dark); box-shadow: var(--shadow); isolation: isolate; cursor: pointer; text-align: left; }
     .room-card.wide { grid-column: span 2; }
     .room-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.65s ease; }
     .room-card:hover img { transform: scale(1.07); }
-    .room-card::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(5, 36, 42, 0.08), rgba(5, 36, 42, 0.88)); }
+    .room-card::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(5, 36, 42, 0.06), rgba(5, 36, 42, 0.86)); }
     .room-info { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 26px; color: var(--white); }
+    .room-info .tag { display: none; }
     .tag { display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; border-radius: 999px; color: var(--teal-dark); background: rgba(255, 255, 255, 0.88); font-size: 0.79rem; font-weight: 900; }
     .room-price { display: inline-flex; margin-left: 8px; padding: 8px 11px; border-radius: 999px; color: var(--teal-dark); background: var(--mango); font-size: 0.79rem; font-weight: 950; }
-    .room-info h3 { margin-top: 16px; font-family: Georgia, "Times New Roman", serif; font-size: 2.15rem; font-weight: 500; line-height: 1.04; }
+    .room-info h3 { margin-top: 0; font-family: Georgia, "Times New Roman", serif; font-size: 2.15rem; font-weight: 500; line-height: 1.04; }
     .room-info p { margin-top: 10px; max-width: 430px; color: rgba(255, 255, 255, 0.80); line-height: 1.62; }
     .room-link { margin-top: 14px; display: inline-flex; align-items: center; gap: 8px; color: var(--mango); font-weight: 950; }
 
@@ -935,6 +1067,23 @@
       display: grid;
       gap: 12px;
       overflow: hidden;
+    }
+    .activity-photo-grid.static {
+      margin-top: 0;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: 220px;
+      overflow: visible;
+    }
+    .activity-photo-grid.static img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 22px;
+      box-shadow: var(--soft-shadow);
+    }
+    .activity-photo-grid.static img:first-child {
+      grid-column: 1 / -1;
+      min-height: 280px;
     }
     .detail-gallery-track {
       display: flex;
@@ -1583,6 +1732,8 @@
       .boat-options-head { display: block; }
       .boat-options-head p { margin-top: 10px; }
       .boat-options-grid { grid-template-columns: 1fr; }
+      .schedule-head { align-items: stretch; }
+      .schedule-form { grid-template-columns: 1fr; }
       .travel-option {
         grid-template-columns: 1fr;
         justify-items: center;
@@ -1637,6 +1788,7 @@
   </nav>
 
   <header class="hero" id="home">
+    <div class="hero-media" id="heroMedia" aria-hidden="true"></div>
     <div class="container hero-grid">
       <div class="hero-copy">
         <span class="hero-badge"><i data-lucide="map-pin" class="icon"></i> <span id="heroBadge"></span></span>
@@ -2132,6 +2284,7 @@
         badge: "Slow island days",
         titleLines: ["Real Maldivian Life"],
         text: "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.",
+        media: [],
         facts: [
           { title: "F. Feeali", text: "Peaceful local island setting" },
           { title: "Lagoon", text: "Snorkeling, sandbank and boat trips" },
@@ -2166,8 +2319,8 @@
           "https://images.unsplash.com/photo-1540202404-a2f29016b523?auto=format&fit=crop&w=1800&q=82"
         ],
         routes: [
-          { key: "male-feeali", title: "Speed Boat", text: "Male to Feeali direct transfer", icon: "ship", price: "from $65" },
-          { key: "velana-maamigili", title: "Airplane", text: "Velana Airport to Maamigili Airport", icon: "plane", price: "from $160" }
+          { key: "male-feeali", title: "Speed Boat", text: "Male to Feeali direct transfer", icon: "ship", price: "from $65", image: "https://images.unsplash.com/photo-1512100356356-de1b84283e18?auto=format&fit=crop&w=1200&q=82" },
+          { key: "velana-maamigili", title: "Airplane", text: "Velana Airport to Maamigili Airport", icon: "plane", price: "from $160", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=82" }
         ],
         airplane: {
           heroImage: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=86",
@@ -2195,7 +2348,7 @@
         items: [
           {
             title: "Deluxe Island Room",
-            tag: "Most Popular",
+            tag: "",
             icon: "sparkles",
             price: "$95",
             text: "A comfortable choice with soft bedding, air conditioning, private bathroom, and relaxed island styling.",
@@ -2217,7 +2370,7 @@
           },
           {
             title: "Cozy Double",
-            tag: "Couples",
+            tag: "",
             icon: "bed-double",
             price: "$70",
             text: "Simple, clean, and ideal for travelers who want a peaceful base on F. Feeali.",
@@ -2239,7 +2392,7 @@
           },
           {
             title: "Family Stay",
-            tag: "Family",
+            tag: "",
             icon: "users",
             price: "$120",
             text: "More room to relax, unpack, and enjoy a flexible island holiday together.",
@@ -2261,7 +2414,7 @@
           },
           {
             title: "Sea View Suite",
-            tag: "Sea View",
+            tag: "",
             icon: "waves",
             price: "$135",
             text: "A brighter suite-style stay with extra comfort, relaxed seating, and a breezy island feel.",
@@ -2578,6 +2731,52 @@
       const el = document.getElementById(id);
       if (el) el.textContent = value || "";
     };
+    let heroMediaTimer;
+    const DEFAULT_HERO_STOCK_IMAGE = "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=2400&q=88";
+    const getHeroMediaUrl = (item) => typeof item === "string" ? item : item?.url || "";
+    const isCustomHeroMedia = (item) => {
+      const url = getHeroMediaUrl(item);
+      return Boolean(url && url !== DEFAULT_HERO_STOCK_IMAGE);
+    };
+    const renderHeroMedia = (media = [], fallbackImage = "", fallbackAlt = "Feeali Buddies Inn") => {
+      const holder = document.getElementById("heroMedia");
+      if (!holder) return;
+      clearInterval(heroMediaTimer);
+      heroMediaTimer = null;
+      const cleanMedia = (Array.isArray(media) ? media : [])
+        .map((item) => {
+          if (typeof item === "string") return { type: "image", url: item, alt: fallbackAlt };
+          return item || {};
+        })
+        .filter((item) => isCustomHeroMedia(item));
+      const slides = cleanMedia;
+      if (!slides.length) {
+        holder.innerHTML = "";
+        return;
+      }
+      holder.innerHTML = slides.map((item, index) => {
+        const type = String(item.type || "").toLowerCase() === "video" ? "video" : "image";
+        const alt = escapeHtml(item.alt || fallbackAlt);
+        const url = escapeHtml(item.url);
+        const poster = item.poster ? ` poster="${escapeHtml(item.poster)}"` : "";
+        if (type === "video") {
+          return `<div class="hero-media-item ${index === 0 ? "active" : ""}"><video muted playsinline autoplay loop preload="metadata"${poster}><source src="${url}"></video></div>`;
+        }
+        return `<div class="hero-media-item ${index === 0 ? "active" : ""}"><img src="${url}" alt="${alt}" /></div>`;
+      }).join("");
+      const renderedSlides = [...holder.querySelectorAll(".hero-media-item")];
+      holder.querySelectorAll("video").forEach((video) => video.play().catch(() => {}));
+      if (renderedSlides.length > 1) {
+        let activeIndex = 0;
+        heroMediaTimer = setInterval(() => {
+          renderedSlides[activeIndex].classList.remove("active");
+          activeIndex = (activeIndex + 1) % renderedSlides.length;
+          renderedSlides[activeIndex].classList.add("active");
+          const video = renderedSlides[activeIndex].querySelector("video");
+          if (video) video.play().catch(() => {});
+        }, 7600);
+      }
+    };
 
     const applyContent = (content) => {
       const c = mergeContent(window.DEFAULT_SITE_CONTENT, content);
@@ -2590,7 +2789,13 @@
       c.travel.speedboats = Array.isArray(c.travel?.speedboats) ? c.travel.speedboats : [];
       c.island.sliderImages = mergeList(window.DEFAULT_SITE_CONTENT.island.sliderImages, c.island.sliderImages);
       document.title = `${c.site.name} | Guest House in ${c.site.island}`;
-      document.documentElement.style.setProperty("--hero-image", `url("${c.site.heroImage}")`);
+      const firstHeroImage = (Array.isArray(c.hero.media) ? c.hero.media : []).find((item) => {
+        const url = getHeroMediaUrl(item);
+        const type = typeof item === "string" ? "image" : String(item?.type || "image").toLowerCase();
+        return isCustomHeroMedia(item) && type !== "video" && url;
+      });
+      const firstHeroImageUrl = getHeroMediaUrl(firstHeroImage);
+      document.documentElement.style.setProperty("--hero-image", firstHeroImageUrl ? `url("${firstHeroImageUrl}")` : "linear-gradient(135deg, #0b3038, #102f32)");
       document.documentElement.style.setProperty("--island-image", `url("${c.island.image}")`);
       document.documentElement.style.setProperty("--activities-bg-image", `url("${c.activities.backgroundImage || c.activities.items?.[0]?.image || c.site.heroImage}")`);
       document.documentElement.style.setProperty("--activities-bg-opacity", c.activities.backgroundOpacity || "0.18");
@@ -2605,6 +2810,7 @@
       document.getElementById("travel").style.setProperty("--travel-bg-opacity", c.travel.backgroundOpacity || "0.22");
       document.querySelectorAll("[data-brand-name]").forEach((el) => { el.textContent = c.site.name; });
       setText("heroBadge", c.hero.badge);
+      renderHeroMedia(c.hero.media, c.site.heroImage, c.site.name);
       document.getElementById("heroTitle").innerHTML = `
         <span class="desktop-break">${c.hero.titleLines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</span>
         <span class="mobile-break">${c.hero.titleLines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</span>`;
@@ -2629,7 +2835,7 @@
       setText("travelTitle", c.travel.title);
       setText("travelText", c.travel.text);
       document.getElementById("travelOptions").innerHTML = (c.travel.routes || []).map((route, index) => `
-        <button class="travel-option ${index === 0 ? "active" : ""}" type="button" data-travel-route="${escapeHtml(route.key || (index === 1 ? "velana-maamigili" : "male-feeali"))}">
+        <button class="travel-option ${index === 0 ? "active" : ""}" type="button" data-travel-route="${escapeHtml(route.key || (index === 1 ? "velana-maamigili" : "male-feeali"))}" style="--travel-card-image:url('${escapeHtml(route.image || travelImages[index % travelImages.length] || c.site.heroImage)}')">
           <span><i data-lucide="${escapeHtml(route.icon || "ship")}" class="icon"></i></span>
           <div><strong>${escapeHtml(route.title)}</strong><small>${escapeHtml(route.text)}</small></div>
           <em class="price-pill">${escapeHtml(route.price || "")}</em>
@@ -2642,11 +2848,10 @@
         <button class="room-card ${item.wide ? "wide" : ""}" type="button" data-room-index="${index}" aria-label="View ${escapeHtml(item.title)} details">
           <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" />
           <div class="room-info">
-            <span class="tag"><i data-lucide="${escapeHtml(item.icon || "bed-double")}" class="icon"></i>${escapeHtml(item.tag)}</span>
             <span class="room-price">${escapeHtml(item.price || "")}</span>
             <h3>${escapeHtml(item.title)}</h3>
             <p>${escapeHtml(item.text)}</p>
-            <span class="room-link">View room details <i data-lucide="arrow-right" class="icon"></i></span>
+            <span class="room-link">View more <i data-lucide="arrow-right" class="icon"></i></span>
           </div>
         </button>`).join("");
       renderRoomsPage(c);
@@ -2752,7 +2957,6 @@
           <article class="rooms-showcase-card">
             <img src="${escapeHtml(room.image)}" alt="${escapeHtml(room.title)}" />
             <div class="rooms-showcase-copy">
-              <span class="tag"><i data-lucide="${escapeHtml(room.icon || "bed-double")}" class="icon"></i>${escapeHtml(room.tag || "Room")}</span>
               <span class="room-price">${escapeHtml(room.price || "")}</span>
               <h3>${escapeHtml(room.title)}</h3>
               <p>${escapeHtml(room.detailText || room.text)}</p>
@@ -2793,7 +2997,7 @@
       document.getElementById("activityDetail").classList.remove("active-detail");
       document.getElementById("travelPage").classList.remove("active-detail");
       document.getElementById("bookingPage").classList.remove("active-detail");
-      setText("roomDetailTag", room.tag || "Room");
+      setText("roomDetailTag", "Rooms");
       setText("roomDetailTitle", room.title);
       setText("roomDetailText", room.detailText || room.text);
       setText("roomDetailPrice", room.price || "Ask");
@@ -2863,11 +3067,13 @@
       setText("activityDetailText", activity.detailText || activity.shortText);
       setText("activityDetailPrice", activity.price || "Ask");
       setText("activityDetailPriceNote", activity.priceNote || "");
-      renderTwoRowGallery("activityDetailGallery", [
+      const activityPhotos = uniquePhotos([
         { image: activity.image, alt: activity.title },
         ...gallery.map((image) => ({ image, alt: activity.title })),
         ...activities.filter((other, otherIndex) => otherIndex !== index).flatMap((other) => [{ image: other.image, alt: other.title }, ...(other.gallery || []).map((image) => ({ image, alt: other.title }))])
-      ], "Activity photo");
+      ], "Activity photo").slice(0, 5);
+      document.getElementById("activityDetailGallery").classList.add("static");
+      document.getElementById("activityDetailGallery").innerHTML = activityPhotos.map((photo) => `<img src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || "Activity photo")}" />`).join("");
       renderMovingStrip("activityMovingStrip", [], "Activity photo");
       document.getElementById("activityDetailHighlights").innerHTML = (activity.highlights || []).map((item) => `<li><i data-lucide="${escapeHtml(item.icon || "sparkles")}" class="icon"></i><span><strong>${escapeHtml(item.title)}</strong><br>${escapeHtml(item.text)}</span></li>`).join("");
       const site = content.site || window.DEFAULT_SITE_CONTENT.site;
@@ -2876,9 +3082,9 @@
       renderIcons();
     };
 
-    const travelBoatOptions = [];
+    let currentVisibleSpeedboats = [];
 
-    const boatCardHtml = (boat) => `
+    const boatCardHtml = (boat, index = 0) => `
       <article class="boat-card">
         <div class="boat-card-image" style="--boat-image:url('${escapeHtml(boat.image)}')">
           ${boat.badge ? `<span class="status-pill">${escapeHtml(boat.badge)}</span>` : ""}
@@ -2891,10 +3097,64 @@
             <div><span>Arrival</span><strong>${escapeHtml(boat.time)}</strong></div>
             ${boat.contact ? `<div><span>Contact</span><strong>${escapeHtml(boat.contact)}</strong></div>` : ""}
           </div>
-          <a class="btn btn-primary" href="#contact"><i data-lucide="message-circle" class="icon"></i>${escapeHtml(boat.action)}</a>
+          <button class="btn btn-primary" type="button" data-boat-schedule="${index}"><i data-lucide="calendar-clock" class="icon"></i>${escapeHtml(boat.action || "Check Schedule")}</button>
         </div>
       </article>`;
     const oldDefaultSpeedboatTitles = new Set(["Public Speedboat", "Private Speedboat", "Group Speedboat", "Morning Speedboat", "Evening Speedboat", "Charter Launch"]);
+
+    const getBoatTimes = (boat = {}) => {
+      if (Array.isArray(boat.scheduleTimes) && boat.scheduleTimes.length) return boat.scheduleTimes;
+      if (typeof boat.scheduleTimes === "string" && boat.scheduleTimes.trim()) return boat.scheduleTimes.split("\n").map((time) => time.trim()).filter(Boolean);
+      return ["Morning schedule", "Afternoon schedule"];
+    };
+
+    const showBoatSchedule = (index = 0) => {
+      const panel = document.getElementById("speedboatSchedulePanel");
+      if (!panel) return;
+      const boat = currentVisibleSpeedboats[index] || currentVisibleSpeedboats[0];
+      if (!boat) return;
+      const site = window.currentSiteContent?.site || window.DEFAULT_SITE_CONTENT.site;
+      const dateValue = toDateValue(new Date());
+      const times = getBoatTimes(boat);
+      panel.classList.add("show");
+      panel.innerHTML = `
+        <div class="schedule-head">
+          <div>
+            <span class="eyebrow">Travel Schedule</span>
+            <h4>${escapeHtml(boat.title || "Speed Boat Schedule")}</h4>
+            <p>${escapeHtml(boat.scheduleNote || "Choose your travel date and preferred time. Our team will confirm the latest seats and weather-safe departure.")}</p>
+          </div>
+          <button class="schedule-close" type="button" data-close-schedule aria-label="Close schedule"><i data-lucide="x" class="icon"></i></button>
+        </div>
+        <div class="schedule-form">
+          <div class="field"><label for="boatScheduleDate">Travel Date</label><div class="field-row"><i data-lucide="calendar" class="icon" aria-hidden="true"></i><input id="boatScheduleDate" type="date" min="${dateValue}" value="${dateValue}"></div></div>
+          <div class="field"><label for="boatScheduleTime">Preferred Time</label><div class="field-row"><i data-lucide="clock" class="icon" aria-hidden="true"></i><select id="boatScheduleTime">${times.map((time) => `<option value="${escapeHtml(time)}">${escapeHtml(time)}</option>`).join("")}</select></div></div>
+          <button class="btn btn-primary" type="button" data-request-boat-schedule="${index}"><i data-lucide="message-circle" class="icon"></i>Request Schedule</button>
+        </div>
+        <p class="schedule-note"><strong>Guide info:</strong> ${escapeHtml(boat.price || "Price on request")} / ${escapeHtml(boat.time || "arrival time to confirm")}. Final schedule depends on weather, seat availability, and your flight arrival time.</p>`;
+      panel.scrollIntoView({ behavior: "smooth", block: "center" });
+      renderIcons();
+    };
+
+    const requestBoatSchedule = (index = 0) => {
+      const boat = currentVisibleSpeedboats[index] || currentVisibleSpeedboats[0];
+      if (!boat) return;
+      const site = window.currentSiteContent?.site || window.DEFAULT_SITE_CONTENT.site;
+      const date = document.getElementById("boatScheduleDate")?.value || "";
+      const time = document.getElementById("boatScheduleTime")?.value || "";
+      const message = [
+        `Hello ${site.name}, I want to check speedboat schedule.`,
+        "",
+        `Boat: ${boat.title || "Speed Boat"}`,
+        `Travel date: ${date}`,
+        `Preferred time: ${time}`,
+        `Guide price: ${boat.price || "Ask team"}`,
+        `Arrival / travel time: ${boat.time || "Confirm"}`,
+        "",
+        "Please confirm seats, exact departure time, and pickup details."
+      ].join("\n");
+      window.open(`https://wa.me/${String(site.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(message)}`, "_blank", "noopener");
+    };
 
     const showTravelPage = (route = "male-feeali") => {
       const travelPage = document.getElementById("travelPage");
@@ -2904,6 +3164,7 @@
       travel.routes = mergeList(window.DEFAULT_SITE_CONTENT.travel.routes, travel.routes);
       travel.speedboats = Array.isArray(travel.speedboats) ? travel.speedboats : [];
       const visibleSpeedboats = travel.speedboats.filter((boat) => !oldDefaultSpeedboatTitles.has(String(boat.title || "").trim()));
+      currentVisibleSpeedboats = visibleSpeedboats;
       const airplane = travel.airplane || window.DEFAULT_SITE_CONTENT.travel.airplane;
       document.body.classList.add("detail-mode");
       document.getElementById("roomsPage").classList.remove("active-detail");
@@ -2972,7 +3233,7 @@
                 <h3>All Speedboat Options</h3>
                 <p>Guide prices and arrival times are shown for planning. Final schedule depends on weather, seat availability, and your flight arrival time.</p>
               </div>
-              ${visibleSpeedboats.length ? `<div class="boat-options-grid">${visibleSpeedboats.map(boatCardHtml).join("")}</div>` : `<p class="travel-note"><strong>No speedboats added yet:</strong> Open backend Travel, add speedboat options, then save to Firebase.</p>`}
+              ${visibleSpeedboats.length ? `<div class="boat-options-grid">${visibleSpeedboats.map(boatCardHtml).join("")}</div><div class="speedboat-schedule-panel" id="speedboatSchedulePanel" aria-live="polite"></div>` : `<p class="travel-note"><strong>No speedboats added yet:</strong> Open backend Travel, add speedboat options, then save to Firebase.</p>`}
               <p class="travel-note"><strong>Important:</strong> These are guide prices for planning. Message us with your flight number, arrival date, number of guests, and luggage count so we can confirm the latest boat name, seat availability, exact departure time, and final price.</p>
             </div>
           </div>`;
@@ -3052,6 +3313,9 @@
       const roomButton = event.target.closest("[data-room-index]");
       const activityButton = event.target.closest("[data-activity-index]");
       const travelButton = event.target.closest("[data-travel-route]");
+      const boatScheduleButton = event.target.closest("[data-boat-schedule]");
+      const boatScheduleRequest = event.target.closest("[data-request-boat-schedule]");
+      const closeSchedule = event.target.closest("[data-close-schedule]");
       if (roomButton) {
         const index = Number(roomButton.dataset.roomIndex);
         history.pushState(null, "", `#room-${index}`);
@@ -3067,6 +3331,12 @@
         document.querySelectorAll("[data-travel-route]").forEach((button) => button.classList.toggle("active", button === travelButton));
         history.pushState(null, "", route === "velana-maamigili" ? "#travel-airplane" : "#travel-speedboat");
         showTravelPage(route);
+      } else if (boatScheduleButton) {
+        showBoatSchedule(Number(boatScheduleButton.dataset.boatSchedule || 0));
+      } else if (boatScheduleRequest) {
+        requestBoatSchedule(Number(boatScheduleRequest.dataset.requestBoatSchedule || 0));
+      } else if (closeSchedule) {
+        document.getElementById("speedboatSchedulePanel")?.classList.remove("show");
       }
     });
     window.addEventListener("hashchange", renderRoomDetailFromHash);
