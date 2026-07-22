@@ -416,6 +416,78 @@
     }
     .booking-status.error { color: #8d2b1f; background: rgba(232,120,98,.16); }
     .booking-status.success { color: #145844; background: rgba(71,123,91,.16); }
+    .reserve-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(5, 36, 42, .62);
+      backdrop-filter: blur(14px);
+    }
+    .reserve-modal.open { display: grid; }
+    .reserve-picker {
+      width: min(100%, 560px);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.48);
+      border-radius: 30px;
+      background: rgba(255,250,242,.96);
+      box-shadow: 0 30px 90px rgba(5,36,42,.36);
+    }
+    .reserve-picker-hero {
+      min-height: 190px;
+      display: grid;
+      align-items: end;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(180deg, rgba(5,36,42,.08), rgba(5,36,42,.86)), var(--reserve-image) center / cover;
+    }
+    .reserve-picker-hero h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 7vw, 3.4rem);
+      font-weight: 500;
+      line-height: .95;
+    }
+    .reserve-picker-body { padding: 22px; }
+    .reserve-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .reserve-calendar-field {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fff;
+    }
+    .reserve-calendar-field label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--teal);
+      font-size: .72rem;
+      font-weight: 950;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .reserve-calendar-field input {
+      width: 100%;
+      min-height: 42px;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      background: transparent;
+      font-weight: 850;
+    }
+    .reserve-picker-actions { display: flex; gap: 12px; margin-top: 18px; }
+    .reserve-picker-actions .btn { flex: 1; }
+    .reserve-picker-actions .btn-ghost {
+      color: var(--ink);
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .reserve-hint { margin-top: 12px; color: var(--muted); font-size: .92rem; line-height: 1.5; }
 
     .intro-grid, .dining-grid, .contact-grid { display: grid; grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr); gap: 58px; align-items: center; }
     .intro-copy .lead, .dining-copy .lead, .contact .lead { margin-top: 22px; }
@@ -475,7 +547,8 @@
     .travel {
       position: relative;
       overflow: hidden;
-      background: linear-gradient(180deg, #f7fcfb, #fffaf2);
+      padding-block: 108px;
+      background: #9db8b7;
       isolation: isolate;
     }
     .travel::before {
@@ -485,30 +558,44 @@
       z-index: -2;
       opacity: var(--travel-bg-opacity);
       background: var(--travel-bg-one) center / cover;
-      animation: travelBgSwap 18s ease-in-out infinite;
+      transform: scale(1.02);
     }
     .travel::after {
       content: "";
       position: absolute;
       inset: 0;
       z-index: -1;
-      opacity: .18;
-      background: radial-gradient(circle at 20% 10%, rgba(248,210,121,.42), transparent 30%), radial-gradient(circle at 80% 80%, rgba(0,127,141,.32), transparent 32%);
+      opacity: 1;
+      background:
+        linear-gradient(180deg, rgba(236, 250, 248, .22), rgba(5, 43, 49, .18) 38%, rgba(5, 43, 49, .50)),
+        radial-gradient(circle at 16% 18%, rgba(244,197,111,.22), transparent 28%),
+        radial-gradient(circle at 84% 82%, rgba(255,255,255,.2), transparent 34%);
       pointer-events: none;
     }
-    @keyframes travelBgSwap {
-      0%, 30% { background-image: var(--travel-bg-one); }
-      36%, 64% { background-image: var(--travel-bg-two); }
-      70%, 100% { background-image: var(--travel-bg-three); }
+    .travel > .container {
+      position: relative;
+      max-width: 1120px;
+      padding: clamp(28px, 5vw, 58px);
+      border: 1px solid rgba(255,255,255,.34);
+      border-radius: 34px;
+      background:
+        linear-gradient(135deg, rgba(6, 67, 74, .54), rgba(255,255,255,.12)),
+        rgba(5, 72, 80, .30);
+      box-shadow: 0 34px 100px rgba(5,36,42,.28);
+      backdrop-filter: blur(14px);
     }
     .travel .center-head {
       max-width: 980px;
       margin-bottom: 42px;
-      padding: 18px 20px;
-      border-radius: 30px;
-      background: rgba(255, 255, 255, 0.26);
-      backdrop-filter: blur(8px);
+      padding: 0;
+      border-radius: 0;
+      color: #fff;
+      background: transparent;
+      backdrop-filter: none;
     }
+    .travel .center-head .eyebrow { color: var(--mango); }
+    .travel .center-head .section-title { color: #fff; text-shadow: 0 18px 54px rgba(0,0,0,.18); }
+    .travel .center-head .lead { color: rgba(255,255,255,.88); }
     .travel-layout {
       display: block;
     }
@@ -530,9 +617,9 @@
       padding: 28px;
       border: 1px solid rgba(255, 255, 255, 0.62);
       border-radius: 22px;
-      color: var(--ink);
-      background: linear-gradient(135deg, rgba(255,255,255,.78), rgba(255,255,255,.48));
-      box-shadow: 0 22px 60px rgba(8, 42, 48, 0.12);
+      color: #fff;
+      background: rgba(8, 75, 84, .44);
+      box-shadow: 0 24px 70px rgba(8, 42, 48, 0.18);
       backdrop-filter: blur(16px);
       cursor: pointer;
       text-align: left;
@@ -555,27 +642,29 @@
       position: absolute;
       inset: 0;
       z-index: -1;
-      background: linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,255,255,.56));
+      background:
+        linear-gradient(135deg, rgba(10, 72, 80, .78), rgba(255,255,255,.18)),
+        linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,.05));
     }
     .travel-option:hover::before { opacity: .28; transform: scale(1.1); }
     .travel-option:hover,
     .travel-option.active {
       transform: translateY(-2px);
-      border-color: rgba(0,127,141,.32);
-      background: rgba(255,255,255,.88);
+      border-color: rgba(244,197,111,.58);
+      background: rgba(9, 89, 98, .58);
     }
-    .travel-option.active { box-shadow: 0 18px 42px rgba(0,127,141,.14); }
+    .travel-option.active { box-shadow: 0 18px 42px rgba(244,197,111,.16); }
     .travel-option span:first-child {
       width: 64px;
       height: 64px;
       display: grid;
       place-items: center;
       border-radius: 18px;
-      color: var(--teal);
-      background: rgba(0,127,141,.10);
+      color: var(--teal-dark);
+      background: rgba(244,197,111,.92);
     }
     .travel-option strong { display: block; font-size: 1.42rem; line-height: 1.15; }
-    .travel-option small { display: block; margin-top: 7px; color: var(--muted); line-height: 1.4; }
+    .travel-option small { display: block; margin-top: 7px; color: rgba(255,255,255,.78); line-height: 1.4; }
     .travel-option .price-pill {
       grid-column: 2;
       justify-self: start;
@@ -848,30 +937,13 @@
     .travel-page.active-detail { display: block; }
     .travel-page-hero {
       position: relative;
-      min-height: 58vh;
-      display: grid;
-      align-items: end;
-      padding: 132px 0 56px;
-      color: #fff;
+      min-height: clamp(250px, 25vw, 350px);
       overflow: hidden;
-      background: linear-gradient(180deg, rgba(5,36,42,.18), rgba(5,36,42,.86)), var(--travel-page-image) center / cover;
+      background: linear-gradient(180deg, rgba(5,36,42,.08), rgba(5,36,42,.22)), var(--travel-page-image) center / cover;
+      box-shadow: inset 0 -42px 70px rgba(5,36,42,.18);
     }
-    .travel-page-hero h2 {
-      max-width: 900px;
-      margin-top: 14px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(3rem, 7vw, 6rem);
-      font-weight: 500;
-      line-height: .92;
-    }
-    .travel-page-hero p {
-      max-width: 720px;
-      margin-top: 18px;
-      color: rgba(255,255,255,.86);
-      font-size: 1.12rem;
-      line-height: 1.7;
-    }
-    .travel-page-body { padding: 72px 0 92px; }
+    .travel-detail-intro { padding-top: 54px; }
+    .travel-page-body { padding: 24px 0 92px; }
     .travel-page-head {
       max-width: 880px;
       margin: 0 auto 34px;
@@ -1183,7 +1255,27 @@
     .room-info { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 26px; color: var(--white); }
     .room-info .tag { display: none; }
     .tag { display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; border-radius: 999px; color: var(--teal-dark); background: rgba(255, 255, 255, 0.88); font-size: 0.79rem; font-weight: 900; }
-    .room-price { display: inline-flex; margin-left: 8px; padding: 8px 11px; border-radius: 999px; color: var(--teal-dark); background: var(--mango); font-size: 0.79rem; font-weight: 950; }
+    .room-price { display: inline-flex; align-items: center; gap: 7px; margin-left: 8px; padding: 8px 11px; border-radius: 999px; color: var(--teal-dark); background: var(--mango); font-size: 0.79rem; font-weight: 950; }
+    .room-price strong,
+    .activity-price strong { font: inherit; color: inherit; }
+    .room-price del,
+    .activity-price del,
+    .rate del { opacity: .62; font-size: .86em; font-weight: 800; }
+    .room-price em,
+    .activity-price em,
+    .rate em {
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      padding: 0 7px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--teal);
+      font-style: normal;
+      font-size: .72em;
+      font-weight: 950;
+      letter-spacing: .02em;
+    }
     .room-info h3 { margin-top: 0; font-family: Georgia, "Times New Roman", serif; font-size: 2.15rem; font-weight: 500; line-height: 1.04; }
     .room-info p { margin-top: 10px; max-width: 430px; color: rgba(255, 255, 255, 0.80); line-height: 1.62; }
     .room-link { margin-top: 14px; display: inline-flex; align-items: center; gap: 8px; color: var(--mango); font-weight: 950; }
@@ -1289,21 +1381,40 @@
       grid-column: span 2;
     }
     .room-detail-hero {
-      min-height: 66vh;
-      display: grid;
-      align-items: end;
-      padding: 132px 0 58px;
-      color: var(--white);
-      background: linear-gradient(180deg, rgba(5,36,42,.18), rgba(5,36,42,.82)), var(--room-detail-image) center / cover;
+      min-height: clamp(250px, 25vw, 350px);
+      background: linear-gradient(180deg, rgba(5,36,42,.08), rgba(5,36,42,.22)), var(--room-detail-image) center / cover;
+      box-shadow: inset 0 -42px 70px rgba(5,36,42,.18);
     }
-    .room-detail-copy { max-width: 850px; }
-    .room-detail-copy h2 { margin-top: 14px; font-family: Georgia, "Times New Roman", serif; font-size: 5.2rem; font-weight: 500; line-height: .92; }
-    .room-detail-copy p { max-width: 680px; margin-top: 18px; color: rgba(255,255,255,.86); font-size: 1.15rem; line-height: 1.75; }
-    .room-detail-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
-    .room-detail-body { padding: 76px 0 88px; }
-    .room-detail-grid { display: grid; grid-template-columns: minmax(0, .88fr) minmax(330px, .42fr); gap: 38px; align-items: start; min-width: 0; }
+    .room-detail-intro {
+      padding: 54px 0 30px;
+      background: #fffdf8;
+    }
+    .room-detail-copy { max-width: 900px; margin-inline: auto; }
+    .room-detail-copy .eyebrow { justify-content: flex-start; color: #d8894c; }
+    .room-detail-copy h2 {
+      margin-top: 26px;
+      color: #d8894c;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      font-size: clamp(2.55rem, 4.4vw, 4.15rem);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: .045em;
+      text-transform: uppercase;
+    }
+    .room-detail-copy p { max-width: 780px; margin-top: 72px; color: #92999b; font-size: 1.05rem; letter-spacing: .03em; line-height: 1.9; }
+    .room-detail-actions { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 12px; margin-top: 30px; }
+    .room-detail-body { padding: 24px 0 88px; }
+    .room-detail-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 26px;
+      align-items: start;
+      width: min(100%, 960px);
+      min-width: 0;
+      margin-inline: auto;
+    }
     .room-detail-grid > *, .activity-detail-grid > * { min-width: 0; }
-    .detail-panel { min-width: 0; overflow: hidden; padding: 28px; border: 1px solid var(--line); border-radius: 26px; background: var(--white); box-shadow: var(--soft-shadow); }
+    .detail-panel { min-width: 0; overflow: hidden; padding: 28px; border: 1px solid rgba(16,47,50,.12); border-radius: 26px; background: rgba(255,255,255,.82); box-shadow: var(--soft-shadow); backdrop-filter: blur(14px); }
     .detail-panel h3 { font-family: Georgia, "Times New Roman", serif; font-size: 2.1rem; font-weight: 500; overflow-wrap: anywhere; }
     .comfort-grid { margin-top: 22px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
     .comfort-card { min-height: 118px; padding: 18px; border: 1px solid var(--line); border-radius: 20px; background: #f7efe3; }
@@ -1359,23 +1470,71 @@
     .detail-gallery-track img:nth-child(3n + 1) { width: clamp(330px, 42vw, 650px); }
     .detail-gallery.static-room-gallery {
       overflow: visible;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      grid-auto-rows: clamp(180px, 22vw, 310px);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
     }
-    .detail-gallery.static-room-gallery img {
+    .room-gallery-viewer {
+      overflow: hidden;
+      border: 1px solid rgba(16,47,50,.10);
+      border-radius: 26px;
+      background: #fff;
+      box-shadow: 0 20px 60px rgba(8,42,48,.12);
+    }
+    .room-gallery-main {
+      position: relative;
+      min-height: 0;
+      aspect-ratio: 1.43 / 1;
+      overflow: hidden;
+      background: #dcebec;
+    }
+    .room-gallery-main img {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      object-fit: cover;
+      animation: roomImageZoom 12s ease-in-out infinite alternate;
+    }
+    .room-gallery-main::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(5,36,42,0), rgba(5,36,42,.18));
+      pointer-events: none;
+    }
+    .room-gallery-thumbs {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      padding: 14px;
+      background: rgba(255,255,255,.82);
+    }
+    .room-thumb {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1.2 / 1;
+      border: 2px solid transparent;
+      border-radius: 14px;
+      background: #eef7f6;
+      cursor: pointer;
+      opacity: .72;
+      transition: opacity .18s ease, transform .18s ease, border-color .18s ease;
+    }
+    .room-thumb:hover,
+    .room-thumb.active {
+      opacity: 1;
+      transform: translateY(-2px);
+      border-color: var(--mango);
+    }
+    .room-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 20px;
-      box-shadow: var(--soft-shadow);
-      animation: roomImageZoom 12s ease-in-out infinite alternate;
     }
-    .detail-gallery.static-room-gallery img:first-child {
-      grid-column: span 2;
-      grid-row: span 2;
-    }
-    .rate-card { position: sticky; top: 104px; }
+    .rate-card { position: static; }
+    .rate-card .contact-actions { justify-content: center; }
     .rate { margin: 18px 0; padding: 18px; border-radius: 20px; background: #eef9f7; }
+    .rate .rate-price { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; color: var(--teal); }
     .rate strong { display: block; color: var(--teal); font-family: Georgia, "Times New Roman", serif; font-size: 2rem; font-weight: 500; }
     .rate span { color: var(--muted); }
     .other-rooms { max-width: 100%; min-width: 0; margin-top: 34px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; overflow: hidden; }
@@ -1561,6 +1720,15 @@
     .activity-price { margin-top: 14px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; color: var(--muted); font-weight: 900; }
     .activity-price strong { display: block; color: var(--teal); font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 1.2rem; font-weight: 950; }
     .activity-price span { color: var(--muted); font-size: .82rem; font-weight: 800; line-height: 1.3; }
+    .activity-price .price-stack {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      color: var(--teal);
+    }
+    .activity-price .price-stack strong { color: inherit; font-family: inherit; }
+    .activity-price .price-stack em { background: var(--mango); color: var(--teal-dark); }
     .activity-discover { margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; color: var(--teal-dark); font-size: 1.05rem; font-weight: 950; }
     .activity-discover::after {
       content: "";
@@ -1592,15 +1760,16 @@
     .activity-detail { display: none; background: #fffdf8; }
     .activity-detail.active-detail { display: block; }
     .activity-detail-hero {
-      min-height: 70vh;
-      display: grid;
-      align-items: end;
-      padding: 132px 0 62px;
-      color: var(--white);
-      background: linear-gradient(180deg, rgba(5,36,42,.12), rgba(5,36,42,.84)), var(--activity-detail-image) center / cover;
+      min-height: 320px;
+      background: linear-gradient(180deg, rgba(5,36,42,.12), rgba(5,36,42,.22)), var(--activity-detail-image) center / cover;
+      box-shadow: inset 0 -42px 70px rgba(5,36,42,.16);
     }
-    .activity-detail-body { padding: 78px 0 90px; }
+    .activity-detail-intro { padding-top: 54px; }
+    .activity-detail-body { padding: 0 0 90px; }
     .activity-detail-grid { display: grid; grid-template-columns: minmax(0,.95fr) minmax(320px,.45fr); gap: 36px; align-items: start; }
+    .activity-detail .static-room-gallery { margin-top: 0; }
+    .activity-detail .detail-panel + .detail-panel,
+    .activity-detail .static-room-gallery + .detail-panel { margin-top: 28px; }
 
     .gallery { padding-bottom: 0; }
     .center-head { max-width: 860px; margin-inline: auto; text-align: center; }
@@ -1823,6 +1992,10 @@
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.75s ease, transform 0.75s ease; }
     .reveal.show { opacity: 1; transform: none; }
 
+    @media (min-width: 1500px) and (orientation: landscape) {
+      body { zoom: 0.8; }
+    }
+
     @media (max-width: 1040px) {
       .section-title { font-size: 3.1rem; }
       .hero h1 { font-size: 5.6rem; }
@@ -1954,6 +2127,20 @@
     @media (max-width: 640px) {
       .container { width: min(100% - 26px, var(--max)); }
       .section { padding: 70px 0; }
+      .travel {
+        padding-block: 72px;
+        background-position: center;
+      }
+      .travel::before {
+        background-position: center;
+        transform: scale(1.06);
+      }
+      .travel > .container {
+        width: min(100% - 22px, var(--max));
+        padding: 28px 16px;
+        border-radius: 26px;
+      }
+      .travel .center-head { margin-bottom: 26px; }
       .section-title { font-size: 2.45rem; }
       .lead, .hero-text { font-size: 1rem; }
       .hero h1 { font-size: 2.85rem; }
@@ -1977,6 +2164,11 @@
       .available-room-copy span { font-size: .72rem; }
       .booking-flow .submit-booking { min-height: 52px; }
       .booking-status { font-size: .9rem; }
+      .reserve-picker { border-radius: 24px; }
+      .reserve-picker-hero { min-height: 150px; padding: 20px; }
+      .reserve-picker-body { padding: 18px; }
+      .reserve-calendar-grid { grid-template-columns: 1fr; }
+      .reserve-picker-actions { flex-direction: column; }
       .booking-form, .experience-grid, .review-grid, .comfort-grid { grid-template-columns: 1fr; }
       .room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
       .rooms .section-head { display: block; }
@@ -2045,6 +2237,30 @@
       .detail-moving-track { gap: 10px; animation-duration: 38s; }
       .detail-moving-strip { padding: 10px 0; }
       .detail-moving-track img, .detail-moving-track img:nth-child(4n + 1), .detail-moving-track img:nth-child(5n + 2) { width: 250px; height: 170px; border-radius: 10px; }
+      .room-gallery-main,
+      .room-gallery-main img {
+        min-height: 0;
+        height: 100%;
+      }
+      .room-gallery-main {
+        min-height: 0;
+        aspect-ratio: 1.43 / 1;
+      }
+      .room-gallery-thumbs {
+        display: flex;
+        grid-template-columns: none;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 12px 14px 18px;
+        scrollbar-width: none;
+      }
+      .room-gallery-thumbs::-webkit-scrollbar { display: none; }
+      .room-thumb {
+        flex: 0 0 23%;
+        min-width: 86px;
+        max-width: 130px;
+        border-radius: 12px;
+      }
       .reviews { background: var(--paper); color: var(--ink); text-align: center; }
       .reviews .eyebrow { color: var(--teal); justify-content: center; }
       .reviews .lead { color: var(--muted); }
@@ -2052,9 +2268,31 @@
       .review-card { display: block; min-height: 280px; text-align: left; color: var(--ink); background: #fff; border-color: transparent; box-shadow: var(--soft-shadow); }
       .review-card p { color: var(--muted); }
       .stars { margin-top: 22px; color: var(--mango); }
-      .rooms-page-hero, .room-detail-hero, .activity-detail-hero { min-height: auto; padding: 112px 0 44px; }
+      .rooms-page-hero { min-height: auto; padding: 112px 0 44px; }
+      .activity-detail-hero { min-height: 280px; padding: 0; background-position: center; }
+      .room-detail-hero { min-height: 280px; background-position: center; }
+      .room-detail-intro { padding: 36px 0 24px; }
+      .room-detail-copy { text-align: center; }
+      .room-detail-copy .eyebrow { justify-content: center; }
       .rooms-page-hero h2, .activity-detail-hero h2 { font-size: 2.75rem; }
-      .room-detail-copy h2 { font-size: 2.75rem; }
+      .room-detail-copy h2 { margin-top: 18px; font-size: 2.5rem; line-height: 1.04; }
+      .room-detail-copy p { max-width: 560px; margin: 22px auto 0; color: var(--muted); }
+      .room-detail-actions { justify-content: center; }
+      .room-detail-body { padding: 42px 0 64px; }
+      .room-detail-body > .container { width: 100%; }
+      .room-detail-grid { width: 100%; gap: 20px; }
+      .room-detail-grid > div { width: 100%; }
+      .detail-gallery.static-room-gallery {
+        width: 100%;
+        margin-top: 0;
+      }
+      .room-gallery-viewer {
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0 0 24px 24px;
+        box-shadow: 0 20px 42px rgba(8,42,48,.12);
+      }
+      .detail-panel { padding: 22px; border-radius: 22px; }
       .restaurant-hero { min-height: auto; padding: 112px 0 44px; }
       .restaurant-hero h2 { font-size: 2.85rem; }
       .restaurant-photo-grid { grid-template-columns: 1fr; grid-auto-rows: 220px; }
@@ -2097,13 +2335,10 @@
       .detail-gallery-track img,
       .detail-gallery-track img:nth-child(3n + 1) { height: 178px; }
       .detail-gallery.static-room-gallery {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-auto-rows: 150px;
-        gap: 10px;
-      }
-      .detail-gallery.static-room-gallery img:first-child {
-        grid-column: 1 / -1;
-        grid-row: span 2;
+        display: block;
+        grid-template-columns: none;
+        grid-auto-rows: auto;
+        gap: 0;
       }
       .footer-links { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .footer-logo { width: clamp(130px, 42vw, 180px); }
@@ -2125,6 +2360,11 @@
       .booking-flow .field { padding: 9px 10px; }
       .booking-flow .field input,
       .booking-flow .field select { min-height: 28px; }
+      .travel > .container {
+        width: min(100% - 14px, var(--max));
+        padding: 24px 12px;
+        border-radius: 22px;
+      }
       .travel-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
       .route-map, .travel-facts { grid-template-columns: 1fr; }
       .flight-route { grid-template-columns: 1fr; padding-top: 76px; }
@@ -2161,13 +2401,13 @@
         grid-template-columns: 1fr;
         justify-items: center;
         gap: 10px;
-        min-height: 232px;
-        padding: 20px 12px;
+        min-height: 210px;
+        padding: 18px 10px;
         text-align: center;
       }
-      .travel-option span:first-child { width: 68px; height: 68px; }
-      .travel-option strong { font-size: 1.48rem; }
-      .travel-option small { max-width: 100px; margin-inline: auto; }
+      .travel-option span:first-child { width: 58px; height: 58px; border-radius: 16px; }
+      .travel-option strong { font-size: 1.22rem; }
+      .travel-option small { max-width: 118px; margin-inline: auto; font-size: .84rem; }
       .travel-option .price-pill { grid-column: auto; justify-self: center; }
       .route-stop:not(:last-child)::after { display: none; }
       .travel-detail-hero, .travel-detail-body { padding: 20px; }
@@ -2198,6 +2438,33 @@
       .room-gallery-card:nth-child(3) { grid-column: 2; grid-row: 2; }
       .room-gallery-card:nth-child(4) { grid-column: 1 / -1; grid-row: 3; }
       .single-room-copy { max-width: 100%; padding: 18px; }
+      .room-gallery-viewer { border-radius: 0 0 22px 22px; }
+      .room-gallery-main,
+      .room-gallery-main img { min-height: 0; }
+      .room-gallery-main {
+        width: 100%;
+        min-height: 0;
+        aspect-ratio: 1.43 / 1;
+      }
+      .room-gallery-main img {
+        width: 100%;
+        height: 100%;
+      }
+      .room-gallery-thumbs {
+        display: flex;
+        grid-template-columns: none;
+        overflow-x: auto;
+      }
+      .room-thumb {
+        flex-basis: 25%;
+        min-width: 78px;
+      }
+      .room-detail-hero { min-height: 230px; }
+      .room-detail-intro { padding: 30px 0 20px; }
+      .room-detail-copy h2 { font-size: 2.05rem; letter-spacing: .035em; }
+      .room-detail-copy p { margin-top: 18px; font-size: .98rem; line-height: 1.58; }
+      .room-detail-actions .btn { width: 100%; }
+      .comfort-grid { grid-template-columns: 1fr; }
       .activity-carousel { padding: 0; --activity-side-pad: 0px; }
       .activity-carousel {
         --activity-card-w: 72vw;
@@ -2216,7 +2483,7 @@
       .activity-arrow { display: none; }
       .gallery-track img, .gallery-track img:nth-child(3n + 1), .gallery-track img:nth-child(4n + 2) { width: 230px; height: 155px; }
       .detail-moving-track img, .detail-moving-track img:nth-child(4n + 1), .detail-moving-track img:nth-child(5n + 2) { width: 220px; height: 150px; }
-      .detail-gallery.static-room-gallery { grid-auto-rows: 132px; }
+      .detail-gallery.static-room-gallery { display: block; grid-auto-rows: auto; }
       .footer-links { grid-template-columns: 1fr; }
       .footer-logo { width: 140px; }
     }
@@ -2490,13 +2757,14 @@
     </section>
 
     <section class="room-detail" id="roomDetail" aria-live="polite">
-      <div class="room-detail-hero">
+      <div class="room-detail-hero" aria-hidden="true"></div>
+      <div class="room-detail-intro">
         <div class="container room-detail-copy">
           <span class="eyebrow" id="roomDetailTag"></span>
           <h2 id="roomDetailTitle"></h2>
           <p id="roomDetailText"></p>
           <div class="room-detail-actions">
-            <a class="btn btn-sun" href="#book"><i data-lucide="calendar-check" class="icon"></i>Reserve This Room</a>
+            <button class="btn btn-sun reserve-room-open" type="button"><i data-lucide="calendar-check" class="icon"></i>Reserve This Room</button>
             <a class="btn btn-ghost" href="#rooms"><i data-lucide="arrow-left" class="icon"></i>Back to Rooms</a>
           </div>
         </div>
@@ -2504,19 +2772,19 @@
       <div class="room-detail-body">
         <div class="container room-detail-grid">
           <div>
+            <div class="detail-gallery" id="roomDetailGallery"></div>
             <div class="detail-panel">
               <span class="eyebrow">Room Comforts</span>
               <h3>Everything prepared for an easy island stay.</h3>
               <div class="comfort-grid" id="roomComforts"></div>
             </div>
-            <div class="detail-gallery" id="roomDetailGallery"></div>
           </div>
           <aside class="detail-panel rate-card">
             <span class="eyebrow">Room Rate</span>
-            <div class="rate"><strong id="roomDetailPrice"></strong><span>per night</span></div>
+            <div class="rate"><div class="rate-price" id="roomDetailPrice"></div><span>per night</span></div>
             <p class="lead" id="roomDetailNote"></p>
             <div class="contact-actions">
-              <a class="btn btn-primary" href="#book"><i data-lucide="send" class="icon"></i>Check Availability</a>
+              <button class="btn btn-primary reserve-room-open" type="button"><i data-lucide="send" class="icon"></i>Check Availability</button>
               <a class="btn btn-sun" id="roomWhatsapp" href="#" target="_blank" rel="noopener"><i data-lucide="message-circle" class="icon"></i>WhatsApp</a>
             </div>
           </aside>
@@ -2587,8 +2855,9 @@
     </section>
 
     <section class="activity-detail" id="activityDetail" aria-live="polite">
-      <div class="activity-detail-hero">
-        <div class="container">
+      <div class="activity-detail-hero" aria-hidden="true"></div>
+      <div class="room-detail-intro activity-detail-intro">
+        <div class="container room-detail-copy">
           <span class="eyebrow" id="activityDetailTag"></span>
           <h2 id="activityDetailTitle"></h2>
           <p id="activityDetailText"></p>
@@ -2598,14 +2867,23 @@
           </div>
         </div>
       </div>
-      <div class="detail-moving-strip reverse" id="activityMovingStrip" aria-label="Moving activity photos"></div>
       <div class="activity-detail-body">
         <div class="container activity-detail-grid">
-          <div class="activity-photo-grid" id="activityDetailGallery"></div>
+          <div>
+            <div class="activity-photo-grid detail-gallery static-room-gallery" id="activityDetailGallery"></div>
+            <div class="detail-panel">
+              <span class="eyebrow">Activity Highlights</span>
+              <h3>Everything arranged for an easy ocean day.</h3>
+              <ul class="menu-list" id="activityDetailHighlights"></ul>
+            </div>
+          </div>
           <aside class="detail-panel rate-card">
             <span class="eyebrow">Activity Details</span>
-            <div class="rate"><strong id="activityDetailPrice"></strong><span id="activityDetailPriceNote"></span></div>
-            <ul class="menu-list" id="activityDetailHighlights"></ul>
+            <div class="rate"><div class="rate-price" id="activityDetailPrice"></div><span id="activityDetailPriceNote"></span></div>
+            <p class="lead">Choose your preferred activity and message our team for the latest timing, weather conditions, and group availability.</p>
+            <div class="contact-actions">
+              <a class="btn btn-primary" href="#contact"><i data-lucide="send" class="icon"></i>Ask Availability</a>
+            </div>
           </aside>
         </div>
       </div>
@@ -2676,6 +2954,35 @@
         </div>
         <div class="review-form-status" id="reviewFormStatus"></div>
       </form>
+    </div>
+
+    <div class="reserve-modal" id="reserveModal" aria-hidden="true">
+      <div class="reserve-picker" role="dialog" aria-modal="true" aria-labelledby="reservePickerTitle">
+        <div class="reserve-picker-hero" id="reservePickerHero">
+          <div>
+            <span class="eyebrow">Reserve Room</span>
+            <h3 id="reservePickerTitle">Choose your dates</h3>
+          </div>
+        </div>
+        <div class="reserve-picker-body">
+          <p class="lead" id="reservePickerText">Select your stay dates first. The booking form will open with the dates filled automatically.</p>
+          <div class="reserve-calendar-grid">
+            <div class="reserve-calendar-field">
+              <label for="reserveCheckin">Check In</label>
+              <input id="reserveCheckin" type="date" />
+            </div>
+            <div class="reserve-calendar-field">
+              <label for="reserveCheckout">Check Out</label>
+              <input id="reserveCheckout" type="date" />
+            </div>
+          </div>
+          <p class="reserve-hint" id="reserveCalendarHint">Click a date, then confirm reserve to continue.</p>
+          <div class="reserve-picker-actions">
+            <button class="btn btn-ghost" id="reserveCancel" type="button">Cancel</button>
+            <button class="btn btn-primary" id="reserveConfirm" type="button"><i data-lucide="calendar-check" class="icon"></i>Confirm Reserve</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <section class="contact reveal" id="contact">
@@ -2767,7 +3074,7 @@
         eyebrow: "Travel Planning",
         title: "Plan your route to F. Feeali.",
         text: "Choose a route and see guide prices, timing, and arrival notes. Our team can confirm the latest schedule before you travel.",
-        backgroundOpacity: "0.22",
+        backgroundOpacity: "0.82",
         backgroundImages: [
           "https://images.unsplash.com/photo-1512100356356-de1b84283e18?auto=format&fit=crop&w=1800&q=82",
           "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=82",
@@ -3010,20 +3317,60 @@
     const menuToggle = document.getElementById("menuToggle");
     const menuClose = document.getElementById("menuClose");
     const aboutSection = document.getElementById("about");
-    const mainEl = document.querySelector("main");
     const roomsSection = document.getElementById("rooms");
     const travelSection = document.getElementById("travel");
     const travelPageSection = document.getElementById("travelPage");
     const activitiesSection = document.getElementById("activities");
     const gallerySection = document.getElementById("gallery");
-    if (mainEl && aboutSection && roomsSection && travelSection && activitiesSection && gallerySection) {
+    const islandSection = document.getElementById("island");
+    const diningSection = document.getElementById("dining");
+    if (aboutSection && roomsSection && travelSection && activitiesSection && gallerySection && islandSection && diningSection) {
       aboutSection.after(roomsSection);
-      roomsSection.after(travelSection);
+      roomsSection.after(activitiesSection);
+      activitiesSection.after(islandSection);
+      islandSection.after(gallerySection);
+      islandSection.after(diningSection);
+      diningSection.after(travelSection);
       if (travelPageSection) travelSection.after(travelPageSection);
-      activitiesSection.after(gallerySection);
     }
     const renderIcons = () => window.lucide && window.lucide.createIcons();
     const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+    const cleanText = (value) => String(value ?? "").trim();
+    const parseMoney = (value) => {
+      const match = cleanText(value).replace(/,/g, "").match(/(\d+(?:\.\d+)?)/);
+      return match ? Number(match[1]) : null;
+    };
+    const formatDollar = (amount) => {
+      if (!Number.isFinite(amount)) return "";
+      const rounded = Math.round(amount * 100) / 100;
+      return `$${Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(2)}`;
+    };
+    const getDiscountPercent = (item = {}) => {
+      const percent = Number(cleanText(item.discountPercent || item.offerPercent).replace("%", ""));
+      return Number.isFinite(percent) && percent > 0 ? Math.min(percent, 95) : 0;
+    };
+    const getRegularPrice = (item = {}) => {
+      const amount = parseMoney(item.price);
+      return amount !== null ? formatDollar(amount) : cleanText(item.price);
+    };
+    const getOfferPrice = (item = {}) => {
+      const percent = getDiscountPercent(item);
+      const regularAmount = parseMoney(item.price);
+      if (percent && regularAmount !== null) return formatDollar(regularAmount * (1 - percent / 100));
+      const fallbackAmount = parseMoney(item.offerPrice || item.discountPrice);
+      return fallbackAmount !== null ? formatDollar(fallbackAmount) : cleanText(item.offerPrice || item.discountPrice);
+    };
+    const getDisplayPrice = (item = {}) => getOfferPrice(item) || getRegularPrice(item) || "Ask";
+    const renderPriceMarkup = (item = {}) => {
+      const offer = getOfferPrice(item);
+      const regular = getRegularPrice(item);
+      const percent = getDiscountPercent(item);
+      const label = percent ? `${percent}% OFF` : cleanText(item.offerLabel || item.discountLabel || "Offer");
+      if (offer) {
+        return `<strong>${escapeHtml(offer)}</strong>${regular ? `<del>${escapeHtml(regular)}</del>` : ""}<em>${escapeHtml(label)}</em>`;
+      }
+      return `<strong>${escapeHtml(regular || "Ask")}</strong>`;
+    };
     const mergeContent = (base, remote) => {
       if (!remote || typeof remote !== "object") return base;
       const output = Array.isArray(base) ? [...base] : { ...base };
@@ -3096,7 +3443,7 @@
       const card = ({ room, index }) => `
         <button class="other-room" type="button" data-room-index="${index}">
           <img src="${escapeHtml(room.image)}" alt="${escapeHtml(room.title)}" />
-          <div><strong>${escapeHtml(room.title)}</strong><span>${escapeHtml(room.price || "")} per night</span></div>
+          <div><strong>${escapeHtml(room.title)}</strong><span>${escapeHtml(getDisplayPrice(room))} per night</span></div>
         </button>`;
       holder.innerHTML = otherRooms.map(card).join("");
     };
@@ -3227,7 +3574,7 @@
       document.getElementById("travel").style.setProperty("--travel-bg-one", `url("${travelImages[0] || c.site.heroImage}")`);
       document.getElementById("travel").style.setProperty("--travel-bg-two", `url("${travelImages[1] || travelImages[0] || c.site.heroImage}")`);
       document.getElementById("travel").style.setProperty("--travel-bg-three", `url("${travelImages[2] || travelImages[0] || c.site.heroImage}")`);
-      document.getElementById("travel").style.setProperty("--travel-bg-opacity", c.travel.backgroundOpacity || "0.22");
+      document.getElementById("travel").style.setProperty("--travel-bg-opacity", c.travel.backgroundOpacity || "0.82");
       document.querySelectorAll("[data-brand-name]").forEach((el) => { el.textContent = c.site.name; });
       setText("heroBadge", c.hero.badge);
       renderHeroMedia(c.hero.media, c.site.heroImage, c.site.name);
@@ -3326,7 +3673,7 @@
           <div class="activity-card-copy">
             <h3>${escapeHtml(item.title)}</h3>
             <p>${escapeHtml(item.shortText)}</p>
-            <div class="activity-price"><strong>${escapeHtml(item.price)}</strong><span>${escapeHtml(item.priceNote)}</span></div>
+            <div class="activity-price"><span class="price-stack">${renderPriceMarkup(item)}</span><span>${escapeHtml(item.priceNote)}</span></div>
             <span class="activity-discover">Discover more <i data-lucide="arrow-right" class="icon"></i></span>
           </div>
         </button>`).join("");
@@ -3399,7 +3746,7 @@
         <article class="rooms-showcase-card">
           <img src="${escapeHtml(room.image || sliderImages[0]?.image || "")}" alt="${escapeHtml(room.title || "Room")}" />
           <div class="rooms-showcase-copy">
-            <span class="room-price">${escapeHtml(room.price || "")}</span>
+            <span class="room-price">${renderPriceMarkup(room)}</span>
             <h3>${escapeHtml(room.title || "Our Rooms")}</h3>
             <p>${escapeHtml(room.detailText || room.text || content.rooms?.text || "")}</p>
             <div class="comfort-grid">${(room.features || []).slice(0, 4).map((feature) => `
@@ -3410,7 +3757,7 @@
               </div>`).join("")}</div>
             <div class="contact-actions">
               <a class="btn btn-primary" href="#room-0"><i data-lucide="arrow-right" class="icon"></i>View Details</a>
-              <a class="btn btn-sun" href="#booking"><i data-lucide="calendar-check" class="icon"></i>Reserve</a>
+              <button class="btn btn-sun reserve-room-open" type="button"><i data-lucide="calendar-check" class="icon"></i>Reserve</button>
             </div>
           </div>
         </article>
@@ -3462,7 +3809,7 @@
       setText("roomDetailTag", "Rooms");
       setText("roomDetailTitle", room.title);
       setText("roomDetailText", room.detailText || room.text);
-      setText("roomDetailPrice", room.price || "Ask");
+      document.getElementById("roomDetailPrice").innerHTML = renderPriceMarkup(room);
       setText("roomDetailNote", room.note || "Ask our team for availability, transfers, and meal plan options.");
       document.getElementById("roomComforts").innerHTML = (room.features || []).map((feature) => `
         <div class="comfort-card">
@@ -3478,9 +3825,21 @@
       ], "Room photo");
       const roomGallery = document.getElementById("roomDetailGallery");
       roomGallery.classList.add("static-room-gallery");
-      roomGallery.innerHTML = gallery.map((photo) => `<img src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || "Room photo")}" />`).join("");
+      const activePhoto = gallery[0] || { image: room.image, alt: room.title || "Room photo" };
+      roomGallery.innerHTML = `
+        <div class="room-gallery-viewer">
+          <div class="room-gallery-main">
+            <img id="roomGalleryMainImage" src="${escapeHtml(activePhoto.image)}" alt="${escapeHtml(activePhoto.alt || "Room photo")}" />
+          </div>
+          <div class="room-gallery-thumbs" aria-label="Room image thumbnails">
+            ${gallery.map((photo, photoIndex) => `
+              <button class="room-thumb ${photoIndex === 0 ? "active" : ""}" type="button" data-room-photo="${escapeHtml(photo.image)}" data-room-photo-alt="${escapeHtml(photo.alt || "Room photo")}">
+                <img src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || "Room photo")}" />
+              </button>`).join("")}
+          </div>
+        </div>`;
       const site = content.site || window.DEFAULT_SITE_CONTENT.site;
-      const roomMessage = encodeURIComponent(`Hello ${site.name}, I want to check availability for ${room.title} (${room.price || "price on request"}).`);
+      const roomMessage = encodeURIComponent(`Hello ${site.name}, I want to check availability for ${room.title} (${getDisplayPrice(room)}).`);
       document.getElementById("roomWhatsapp").href = `https://wa.me/${String(site.whatsapp).replace(/\D/g, "")}?text=${roomMessage}`;
       renderIcons();
     };
@@ -3528,19 +3887,31 @@
       setText("activityDetailTag", "Ocean Adventure");
       setText("activityDetailTitle", activity.title);
       setText("activityDetailText", activity.detailText || activity.shortText);
-      setText("activityDetailPrice", activity.price || "Ask");
+      document.getElementById("activityDetailPrice").innerHTML = renderPriceMarkup(activity);
       setText("activityDetailPriceNote", activity.priceNote || "");
       const activityPhotos = uniquePhotos([
         { image: activity.image, alt: activity.title },
         ...gallery.map((image) => ({ image, alt: activity.title })),
         ...activities.filter((other, otherIndex) => otherIndex !== index).flatMap((other) => [{ image: other.image, alt: other.title }, ...(other.gallery || []).map((image) => ({ image, alt: other.title }))])
       ], "Activity photo").slice(0, 5);
-      document.getElementById("activityDetailGallery").classList.add("static");
-      document.getElementById("activityDetailGallery").innerHTML = activityPhotos.map((photo) => `<img src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || "Activity photo")}" />`).join("");
-      renderMovingStrip("activityMovingStrip", [], "Activity photo");
+      const activityGallery = document.getElementById("activityDetailGallery");
+      activityGallery.classList.add("static-room-gallery");
+      const activePhoto = activityPhotos[0] || { image: activity.image, alt: activity.title || "Activity photo" };
+      activityGallery.innerHTML = `
+        <div class="room-gallery-viewer">
+          <div class="room-gallery-main">
+            <img id="activityGalleryMainImage" src="${escapeHtml(activePhoto.image)}" alt="${escapeHtml(activePhoto.alt || "Activity photo")}" />
+          </div>
+          <div class="room-gallery-thumbs" aria-label="Activity image thumbnails">
+            ${activityPhotos.map((photo, photoIndex) => `
+              <button class="room-thumb activity-thumb ${photoIndex === 0 ? "active" : ""}" type="button" data-activity-photo="${escapeHtml(photo.image)}" data-activity-photo-alt="${escapeHtml(photo.alt || "Activity photo")}">
+                <img src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || "Activity photo")}" />
+              </button>`).join("")}
+          </div>
+        </div>`;
       document.getElementById("activityDetailHighlights").innerHTML = (activity.highlights || []).map((item) => `<li><i data-lucide="${escapeHtml(item.icon || "sparkles")}" class="icon"></i><span><strong>${escapeHtml(item.title)}</strong><br>${escapeHtml(item.text)}</span></li>`).join("");
       const site = content.site || window.DEFAULT_SITE_CONTENT.site;
-      const message = encodeURIComponent(`Hello ${site.name}, I want to book or ask about ${activity.title} (${activity.price || "price on request"}).`);
+      const message = encodeURIComponent(`Hello ${site.name}, I want to book or ask about ${activity.title} (${getDisplayPrice(activity)}).`);
       document.getElementById("activityWhatsapp").href = `https://wa.me/${String(site.whatsapp).replace(/\D/g, "")}?text=${message}`;
       renderIcons();
     };
@@ -3640,8 +4011,9 @@
       if (route === "velana-maamigili") {
         travelPage.style.setProperty("--travel-page-image", `url('${airplane.heroImage || window.DEFAULT_SITE_CONTENT.travel.airplane.heroImage}')`);
         travelPageContent.innerHTML = `
-          <div class="travel-page-hero">
-            <div class="container">
+          <div class="travel-page-hero" aria-hidden="true"></div>
+          <div class="room-detail-intro travel-detail-intro">
+            <div class="container room-detail-copy">
               <span class="eyebrow">Airplane Route</span>
               <h2>${escapeHtml(airplane.title || "Velana Airport to Maamigili Airport")}</h2>
               <p>${escapeHtml(airplane.text || "")}</p>
@@ -3678,8 +4050,9 @@
       } else {
         travelPage.style.setProperty("--travel-page-image", `url('${travel.speedboatHeroImage || window.DEFAULT_SITE_CONTENT.travel.speedboatHeroImage}')`);
         travelPageContent.innerHTML = `
-          <div class="travel-page-hero">
-            <div class="container">
+          <div class="travel-page-hero" aria-hidden="true"></div>
+          <div class="room-detail-intro travel-detail-intro">
+            <div class="container room-detail-copy">
               <span class="eyebrow">Speed Boat</span>
               <h2>Male to Feeali Speed Boat</h2>
               <p>See all boat options, guide prices, and arrival timing for travelling from Male or Velana Airport area to F. Feeali.</p>
@@ -3785,6 +4158,7 @@
       } else if (window.location.hash === "#restaurant-detail") {
         requestAnimationFrame(showRestaurantDetail);
       } else if (window.location.hash === "#booking") {
+        preferredRoomIndex = null;
         requestAnimationFrame(showBookingPage);
       } else {
         closeDetailViews();
@@ -3816,7 +4190,29 @@
       const boatScheduleRequest = event.target.closest("[data-request-boat-schedule]");
       const closeSchedule = event.target.closest("[data-close-schedule]");
       const activityScrollButton = event.target.closest("[data-activity-scroll]");
-      if (activityScrollButton) {
+      const roomThumb = event.target.closest("[data-room-photo]");
+      const activityThumb = event.target.closest("[data-activity-photo]");
+      const reserveButton = event.target.closest(".reserve-room-open");
+      if (reserveButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        const detailMatch = window.location.hash.match(/^#room-(\d+)$/);
+        setReserveModal(true, detailMatch ? Number(detailMatch[1]) : 0);
+      } else if (roomThumb) {
+        const mainImage = document.getElementById("roomGalleryMainImage");
+        if (mainImage) {
+          mainImage.src = roomThumb.dataset.roomPhoto;
+          mainImage.alt = roomThumb.dataset.roomPhotoAlt || "Room photo";
+        }
+        document.querySelectorAll(".room-thumb").forEach((thumb) => thumb.classList.toggle("active", thumb === roomThumb));
+      } else if (activityThumb) {
+        const mainImage = document.getElementById("activityGalleryMainImage");
+        if (mainImage) {
+          mainImage.src = activityThumb.dataset.activityPhoto;
+          mainImage.alt = activityThumb.dataset.activityPhotoAlt || "Activity photo";
+        }
+        document.querySelectorAll(".activity-thumb").forEach((thumb) => thumb.classList.toggle("active", thumb === activityThumb));
+      } else if (activityScrollButton) {
         const grid = document.getElementById("activitiesGrid");
         const direction = Number(activityScrollButton.dataset.activityScroll || 1);
         const cards = [...grid.querySelectorAll(".activity-card")];
@@ -3871,6 +4267,14 @@
     const availableRoomGrid = document.getElementById("availableRoomGrid");
     const availabilitySummary = document.getElementById("availabilitySummary");
     const reservationSubmit = document.getElementById("reservationSubmit");
+    const reserveModal = document.getElementById("reserveModal");
+    const reserveCheckin = document.getElementById("reserveCheckin");
+    const reserveCheckout = document.getElementById("reserveCheckout");
+    const reservePickerHero = document.getElementById("reservePickerHero");
+    const reservePickerTitle = document.getElementById("reservePickerTitle");
+    const reservePickerText = document.getElementById("reservePickerText");
+    const reserveCalendarHint = document.getElementById("reserveCalendarHint");
+    let preferredRoomIndex = null;
     checkin.min = toDateValue(today);
     checkout.min = toDateValue(tomorrow);
     checkin.value = toDateValue(today);
@@ -3879,6 +4283,10 @@
     bookingCheckout.min = toDateValue(tomorrow);
     bookingCheckin.value = toDateValue(today);
     bookingCheckout.value = toDateValue(tomorrow);
+    reserveCheckin.min = toDateValue(today);
+    reserveCheckout.min = toDateValue(tomorrow);
+    reserveCheckin.value = toDateValue(today);
+    reserveCheckout.value = toDateValue(tomorrow);
     checkin.addEventListener("change", () => {
       const selected = new Date(checkin.value);
       const nextDay = new Date(selected);
@@ -3894,6 +4302,37 @@
       if (!endEl.value || new Date(endEl.value) <= selected) endEl.value = toDateValue(nextDay);
     };
     bookingCheckin.addEventListener("change", () => syncCheckout(bookingCheckin, bookingCheckout));
+    reserveCheckin.addEventListener("change", () => syncCheckout(reserveCheckin, reserveCheckout));
+    const currentPreferredRoom = () => {
+      const rooms = window.currentSiteContent?.rooms?.items || window.DEFAULT_SITE_CONTENT.rooms.items;
+      return rooms[preferredRoomIndex ?? 0] || rooms[0] || {};
+    };
+    const setReserveModal = (open, roomIndex = preferredRoomIndex ?? 0) => {
+      preferredRoomIndex = roomIndex;
+      const room = currentPreferredRoom();
+      reserveModal.classList.toggle("open", open);
+      reserveModal.setAttribute("aria-hidden", open ? "false" : "true");
+      document.body.style.overflow = open ? "hidden" : "";
+      reservePickerHero.style.setProperty("--reserve-image", `url("${room.image || window.currentSiteContent?.site?.heroImage || ""}")`);
+      reservePickerTitle.textContent = room.title ? `Reserve ${room.title}` : "Choose your dates";
+      reservePickerText.textContent = room.title ? `${room.title} - ${getDisplayPrice(room)} per night. Select check-in and check-out dates to continue.` : "Select your stay dates first.";
+      reserveCalendarHint.textContent = "Choose check-in and check-out, then confirm reserve.";
+      if (open) reserveCheckin.focus();
+      renderIcons();
+    };
+    document.getElementById("reserveCancel").addEventListener("click", () => setReserveModal(false));
+    reserveModal.addEventListener("click", (event) => { if (event.target === reserveModal) setReserveModal(false); });
+    document.getElementById("reserveConfirm").addEventListener("click", () => {
+      syncCheckout(reserveCheckin, reserveCheckout);
+      bookingCheckin.value = reserveCheckin.value;
+      bookingCheckout.value = reserveCheckout.value;
+      syncCheckout(bookingCheckin, bookingCheckout);
+      resetRoomSelection();
+      setReserveModal(false);
+      showBookingPage();
+      const available = getAvailableRooms();
+      showAvailability(available);
+    });
     const datesOverlap = (startA, endA, startB, endB) => new Date(startA) < new Date(endB) && new Date(endA) > new Date(startB);
     const isRoomAvailable = (roomTitle, start, end) => {
       const bookings = Object.values(window.currentBookings || {});
@@ -3918,16 +4357,17 @@
     [bookingCheckin, bookingCheckout].forEach((input) => input.addEventListener("change", resetRoomSelection));
     const getAvailableRooms = () => {
       const rooms = window.currentSiteContent?.rooms?.items || window.DEFAULT_SITE_CONTENT.rooms.items;
-      return rooms
-        .map((room, index) => ({ room, index }))
+      const candidates = preferredRoomIndex !== null && rooms[preferredRoomIndex] ? [{ room: rooms[preferredRoomIndex], index: preferredRoomIndex }] : rooms.map((room, index) => ({ room, index }));
+      return candidates
         .filter(({ room }) => isRoomAvailable(room.title, bookingCheckin.value, bookingCheckout.value));
     };
     const showAvailability = (available) => {
       availableRooms.classList.add("show");
       if (!available.length) {
         if (availabilitySummary) availabilitySummary.textContent = "Guest house is full.";
-        availableRoomGrid.innerHTML = `<div class="booking-status error" style="grid-column:1/-1">Rooms are full for ${bookingCheckin.value} to ${bookingCheckout.value}. Please choose another date or message us on WhatsApp.</div>`;
-        setBookingStatus("Rooms are full for those dates. Please choose another date.", "error");
+        const roomName = preferredRoomIndex !== null ? currentPreferredRoom().title || "This room" : "Rooms";
+        availableRoomGrid.innerHTML = `<div class="booking-status error" style="grid-column:1/-1">${escapeHtml(roomName)} is full for ${bookingCheckin.value} to ${bookingCheckout.value}. Please choose another date or message us on WhatsApp.</div>`;
+        setBookingStatus(`${roomName} is full for those dates. Please choose another date.`, "error");
         return false;
       }
       if (availabilitySummary) availabilitySummary.textContent = `${available.length} room${available.length === 1 ? "" : "s"} available.`;
@@ -3936,16 +4376,17 @@
           <img src="${escapeHtml(room.image)}" alt="${escapeHtml(room.title)}" />
           <div class="available-room-copy">
             <strong>${escapeHtml(room.title)}</strong>
-            <span>${escapeHtml(room.price || "Ask")} per night</span>
+            <span>${escapeHtml(getDisplayPrice(room))} per night</span>
           </div>
         </article>`).join("");
-      setBookingStatus(`Rooms are available. Fill the form and send your reservation request.`, "success");
+      setBookingStatus(`${preferredRoomIndex !== null ? "Selected room is" : "Rooms are"} available. Fill the form and send your reservation request.`, "success");
       reservationSubmit.innerHTML = `<i data-lucide="send" class="icon"></i>Send Reservation Request`;
       renderIcons();
       return true;
     };
     document.getElementById("book").addEventListener("submit", (event) => {
       event.preventDefault();
+      preferredRoomIndex = null;
       window.location.hash = "#booking";
     });
     document.getElementById("reservationForm").addEventListener("submit", async (event) => {
@@ -3959,10 +4400,13 @@
       if (!showAvailability(available)) {
         return;
       }
+      const selectedRoom = available[0]?.room || currentPreferredRoom();
       const preferredRooms = available.map(({ room }) => room.title).join(", ");
+      const selectedRoomTitle = selectedRoom?.title || preferredRooms || "Any available room";
+      const selectedRoomPrice = selectedRoom ? getDisplayPrice(selectedRoom) : "";
       const booking = {
-        roomTitle: "Any available room",
-        roomPrice: "",
+        roomTitle: selectedRoomTitle,
+        roomPrice: selectedRoomPrice,
         availableRooms: preferredRooms,
         guestName: document.getElementById("bookingName").value.trim(),
         guestEmail: document.getElementById("bookingEmail").value.trim(),
@@ -3978,6 +4422,8 @@
       const message = [
         `Hello ${site.name}, I want to make a reservation.`,
         "",
+        `Selected room: ${selectedRoomTitle}`,
+        `Room price: ${selectedRoomPrice || "Ask"}`,
         `Available room options shown: ${preferredRooms || "Any available room"}`,
         `Name: ${booking.guestName}`,
         `Email: ${booking.guestEmail}`,
@@ -3991,8 +4437,12 @@
         "Rooms showed available on the website. Please confirm the best room and send payment details."
       ].join("\n");
       if (window.saveBookingRequest) await window.saveBookingRequest(booking);
-      setBookingStatus(`Your reservation request was saved. WhatsApp is opening now.`, "success");
+      const emailTo = window.currentSiteContent?.contact?.email || "reservations@feealibuddiesinn.com";
+      const mailSubject = encodeURIComponent(`Reservation Request - ${booking.guestName || selectedRoomTitle}`);
+      const mailBody = encodeURIComponent(message);
+      setBookingStatus(`Your reservation request was saved. WhatsApp and email are opening now.`, "success");
       window.open(`https://wa.me/${String(site.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(message)}`, "_blank", "noopener");
+      window.open(`mailto:${emailTo}?subject=${mailSubject}&body=${mailBody}`, "_blank", "noopener");
     });
 
     const reviewModal = document.getElementById("reviewModal");
