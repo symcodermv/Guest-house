@@ -3305,14 +3305,6 @@
   </script>
 
   <script>
-    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    const navEntry = performance.getEntriesByType?.("navigation")?.[0];
-    if (navEntry?.type === "reload" && window.location.hash && !/^#room-\d+$|^#activity-\d+$|^#travel-/.test(window.location.hash)) {
-      history.replaceState(null, "", window.location.pathname + window.location.search);
-    }
-    window.addEventListener("pageshow", () => {
-      if (!window.location.hash) window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    });
     const navLinks = document.getElementById("navLinks");
     const menuToggle = document.getElementById("menuToggle");
     const menuClose = document.getElementById("menuClose");
@@ -3324,6 +3316,16 @@
     if (isReloadNavigation && window.location.hash) {
       history.replaceState(null, "", window.location.pathname + window.location.search);
     }
+    const forceHeroOnReload = () => {
+      if (!isReloadNavigation) return;
+      document.body.classList.remove("detail-mode", "menu-open");
+      document.querySelectorAll(".active-detail").forEach((section) => section.classList.remove("active-detail"));
+      document.getElementById("roomDetail")?.classList.remove("active");
+      if (window.location.hash) history.replaceState(null, "", window.location.pathname + window.location.search);
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }), 80);
+      setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }), 260);
+    };
     const aboutSection = document.getElementById("about");
     const roomsSection = document.getElementById("rooms");
     const travelSection = document.getElementById("travel");
@@ -3734,7 +3736,11 @@
 
       window.currentSiteContent = c;
       renderRoomDetailFromHash();
-      if (!window.location.hash) requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+      if (isReloadNavigation) {
+        requestAnimationFrame(forceHeroOnReload);
+      } else if (!window.location.hash) {
+        requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+      }
       renderIcons();
     };
 
@@ -4497,18 +4503,11 @@
     }, { threshold: 0.14 });
     document.querySelectorAll(".reveal").forEach((section) => observer.observe(section));
     applyContent(window.DEFAULT_SITE_CONTENT);
-    const showHeroAfterRefresh = () => {
-      if (!isReloadNavigation) return;
-      setMenu(false);
-      closeDetailViews();
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }), 80);
-    };
     window.addEventListener("load", () => {
       renderIcons();
-      showHeroAfterRefresh();
+      forceHeroOnReload();
     });
-    window.addEventListener("pageshow", showHeroAfterRefresh);
+    window.addEventListener("pageshow", forceHeroOnReload);
   </script>
 
   <script type="module">
