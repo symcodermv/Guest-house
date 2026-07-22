@@ -3316,6 +3316,14 @@
     const navLinks = document.getElementById("navLinks");
     const menuToggle = document.getElementById("menuToggle");
     const menuClose = document.getElementById("menuClose");
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    const isReloadNavigation = (() => {
+      const navEntry = performance.getEntriesByType?.("navigation")?.[0];
+      return navEntry?.type === "reload";
+    })();
+    if (isReloadNavigation && window.location.hash) {
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
     const aboutSection = document.getElementById("about");
     const roomsSection = document.getElementById("rooms");
     const travelSection = document.getElementById("travel");
@@ -4489,7 +4497,18 @@
     }, { threshold: 0.14 });
     document.querySelectorAll(".reveal").forEach((section) => observer.observe(section));
     applyContent(window.DEFAULT_SITE_CONTENT);
-    window.addEventListener("load", renderIcons);
+    const showHeroAfterRefresh = () => {
+      if (!isReloadNavigation) return;
+      setMenu(false);
+      closeDetailViews();
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }), 80);
+    };
+    window.addEventListener("load", () => {
+      renderIcons();
+      showHeroAfterRefresh();
+    });
+    window.addEventListener("pageshow", showHeroAfterRefresh);
   </script>
 
   <script type="module">
