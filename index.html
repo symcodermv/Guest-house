@@ -429,11 +429,48 @@
       background: rgba(0, 127, 141, 0.10);
     }
     .signature span { width: 56px; height: 56px; color: var(--teal-dark); background: #f8df9e; }
-    .experience-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-    .experience { min-height: 188px; padding: 24px; border: 1px solid var(--line); border-radius: 24px; background: var(--white); box-shadow: var(--soft-shadow); }
-    .experience-icon { width: 48px; height: 48px; margin-bottom: 20px; }
-    .experience h3 { font-size: 1.04rem; line-height: 1.25; }
-    .experience p { margin-top: 10px; color: var(--muted); font-size: 0.94rem; line-height: 1.65; }
+    .experience-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .experience {
+      position: relative;
+      min-height: 204px;
+      overflow: hidden;
+      padding: 26px;
+      border: 1px solid rgba(16, 47, 50, 0.13);
+      border-radius: 26px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.34)),
+        radial-gradient(circle at 18% 10%, rgba(244,197,111,.20), transparent 34%),
+        radial-gradient(circle at 88% 78%, rgba(0,127,141,.12), transparent 32%);
+      box-shadow: 0 18px 48px rgba(8, 42, 48, 0.10);
+      backdrop-filter: blur(18px);
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+      isolation: isolate;
+    }
+    .experience::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: .55;
+      background: linear-gradient(115deg, rgba(255,255,255,.55), transparent 34% 70%, rgba(255,255,255,.22));
+      pointer-events: none;
+    }
+    .experience:hover {
+      transform: translateY(-5px);
+      border-color: rgba(0,127,141,.24);
+      box-shadow: 0 24px 58px rgba(8, 42, 48, 0.16);
+    }
+    .experience-icon {
+      width: 54px;
+      height: 54px;
+      margin-bottom: 22px;
+      color: var(--teal-dark);
+      background: rgba(255,255,255,.64);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: inset 0 0 0 1px rgba(0,127,141,.08), 0 12px 30px rgba(8,42,48,.08);
+    }
+    .experience h3 { font-size: 1.08rem; line-height: 1.25; letter-spacing: 0; }
+    .experience p { margin-top: 12px; color: rgba(16,47,50,.68); font-size: 0.95rem; line-height: 1.72; }
 
     .travel {
       position: relative;
@@ -2961,6 +2998,14 @@
   </script>
 
   <script>
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    const navEntry = performance.getEntriesByType?.("navigation")?.[0];
+    if (navEntry?.type === "reload" && window.location.hash && !/^#room-\d+$|^#activity-\d+$|^#travel-/.test(window.location.hash)) {
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+    window.addEventListener("pageshow", () => {
+      if (!window.location.hash) window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
     const navLinks = document.getElementById("navLinks");
     const menuToggle = document.getElementById("menuToggle");
     const menuClose = document.getElementById("menuClose");
@@ -3121,7 +3166,8 @@
           return item || {};
         })
         .filter((item) => isCustomHeroMedia(item));
-      const slides = cleanMedia;
+      const videoSlides = cleanMedia.filter((item) => String(item.type || "").toLowerCase() === "video");
+      const slides = videoSlides.length ? videoSlides : cleanMedia;
       if (!slides.length) {
         holder.innerHTML = "";
         return;
@@ -3139,7 +3185,7 @@
       }).join("");
       const renderedSlides = [...holder.querySelectorAll(".hero-media-item")];
       holder.querySelectorAll("video").forEach((video) => video.play().catch(() => {}));
-      if (renderedSlides.length > 1) {
+      if (!videoSlides.length && renderedSlides.length > 1) {
         let activeIndex = 0;
         heroMediaTimer = setInterval(() => {
           renderedSlides[activeIndex].classList.remove("active");
@@ -3333,6 +3379,7 @@
 
       window.currentSiteContent = c;
       renderRoomDetailFromHash();
+      if (!window.location.hash) requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
       renderIcons();
     };
 
