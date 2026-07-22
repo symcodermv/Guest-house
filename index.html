@@ -1031,6 +1031,10 @@
     }
     .single-room-card {
       grid-column: 1 / -1;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
       padding: 14px;
       border: 1px solid var(--line);
       border-radius: 30px;
@@ -1042,35 +1046,73 @@
     }
     .single-room-hero {
       position: relative;
-      min-height: clamp(460px, 58vw, 720px);
+      width: 100%;
+      min-height: clamp(360px, 48vw, 640px);
+      aspect-ratio: 16 / 9;
       overflow: hidden;
       border-radius: 24px;
       color: #fff;
-      background: var(--teal-dark);
+      background: #071f28;
+      isolation: isolate;
     }
-    .single-room-slides { position: absolute; inset: 0; }
-    .single-room-slides img {
+    .single-room-slides {
+      position: absolute;
+      inset: 18px;
+      display: grid;
+      grid-template-columns: 1.45fr .8fr .8fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 14px;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 18px;
+    }
+    .room-gallery-card {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border-radius: 22px;
+      background: #171b20;
+      opacity: 0;
+      transform: translateY(26px) scale(.97);
+      animation: roomPanelReveal .85s cubic-bezier(.2,.8,.2,1) forwards;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 22px 54px rgba(0,0,0,.24);
+    }
+    .room-gallery-card:nth-child(1) { grid-row: 1 / 3; animation-delay: .05s; }
+    .room-gallery-card:nth-child(2) { animation-delay: .14s; }
+    .room-gallery-card:nth-child(3) { animation-delay: .23s; }
+    .room-gallery-card:nth-child(4) { animation-delay: .32s; }
+    .room-gallery-card:nth-child(5) { animation-delay: .41s; }
+    .room-gallery-card img {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      transform: scale(1.04);
-      animation: roomPhotoFade 24s ease-in-out infinite;
+      transform: scale(1.08);
+      filter: saturate(.9) contrast(1.04);
+      transition: opacity 1.1s ease, transform 5.5s cubic-bezier(.2,.7,.2,1), filter 1.1s ease;
     }
-    .single-room-slides img:nth-child(1) { animation-delay: 0s; }
-    .single-room-slides img:nth-child(2) { animation-delay: 6s; }
-    .single-room-slides img:nth-child(3) { animation-delay: 12s; }
-    .single-room-slides img:nth-child(4) { animation-delay: 18s; }
-    .single-room-card:hover .single-room-slides img { animation-play-state: paused; }
-    @keyframes roomPhotoFade {
-      0%, 100% { opacity: 0; transform: scale(1.04); }
-      8%, 27% { opacity: 1; }
-      38% { opacity: 0; transform: scale(1.12); }
+    .room-gallery-card img.active {
+      opacity: 1;
+      transform: scale(1);
+      filter: saturate(1.04) contrast(1.02);
     }
-    .single-room-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,36,42,.04), rgba(5,36,42,.88)); }
-    .single-room-copy { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: 28px; }
+    .room-gallery-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.03) 20%, rgba(0,0,0,.62) 100%);
+      pointer-events: none;
+    }
+    .room-gallery-card.large::after {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.58) 0%, rgba(0,0,0,.08) 58%),
+        linear-gradient(180deg, transparent 35%, rgba(0,0,0,.64) 100%);
+    }
+    @keyframes roomPanelReveal { to { opacity: 1; transform: none; } }
+    .single-room-hero::after { content: ""; position: absolute; inset: 0; z-index: 4; background: linear-gradient(180deg, rgba(5,36,42,.02), rgba(5,36,42,.16) 42%, rgba(5,36,42,.82)); pointer-events: none; }
+    .single-room-copy { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; max-width: 56%; padding: 34px 46px; }
     .single-room-copy h3 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.25rem, 4vw, 4rem); font-weight: 500; line-height: .98; }
     .single-room-copy p { max-width: 620px; margin-top: 12px; color: rgba(255,255,255,.84); line-height: 1.7; }
     .single-room-side { display: grid; gap: 12px; align-content: stretch; }
@@ -1923,7 +1965,20 @@
       }
       .home-room-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
       .single-room-card { grid-column: 1 / -1; padding: 10px; border-radius: 22px; }
-      .single-room-hero { min-height: 390px; border-radius: 18px; }
+      .single-room-hero { min-height: 430px; aspect-ratio: auto; border-radius: 18px; }
+      .single-room-slides {
+        inset: 8px;
+        grid-template-columns: 1.25fr .85fr;
+        grid-template-rows: 1fr 1fr 1fr;
+        gap: 7px;
+      }
+      .room-gallery-card:nth-child(1) { grid-column: 1; grid-row: 1 / 4; }
+      .room-gallery-card:nth-child(2) { grid-column: 2; grid-row: 1; }
+      .room-gallery-card:nth-child(3) { grid-column: 2; grid-row: 2; }
+      .room-gallery-card:nth-child(4) { grid-column: 2; grid-row: 3; }
+      .room-gallery-card:nth-child(5) { display: none; }
+      .room-gallery-card { border-radius: 14px; }
+      .single-room-copy { max-width: 76%; padding: 22px; }
       .single-room-side { grid-template-columns: repeat(2, minmax(0,1fr)); }
       .single-room-side img { min-height: 120px; border-radius: 14px; }
       .room-card, .room-card.wide { grid-column: auto; min-height: 260px; border-radius: 8px; }
@@ -2096,7 +2151,16 @@
         bottom: 13px;
       }
       .room-card, .room-card.wide { min-height: 220px; }
-      .single-room-hero { min-height: 330px; }
+      .single-room-hero { min-height: 500px; }
+      .single-room-slides {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1.35fr .7fr .7fr;
+      }
+      .room-gallery-card:nth-child(1) { grid-column: 1 / -1; grid-row: 1; }
+      .room-gallery-card:nth-child(2) { grid-column: 1; grid-row: 2; }
+      .room-gallery-card:nth-child(3) { grid-column: 2; grid-row: 2; }
+      .room-gallery-card:nth-child(4) { grid-column: 1 / -1; grid-row: 3; }
+      .single-room-copy { max-width: 100%; padding: 18px; }
       .activity-carousel { padding: 0; --activity-side-pad: 0px; }
       .activity-carousel {
         --activity-card-w: 72vw;
@@ -2182,7 +2246,6 @@
           <span class="eyebrow" id="aboutEyebrow"></span>
           <h2 class="section-title" id="aboutTitle"></h2>
           <p class="lead" id="aboutText"></p>
-          <div class="signature"><span><i data-lucide="waves" class="icon"></i></span><p id="aboutSignature"></p></div>
         </div>
         <div class="experience-grid" id="amenitiesGrid" aria-label="Guest house amenities"></div>
       </div>
@@ -2653,7 +2716,7 @@
         eyebrow: "Welcome to Feeali",
         title: "A guest house made for slow mornings, clear water, and easy island living.",
         text: "Stay close to the heart of F. Feeali, where friendly local service, comfortable rooms, and ocean experiences come together.",
-        signature: "Local hospitality with a modern island feel.",
+        signature: "",
         amenities: [
           { icon: "wifi", title: "Fast Wi-Fi", text: "Stay connected for work, travel plans, calls, and sharing holiday moments." },
           { icon: "snowflake", title: "Air-Conditioned Rooms", text: "Cool, clean spaces prepared for restful nights after sunny island days." },
@@ -2901,12 +2964,17 @@
     const navLinks = document.getElementById("navLinks");
     const menuToggle = document.getElementById("menuToggle");
     const menuClose = document.getElementById("menuClose");
+    const aboutSection = document.getElementById("about");
     const mainEl = document.querySelector("main");
     const roomsSection = document.getElementById("rooms");
+    const travelSection = document.getElementById("travel");
+    const travelPageSection = document.getElementById("travelPage");
     const activitiesSection = document.getElementById("activities");
     const gallerySection = document.getElementById("gallery");
-    if (mainEl && roomsSection && activitiesSection && gallerySection) {
-      roomsSection.after(activitiesSection);
+    if (mainEl && aboutSection && roomsSection && travelSection && activitiesSection && gallerySection) {
+      aboutSection.after(roomsSection);
+      roomsSection.after(travelSection);
+      if (travelPageSection) travelSection.after(travelPageSection);
       activitiesSection.after(gallerySection);
     }
     const renderIcons = () => window.lucide && window.lucide.createIcons();
@@ -2986,6 +3054,24 @@
           <div><strong>${escapeHtml(room.title)}</strong><span>${escapeHtml(room.price || "")} per night</span></div>
         </button>`;
       holder.innerHTML = otherRooms.map(card).join("");
+    };
+    let roomsSuiteTimer;
+    const setupRoomsSuiteAnimation = () => {
+      clearInterval(roomsSuiteTimer);
+      const stage = document.querySelector("[data-rooms-suite-stage]");
+      if (!stage) return;
+      const cards = [...stage.querySelectorAll(".room-gallery-card")];
+      if (!cards.length) return;
+      let index = 0;
+      const cycleCount = Math.max(...cards.map((card) => card.querySelectorAll("img").length), 1);
+      roomsSuiteTimer = setInterval(() => {
+        index = (index + 1) % cycleCount;
+        cards.forEach((card, cardIndex) => {
+          const imgs = [...card.querySelectorAll("img")];
+          imgs.forEach((img) => img.classList.remove("active"));
+          imgs[(index + cardIndex) % imgs.length]?.classList.add("active");
+        });
+      }, 4800);
     };
 
     const setText = (id, value) => {
@@ -3111,7 +3197,6 @@
       setText("aboutEyebrow", c.about.eyebrow);
       setText("aboutTitle", c.about.title);
       setText("aboutText", c.about.text);
-      setText("aboutSignature", c.about.signature);
       document.getElementById("amenitiesGrid").innerHTML = c.about.amenities.map((item) => `
         <article class="experience">
           <span class="experience-icon"><i data-lucide="${escapeHtml(item.icon || "sparkles")}" class="icon"></i></span>
@@ -3139,11 +3224,22 @@
         ...((room.interiorImages || []).map((image) => ({ image, alt: `${room.title || "Room"} interior` }))),
         ...((room.bathroomImages || []).map((image) => ({ image, alt: `${room.title || "Room"} bathroom` })))
       ], "Room photo") : [];
+      const roomVideoPhotos = roomPhotos.length
+        ? Array.from({ length: Math.max(15, roomPhotos.length * 3) }, (_, index) => roomPhotos[index % roomPhotos.length])
+        : (room?.image ? Array.from({ length: 15 }, () => ({ image: room.image, alt: room.title || "Room" })) : []);
+      const roomPanelTitles = ["Room Escape", "Interior", "Comfort", "Details", "Island Rest"];
+      const roomPanelHtml = roomPanelTitles.map((title, panelIndex) => {
+        const panelPhotos = Array.from({ length: 3 }, (_, imageIndex) => roomVideoPhotos[(panelIndex + imageIndex) % roomVideoPhotos.length]);
+        return `
+          <article class="room-gallery-card ${panelIndex === 0 ? "large" : ""}">
+            ${panelPhotos.map((photo, imageIndex) => `<img class="${imageIndex === 0 ? "active" : ""}" src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || title)}" />`).join("")}
+          </article>`;
+      }).join("");
       document.getElementById("roomsGrid").innerHTML = room ? `
         <button class="single-room-card" type="button" data-room-index="0" aria-label="View room details">
-          <div class="single-room-hero">
+          <div class="single-room-hero" data-rooms-suite-stage>
             <div class="single-room-slides">
-              ${(roomPhotos.length ? roomPhotos : [{ image: room.image, alt: room.title || "Room" }]).slice(0, 4).map((photo) => `<img src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || "Room photo")}" />`).join("")}
+              ${roomPanelHtml}
             </div>
             <div class="single-room-copy">
               <h3>${escapeHtml(room.title || "Rooms")}</h3>
@@ -3152,6 +3248,7 @@
             </div>
           </div>
         </button>` : "";
+      setupRoomsSuiteAnimation();
       renderRoomsPage(c);
 
       setText("diningEyebrow", c.dining.eyebrow);
