@@ -6,6 +6,7 @@
   <title>Feeali Buddies Inn | Guest House in F. Feeali</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <meta name="description" content="Feeali Buddies Inn guest house in F. Feeali, Maldives." />
+  <link rel="preload" href="FeealiBeach.MP4" as="video" type="video/mp4" />
   <link rel="preconnect" href="https://images.unsplash.com" />
   <link rel="preconnect" href="https://unpkg.com" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
@@ -2514,7 +2515,13 @@
   </nav>
 
   <header class="hero" id="home">
-    <div class="hero-media" id="heroMedia" aria-hidden="true"></div>
+    <div class="hero-media" id="heroMedia" aria-hidden="true">
+      <div class="hero-media-item active">
+        <video muted playsinline autoplay loop preload="auto">
+          <source src="FeealiBeach.MP4" type="">
+        </video>
+      </div>
+    </div>
     <div class="container hero-grid">
       <div class="hero-copy">
         <span class="hero-badge"><i data-lucide="map-pin" class="icon"></i> <span id="heroBadge"></span></span>
@@ -3038,7 +3045,7 @@
         island: "F. Feeali",
         whatsapp: "9609131220",
         phoneDisplay: "+960 913 1220",
-        heroImage: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=2400&q=88",
+        heroImage: "",
         menuImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=86",
         menuOpacity: "0.78"
       },
@@ -3046,7 +3053,9 @@
         badge: "Slow island days",
         titleLines: ["Real Maldivian Life"],
         text: "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.",
-        media: [],
+        media: [
+          { type: "video", url: "FeealiBeach.MP4", portraitUrl: "FeealiBeach.MP4", alt: "Feeali Buddies Inn hero video" }
+        ],
         facts: [
           { title: "F. Feeali", text: "Peaceful local island setting" },
           { title: "Lagoon", text: "Snorkeling, sandbank and boat trips" },
@@ -3523,8 +3532,7 @@
           return item || {};
         })
         .filter((item) => isCustomHeroMedia(item));
-      const videoSlides = cleanMedia.filter((item) => String(item.type || "").toLowerCase() === "video");
-      const slides = videoSlides.length ? videoSlides : cleanMedia;
+      const slides = cleanMedia;
       if (!slides.length) {
         holder.innerHTML = "";
         return;
@@ -3536,21 +3544,28 @@
         const posterUrl = getResponsiveHeroPoster(item);
         const poster = posterUrl ? ` poster="${escapeHtml(posterUrl)}"` : "";
         if (type === "video") {
-          return `<div class="hero-media-item ${index === 0 ? "active" : ""}"><video muted playsinline autoplay loop preload="metadata"${poster}><source src="${url}"></video></div>`;
+          return `<div class="hero-media-item ${index === 0 ? "active" : ""}"><video muted playsinline autoplay loop preload="${index === 0 ? "auto" : "metadata"}"${poster}><source src="${url}"></video></div>`;
         }
         return `<div class="hero-media-item ${index === 0 ? "active" : ""}"><img src="${url}" alt="${alt}" /></div>`;
       }).join("");
       const renderedSlides = [...holder.querySelectorAll(".hero-media-item")];
-      holder.querySelectorAll("video").forEach((video) => video.play().catch(() => {}));
-      if (!videoSlides.length && renderedSlides.length > 1) {
+      holder.querySelectorAll("video").forEach((video, index) => {
+        if (index === 0) video.play().catch(() => {});
+      });
+      if (renderedSlides.length > 1) {
         let activeIndex = 0;
         heroMediaTimer = setInterval(() => {
+          const previousVideo = renderedSlides[activeIndex].querySelector("video");
+          if (previousVideo) previousVideo.pause();
           renderedSlides[activeIndex].classList.remove("active");
           activeIndex = (activeIndex + 1) % renderedSlides.length;
           renderedSlides[activeIndex].classList.add("active");
           const video = renderedSlides[activeIndex].querySelector("video");
-          if (video) video.play().catch(() => {});
-        }, 7600);
+          if (video) {
+            video.currentTime = 0;
+            video.play().catch(() => {});
+          }
+        }, 8200);
       }
     };
 
@@ -3559,6 +3574,9 @@
       c.hero.badge = "Slow island days";
       c.hero.titleLines = ["Real Maldivian Life"];
       c.hero.text = "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.";
+      if (!Array.isArray(c.hero.media) || !c.hero.media.some((item) => isCustomHeroMedia(item))) {
+        c.hero.media = window.DEFAULT_SITE_CONTENT.hero.media;
+      }
       const incomingRooms = content && content !== window.DEFAULT_SITE_CONTENT && Array.isArray(content.rooms?.items) ? content.rooms.items : [];
       c.rooms.items = incomingRooms.filter((room) => room && hasCustomRoomImage(room));
       c.activities.items = mergeList(window.DEFAULT_SITE_CONTENT.activities.items, c.activities.items);
