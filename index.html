@@ -644,29 +644,35 @@
     }
     .intro-birds {
       position: absolute;
-      top: clamp(34px, 8vw, 92px);
-      left: -180px;
-      z-index: 1;
-      width: min(48vw, 520px);
-      height: 170px;
+      top: clamp(42px, 7vw, 84px);
+      left: clamp(250px, 27vw, 390px);
+      z-index: 3;
+      width: 96px;
+      height: 42px;
       pointer-events: none;
-      opacity: .78;
-      animation: birdsCross 18s linear infinite;
+      opacity: 0;
+      visibility: hidden;
+      --intro-bird-scale: 1;
+    }
+    .intro.show .intro-birds {
+      visibility: visible;
+      animation: introBirdsSmall 6.8s ease forwards;
     }
     .intro-birds span {
       position: absolute;
-      width: 48px;
-      height: 26px;
+      width: 18px;
+      height: 10px;
+      color: rgba(16,47,50,.36);
       animation: birdWing 1.7s ease-in-out infinite;
     }
     .intro-birds span::before,
     .intro-birds span::after {
       content: "";
       position: absolute;
-      top: 10px;
-      width: 26px;
-      height: 16px;
-      border-top: 3px solid rgba(16,47,50,.50);
+      top: 4px;
+      width: 11px;
+      height: 7px;
+      border-top: 2px solid currentColor;
       border-radius: 50%;
     }
     .intro-birds span::before {
@@ -677,15 +683,13 @@
       right: 0;
       transform: rotate(-18deg);
     }
-    .intro-birds span:nth-child(1) { left: 66%; top: 38%; transform: scale(1.55); animation-delay: 0s; }
-    .intro-birds span:nth-child(2) { left: 36%; top: 16%; transform: scale(.82); animation-delay: -.45s; opacity: .72; }
-    .intro-birds span:nth-child(3) { left: 18%; top: 56%; transform: scale(.62); animation-delay: -.88s; opacity: .58; }
-    @keyframes birdsCross {
-      0% { translate: -8vw 18px; opacity: 0; }
-      8% { opacity: .78; }
-      50% { translate: 54vw -12px; opacity: .78; }
-      92% { opacity: .72; }
-      100% { translate: 116vw 8px; opacity: 0; }
+    .intro-birds span:nth-child(1) { left: 42px; top: 3px; transform: scale(.86); animation-delay: 0s; }
+    .intro-birds span:nth-child(2) { left: 18px; top: 16px; transform: scale(.58); animation-delay: -.45s; opacity: .72; }
+    .intro-birds span:nth-child(3) { left: 68px; top: 18px; transform: scale(.48); animation-delay: -.88s; opacity: .58; }
+    @keyframes introBirdsSmall {
+      0% { opacity: 0; transform: translate(-14px, 12px) scale(var(--intro-bird-scale)); }
+      18%, 58% { opacity: .82; }
+      100% { opacity: 0; visibility: hidden; transform: translate(28px, -10px) scale(var(--intro-bird-scale)); }
     }
     @keyframes birdWing {
       0%, 100% { rotate: -2deg; }
@@ -2537,6 +2541,12 @@
         border-radius: 26px;
       }
       .travel .center-head { margin-bottom: 26px; }
+      .intro-birds {
+        top: 44px;
+        left: auto;
+        right: 18%;
+        --intro-bird-scale: .78;
+      }
       .section-title { font-size: 2.45rem; }
       .lead, .hero-text { font-size: 1rem; }
       .hero h1 { font-size: 2.85rem; }
