@@ -282,10 +282,6 @@
       backdrop-filter: blur(12px);
     }
     body.menu-open { overflow: hidden; }
-    body.site-loading .hero {
-      visibility: hidden;
-    }
-
     .hero {
       position: relative;
       min-height: calc(100svh + 90px);
@@ -534,7 +530,8 @@
     }
     .reserve-modal.open { display: grid; }
     .reserve-picker {
-      width: min(100%, 560px);
+      width: min(100%, 980px);
+      max-height: min(92vh, 920px);
       overflow: hidden;
       border: 1px solid rgba(255,255,255,.48);
       border-radius: 30px;
@@ -556,6 +553,65 @@
       line-height: .95;
     }
     .reserve-picker-body { padding: 22px; }
+    .beds24-frame-wrap {
+      overflow: hidden;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.72);
+    }
+    .beds24-frame-wrap iframe {
+      display: block;
+      width: 100%;
+      min-height: min(72vh, 760px);
+      border: 0;
+      background: #fff;
+    }
+    .beds24-booking-button,
+    .b24bookingbutton input[type="submit"] {
+      width: auto;
+      min-height: 52px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--mango);
+      border-radius: 999px;
+      padding: 10px 24px;
+      color: var(--teal-dark);
+      background: var(--mango);
+      box-shadow: 0 14px 30px rgba(244, 197, 111, 0.28);
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 950;
+      text-align: center;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .beds24-booking-button:hover,
+    .b24bookingbutton input[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 38px rgba(244, 197, 111, 0.34);
+    }
+    .beds24-panel {
+      padding: clamp(20px, 4vw, 38px);
+      border: 1px solid rgba(255,255,255,.58);
+      border-radius: 30px;
+      background: rgba(255,255,255,.88);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      text-align: center;
+    }
+    .beds24-panel h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 6vw, 4.1rem);
+      font-weight: 500;
+      line-height: 1;
+    }
+    .beds24-panel .lead {
+      max-width: 620px;
+      margin: 12px auto 0;
+    }
     .reserve-calendar-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3340,26 +3396,22 @@
 
     <section class="booking-page" id="bookingPage" aria-live="polite">
       <div class="container booking-shell">
-        <form class="booking-flow" id="reservationForm" aria-label="Room availability and reservation form">
+        <div class="beds24-panel" aria-label="Beds24 online booking">
+          <span class="eyebrow">Book Online</span>
           <h3>Make a Reservation</h3>
-          <p class="lead">Fast replies by WhatsApp. Email is saved for payment details.</p>
-          <div class="booking-form">
-            <div class="field"><label for="bookingNationality">Nationality</label><div class="field-row"><i data-lucide="flag" class="icon" aria-hidden="true"></i><input id="bookingNationality" name="nationality" type="text" placeholder="Nationality" required /></div></div>
-            <div class="field"><label for="bookingCheckin">Check In</label><div class="field-row"><i data-lucide="calendar" class="icon" aria-hidden="true"></i><input id="bookingCheckin" name="checkin" type="date" required /></div></div>
-            <div class="field"><label for="bookingCheckout">Check Out</label><div class="field-row"><i data-lucide="calendar" class="icon" aria-hidden="true"></i><input id="bookingCheckout" name="checkout" type="date" required /></div></div>
-            <div class="field"><label for="bookingName">Full Name</label><div class="field-row"><i data-lucide="user" class="icon" aria-hidden="true"></i><input id="bookingName" name="name" type="text" placeholder="Full name" required /></div></div>
-            <div class="field"><label for="bookingEmail">Email</label><div class="field-row"><i data-lucide="mail" class="icon" aria-hidden="true"></i><input id="bookingEmail" name="email" type="email" placeholder="name@email.com" required /></div></div>
-            <div class="field"><label for="bookingPhone">Contact</label><div class="field-row"><i data-lucide="phone" class="icon" aria-hidden="true"></i><input id="bookingPhone" name="phone" type="tel" placeholder="+960..." required /></div></div>
-            <div class="field"><label for="bookingAdults">Adults</label><div class="field-row"><i data-lucide="users" class="icon" aria-hidden="true"></i><select id="bookingAdults" name="adults"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div></div>
-            <div class="field"><label for="bookingChildren">Children</label><div class="field-row"><i data-lucide="baby" class="icon" aria-hidden="true"></i><select id="bookingChildren" name="children"><option selected>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div></div>
-            <div class="available-rooms" id="availableRooms">
-              <div class="available-room-head"><strong>Availability</strong><span id="availabilitySummary">Choose dates to check.</span></div>
-              <div class="available-room-grid" id="availableRoomGrid"></div>
-            </div>
-            <button class="btn btn-primary submit-booking" id="reservationSubmit" type="submit"><i data-lucide="search" class="icon"></i>Check Availability</button>
+          <p class="lead">Choose your dates and send your booking directly through our secure Beds24 booking engine.</p>
+          <div class="b24bookingbutton">
+            <form method="GET" action="https://beds24.com/booking.php" target="_blank" style="display:inline">
+              <input type="submit" value="Book Online">
+              <input type="hidden" name="propid" value="343797">
+              <input type="hidden" name="type" value="0">
+              <input type="hidden" name="referer" value="BookingButton">
+            </form>
           </div>
-          <div class="booking-status" id="bookingStatus">Choose travel dates to check availability.</div>
-        </form>
+          <div class="beds24-frame-wrap">
+            <iframe src="https://beds24.com/booking.php?propid=343797&amp;type=0&amp;referer=BookingButton" title="Book Feeali Buddies Inn online" loading="lazy"><p><a href="https://beds24.com/booking.php?propid=343797&amp;type=0&amp;referer=BookingButton" title="Book Now">Book Now</a></p></iframe>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -3411,26 +3463,25 @@
       <div class="reserve-picker" role="dialog" aria-modal="true" aria-labelledby="reservePickerTitle">
         <div class="reserve-picker-hero" id="reservePickerHero">
           <div>
-            <span class="eyebrow">Reserve Room</span>
-            <h3 id="reservePickerTitle">Choose your dates</h3>
+            <span class="eyebrow">Book Online</span>
+            <h3 id="reservePickerTitle">Feeali Buddies Inn</h3>
           </div>
         </div>
         <div class="reserve-picker-body">
-          <p class="lead" id="reservePickerText">Select your stay dates first. The booking form will open with the dates filled automatically.</p>
-          <div class="reserve-calendar-grid">
-            <div class="reserve-calendar-field">
-              <label for="reserveCheckin">Check In</label>
-              <input id="reserveCheckin" type="date" />
-            </div>
-            <div class="reserve-calendar-field">
-              <label for="reserveCheckout">Check Out</label>
-              <input id="reserveCheckout" type="date" />
-            </div>
+          <p class="lead" id="reservePickerText">Choose your dates and complete your booking securely through Beds24.</p>
+          <div class="b24bookingbutton">
+            <form method="GET" action="https://beds24.com/booking.php" target="_blank" style="display:inline">
+              <input type="submit" value="Book Online">
+              <input type="hidden" name="propid" value="343797">
+              <input type="hidden" name="type" value="0">
+              <input type="hidden" name="referer" value="BookingButton">
+            </form>
           </div>
-          <p class="reserve-hint" id="reserveCalendarHint">Click a date, then confirm reserve to continue.</p>
+          <div class="beds24-frame-wrap">
+            <iframe src="https://beds24.com/booking.php?propid=343797&amp;type=0&amp;referer=BookingButton" title="Book Feeali Buddies Inn online" loading="lazy"><p><a href="https://beds24.com/booking.php?propid=343797&amp;type=0&amp;referer=BookingButton" title="Book Now">Book Now</a></p></iframe>
+          </div>
           <div class="reserve-picker-actions">
-            <button class="btn btn-ghost" id="reserveCancel" type="button">Cancel</button>
-            <button class="btn btn-primary" id="reserveConfirm" type="button"><i data-lucide="calendar-check" class="icon"></i>Confirm Reserve</button>
+            <button class="btn btn-ghost" id="reserveCancel" type="button">Close</button>
           </div>
         </div>
       </div>
@@ -3998,11 +4049,15 @@
       "images.unsplash.com/photo-1566665797739",
       "images.unsplash.com/photo-1596394516093"
     ];
-    const getHeroMediaUrl = (item) => typeof item === "string" ? item : item?.url || "";
+    const getHeroMediaUrl = (item) => {
+      if (typeof item === "string") return item;
+      return item?.url || item?.portraitUrl || item?.poster || item?.posterPortrait || "";
+    };
     const isPortraitHero = () => window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
     const getResponsiveHeroMediaUrl = (item) => {
       if (typeof item === "string") return item;
-      return (isPortraitHero() && item?.portraitUrl) ? item.portraitUrl : item?.url || "";
+      if (isPortraitHero() && item?.portraitUrl) return item.portraitUrl;
+      return item?.url || item?.portraitUrl || item?.poster || item?.posterPortrait || "";
     };
     const getResponsiveHeroPoster = (item) => {
       if (typeof item === "string") return "";
@@ -4026,10 +4081,7 @@
         if (video.paused || video.readyState < 2) recovery();
       }, 900);
     };
-    const isCustomHeroMedia = (item) => {
-      const url = getHeroMediaUrl(item);
-      return Boolean(url && url !== DEFAULT_HERO_STOCK_IMAGE && !String(url).includes("FeealiBeach.MP4"));
-    };
+    const isCustomHeroMedia = (item) => Boolean(getHeroMediaUrl(item));
     const isDefaultRoomImage = (url = "") => DEFAULT_ROOM_IMAGE_PATTERNS.some((pattern) => String(url).includes(pattern));
     const hasCustomRoomImage = (room = {}) => [
       room.image,
@@ -4764,7 +4816,6 @@
       } else if (window.location.hash === "#restaurant-detail") {
         requestAnimationFrame(showRestaurantDetail);
       } else if (window.location.hash === "#booking") {
-        preferredRoomIndex = null;
         requestAnimationFrame(showBookingPage);
       } else {
         closeDetailViews();
@@ -4862,193 +4913,42 @@
     const toDateValue = (date) => new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
     const checkin = document.getElementById("checkin");
     const checkout = document.getElementById("checkout");
-    const guestName = document.getElementById("guestName");
-    const guestPhone = document.getElementById("guestPhone");
-    const adults = document.getElementById("adults");
-    const children = document.getElementById("children");
-    const bookingCheckin = document.getElementById("bookingCheckin");
-    const bookingCheckout = document.getElementById("bookingCheckout");
-    const bookingStatus = document.getElementById("bookingStatus");
-    const availableRooms = document.getElementById("availableRooms");
-    const availableRoomGrid = document.getElementById("availableRoomGrid");
-    const availabilitySummary = document.getElementById("availabilitySummary");
-    const reservationSubmit = document.getElementById("reservationSubmit");
+    if (checkin && checkout) {
+      checkin.min = toDateValue(today);
+      checkout.min = toDateValue(tomorrow);
+      checkin.value = toDateValue(today);
+      checkout.value = toDateValue(tomorrow);
+      checkin.addEventListener("change", () => {
+        const selected = new Date(checkin.value);
+        const nextDay = new Date(selected);
+        nextDay.setDate(selected.getDate() + 1);
+        checkout.min = toDateValue(nextDay);
+        if (!checkout.value || new Date(checkout.value) <= selected) checkout.value = toDateValue(nextDay);
+      });
+    }
     const reserveModal = document.getElementById("reserveModal");
-    const reserveCheckin = document.getElementById("reserveCheckin");
-    const reserveCheckout = document.getElementById("reserveCheckout");
     const reservePickerHero = document.getElementById("reservePickerHero");
     const reservePickerTitle = document.getElementById("reservePickerTitle");
     const reservePickerText = document.getElementById("reservePickerText");
-    const reserveCalendarHint = document.getElementById("reserveCalendarHint");
-    let preferredRoomIndex = null;
-    checkin.min = toDateValue(today);
-    checkout.min = toDateValue(tomorrow);
-    checkin.value = toDateValue(today);
-    checkout.value = toDateValue(tomorrow);
-    bookingCheckin.min = toDateValue(today);
-    bookingCheckout.min = toDateValue(tomorrow);
-    bookingCheckin.value = toDateValue(today);
-    bookingCheckout.value = toDateValue(tomorrow);
-    reserveCheckin.min = toDateValue(today);
-    reserveCheckout.min = toDateValue(tomorrow);
-    reserveCheckin.value = toDateValue(today);
-    reserveCheckout.value = toDateValue(tomorrow);
-    checkin.addEventListener("change", () => {
-      const selected = new Date(checkin.value);
-      const nextDay = new Date(selected);
-      nextDay.setDate(selected.getDate() + 1);
-      checkout.min = toDateValue(nextDay);
-      if (!checkout.value || new Date(checkout.value) <= selected) checkout.value = toDateValue(nextDay);
-    });
-    const syncCheckout = (startEl, endEl) => {
-      const selected = new Date(startEl.value);
-      const nextDay = new Date(selected);
-      nextDay.setDate(selected.getDate() + 1);
-      endEl.min = toDateValue(nextDay);
-      if (!endEl.value || new Date(endEl.value) <= selected) endEl.value = toDateValue(nextDay);
-    };
-    bookingCheckin.addEventListener("change", () => syncCheckout(bookingCheckin, bookingCheckout));
-    reserveCheckin.addEventListener("change", () => syncCheckout(reserveCheckin, reserveCheckout));
-    const currentPreferredRoom = () => {
+    const currentRoomForBooking = (roomIndex = 0) => {
       const rooms = window.currentSiteContent?.rooms?.items || window.DEFAULT_SITE_CONTENT.rooms.items;
-      return rooms[preferredRoomIndex ?? 0] || rooms[0] || {};
+      return rooms[roomIndex] || rooms[0] || {};
     };
-    const setReserveModal = (open, roomIndex = preferredRoomIndex ?? 0) => {
-      preferredRoomIndex = roomIndex;
-      const room = currentPreferredRoom();
+    const setReserveModal = (open, roomIndex = 0) => {
+      const room = currentRoomForBooking(roomIndex);
       reserveModal.classList.toggle("open", open);
       reserveModal.setAttribute("aria-hidden", open ? "false" : "true");
       document.body.style.overflow = open ? "hidden" : "";
       reservePickerHero.style.setProperty("--reserve-image", `url("${room.image || window.currentSiteContent?.site?.heroImage || ""}")`);
-      reservePickerTitle.textContent = room.title ? `Reserve ${room.title}` : "Choose your dates";
-      reservePickerText.textContent = room.title ? `${room.title} - ${getDisplayPrice(room)} per night. Select check-in and check-out dates to continue.` : "Select your stay dates first.";
-      reserveCalendarHint.textContent = "Choose check-in and check-out, then confirm reserve.";
-      if (open) reserveCheckin.focus();
+      reservePickerTitle.textContent = room.title ? `Book ${room.title}` : "Book Feeali Buddies Inn";
+      reservePickerText.textContent = "Choose your dates and complete your reservation securely through Beds24.";
       renderIcons();
     };
     document.getElementById("reserveCancel").addEventListener("click", () => setReserveModal(false));
     reserveModal.addEventListener("click", (event) => { if (event.target === reserveModal) setReserveModal(false); });
-    document.getElementById("reserveConfirm").addEventListener("click", () => {
-      syncCheckout(reserveCheckin, reserveCheckout);
-      bookingCheckin.value = reserveCheckin.value;
-      bookingCheckout.value = reserveCheckout.value;
-      syncCheckout(bookingCheckin, bookingCheckout);
-      resetRoomSelection();
-      setReserveModal(false);
-      showBookingPage();
-      const available = getAvailableRooms();
-      showAvailability(available);
-    });
-    const datesOverlap = (startA, endA, startB, endB) => new Date(startA) < new Date(endB) && new Date(endA) > new Date(startB);
-    const isRoomAvailable = (roomTitle, start, end) => {
-      const bookings = Object.values(window.currentBookings || {});
-      return !bookings.some((booking) =>
-        booking.roomTitle === roomTitle &&
-        !["cancelled", "rejected"].includes(String(booking.status || "").toLowerCase()) &&
-        booking.checkin && booking.checkout &&
-        datesOverlap(start, end, booking.checkin, booking.checkout)
-      );
-    };
-    const setBookingStatus = (message, type = "") => {
-      bookingStatus.textContent = message;
-      bookingStatus.className = `booking-status ${type}`.trim();
-    };
-    const resetRoomSelection = () => {
-      if (availableRooms) availableRooms.classList.remove("show");
-      if (availableRoomGrid) availableRoomGrid.innerHTML = "";
-      if (availabilitySummary) availabilitySummary.textContent = "Choose dates to check.";
-      if (reservationSubmit) reservationSubmit.innerHTML = `<i data-lucide="search" class="icon"></i>Check Availability`;
-      renderIcons();
-    };
-    [bookingCheckin, bookingCheckout].forEach((input) => input.addEventListener("change", resetRoomSelection));
-    const getAvailableRooms = () => {
-      const rooms = window.currentSiteContent?.rooms?.items || window.DEFAULT_SITE_CONTENT.rooms.items;
-      const candidates = preferredRoomIndex !== null && rooms[preferredRoomIndex] ? [{ room: rooms[preferredRoomIndex], index: preferredRoomIndex }] : rooms.map((room, index) => ({ room, index }));
-      return candidates
-        .filter(({ room }) => isRoomAvailable(room.title, bookingCheckin.value, bookingCheckout.value));
-    };
-    const showAvailability = (available) => {
-      availableRooms.classList.add("show");
-      if (!available.length) {
-        if (availabilitySummary) availabilitySummary.textContent = "Guest house is full.";
-        const roomName = preferredRoomIndex !== null ? currentPreferredRoom().title || "This room" : "Rooms";
-        availableRoomGrid.innerHTML = `<div class="booking-status error" style="grid-column:1/-1">${escapeHtml(roomName)} is full for ${bookingCheckin.value} to ${bookingCheckout.value}. Please choose another date or message us on WhatsApp.</div>`;
-        setBookingStatus(`${roomName} is full for those dates. Please choose another date.`, "error");
-        return false;
-      }
-      if (availabilitySummary) availabilitySummary.textContent = `${available.length} room${available.length === 1 ? "" : "s"} available.`;
-      availableRoomGrid.innerHTML = available.map(({ room }) => `
-        <article class="available-room" aria-label="${escapeHtml(room.title)} available">
-          <img src="${escapeHtml(room.image)}" alt="${escapeHtml(room.title)}" />
-          <div class="available-room-copy">
-            <strong>${escapeHtml(room.title)}</strong>
-            <span>${escapeHtml(getDisplayPrice(room))} per night</span>
-          </div>
-        </article>`).join("");
-      setBookingStatus(`${preferredRoomIndex !== null ? "Selected room is" : "Rooms are"} available. Fill the form and send your reservation request.`, "success");
-      reservationSubmit.innerHTML = `<i data-lucide="send" class="icon"></i>Send Reservation Request`;
-      renderIcons();
-      return true;
-    };
     document.getElementById("book").addEventListener("submit", (event) => {
       event.preventDefault();
-      preferredRoomIndex = null;
       window.location.hash = "#booking";
-    });
-    document.getElementById("reservationForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const site = window.currentSiteContent?.site || window.DEFAULT_SITE_CONTENT.site;
-      const available = getAvailableRooms();
-      if (!availableRooms.classList.contains("show")) {
-        showAvailability(available);
-        return;
-      }
-      if (!showAvailability(available)) {
-        return;
-      }
-      const selectedRoom = available[0]?.room || currentPreferredRoom();
-      const preferredRooms = available.map(({ room }) => room.title).join(", ");
-      const selectedRoomTitle = selectedRoom?.title || preferredRooms || "Any available room";
-      const selectedRoomPrice = selectedRoom ? getDisplayPrice(selectedRoom) : "";
-      const booking = {
-        roomTitle: selectedRoomTitle,
-        roomPrice: selectedRoomPrice,
-        availableRooms: preferredRooms,
-        guestName: document.getElementById("bookingName").value.trim(),
-        guestEmail: document.getElementById("bookingEmail").value.trim(),
-        guestPhone: document.getElementById("bookingPhone").value.trim(),
-        nationality: document.getElementById("bookingNationality").value.trim(),
-        checkin: bookingCheckin.value,
-        checkout: bookingCheckout.value,
-        adults: document.getElementById("bookingAdults").value,
-        children: document.getElementById("bookingChildren").value,
-        status: "pending_payment",
-        source: "index.html"
-      };
-      const message = [
-        `Hello ${site.name}, I want to make a reservation.`,
-        "",
-        `Selected room: ${selectedRoomTitle}`,
-        `Room price: ${selectedRoomPrice || "Ask"}`,
-        `Available room options shown: ${preferredRooms || "Any available room"}`,
-        `Name: ${booking.guestName}`,
-        `Email: ${booking.guestEmail}`,
-        `Phone: ${booking.guestPhone}`,
-        `Nationality: ${booking.nationality}`,
-        `Check in: ${booking.checkin}`,
-        `Check out: ${booking.checkout}`,
-        `Adults: ${booking.adults}`,
-        `Children: ${booking.children}`,
-        "",
-        "Rooms showed available on the website. Please confirm the best room and send payment details."
-      ].join("\n");
-      if (window.saveBookingRequest) await window.saveBookingRequest(booking);
-      const emailTo = window.currentSiteContent?.contact?.email || "reservations@feealibuddiesinn.com";
-      const mailSubject = encodeURIComponent(`Reservation Request - ${booking.guestName || selectedRoomTitle}`);
-      const mailBody = encodeURIComponent(message);
-      setBookingStatus(`Your reservation request was saved. WhatsApp and email are opening now.`, "success");
-      window.open(`https://wa.me/${String(site.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(message)}`, "_blank", "noopener");
-      window.open(`mailto:${emailTo}?subject=${mailSubject}&body=${mailBody}`, "_blank", "noopener");
     });
 
     const reviewModal = document.getElementById("reviewModal");
@@ -5125,16 +5025,7 @@
     isSupported().then((supported) => { if (supported) getAnalytics(app); });
     const db = getDatabase(app);
     const siteRef = ref(db, "feealiBuddiesInn/siteContent");
-    const bookingsRef = ref(db, "feealiBuddiesInn/bookings");
     const reviewSubmissionsRef = ref(db, "feealiBuddiesInn/reviewSubmissions");
-    window.currentBookings = {};
-
-    window.saveBookingRequest = async (booking) => {
-      await push(bookingsRef, {
-        ...booking,
-        createdAt: serverTimestamp()
-      });
-    };
 
     window.saveGuestReview = async (review) => {
       await push(reviewSubmissionsRef, {
@@ -5159,9 +5050,6 @@
       } else {
         applyContent(window.DEFAULT_SITE_CONTENT);
       }
-    });
-    onValue(bookingsRef, (snapshot) => {
-      window.currentBookings = snapshot.val() || {};
     });
   </script>
 </body>
