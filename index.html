@@ -6,7 +6,6 @@
   <title>Feeali Buddies Inn | Guest House in F. Feeali</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <meta name="description" content="Feeali Buddies Inn guest house in F. Feeali, Maldives." />
-  <link rel="preload" href="FeealiBeach.MP4" as="video" type="video/mp4" />
   <link rel="preconnect" href="https://images.unsplash.com" />
   <link rel="preconnect" href="https://unpkg.com" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
@@ -75,16 +74,22 @@
       left: 0;
       right: 0;
       z-index: 50;
-      min-height: 82px;
-      background: linear-gradient(180deg, rgba(5, 36, 42, 0.18), rgba(5, 36, 42, 0));
+      min-height: 90px;
+      background: transparent;
       box-shadow: none;
       backdrop-filter: none;
       pointer-events: none;
+      transition: background .48s ease, box-shadow .48s ease, backdrop-filter .48s ease;
+    }
+    .site-nav.scrolled {
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 1px 0 rgba(16, 47, 50, 0.08), 0 18px 42px rgba(16, 47, 50, 0.05);
+      backdrop-filter: blur(16px);
     }
     .nav-shell {
       pointer-events: auto;
       width: min(var(--max), calc(100% - 48px));
-      min-height: 82px;
+      min-height: 90px;
       margin-inline: auto;
       display: flex;
       align-items: center;
@@ -97,14 +102,62 @@
       background: transparent;
       box-shadow: none;
       backdrop-filter: none;
+      transition: color .48s ease, min-height .48s ease;
     }
     .brand {
+      position: relative;
       display: inline-flex;
       align-items: center;
       gap: 11px;
       min-width: 0;
-      font-weight: 900;
+      font-weight: 700;
+      font-size: 0.98rem;
       white-space: nowrap;
+    }
+    .brand-birds {
+      position: absolute;
+      left: 38px;
+      top: 8px;
+      width: 58px;
+      height: 24px;
+      pointer-events: none;
+      overflow: visible;
+      opacity: .86;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,.12));
+    }
+    .brand-birds span {
+      position: absolute;
+      width: 12px;
+      height: 7px;
+      transform-origin: center;
+      animation: brandBirdDrift 7.5s ease-in-out infinite, birdWing 1.6s ease-in-out infinite;
+    }
+    .brand-birds span::before,
+    .brand-birds span::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      width: 8px;
+      height: 5px;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+    }
+    .brand-birds span::before {
+      right: 50%;
+      transform: rotate(18deg);
+    }
+    .brand-birds span::after {
+      left: 50%;
+      transform: rotate(-18deg);
+    }
+    .brand-birds span:nth-child(1) { left: 4px; top: 8px; color: rgba(16,47,50,.82); transform: scale(.72); }
+    .brand-birds span:nth-child(2) { left: 24px; top: 2px; color: rgba(16,47,50,.74); transform: scale(.52); animation-delay: -1.1s; }
+    .brand-birds span:nth-child(3) { left: 44px; top: 11px; color: rgba(16,47,50,.62); transform: scale(.42); animation-delay: -2.2s; }
+    .site-nav:not(.scrolled) .brand-birds span { color: rgba(255,255,255,.78); }
+    @keyframes brandBirdDrift {
+      0%, 100% { translate: 0 0; }
+      45% { translate: 7px -4px; }
+      70% { translate: 13px 1px; }
     }
     .brand-mark {
       width: 78px;
@@ -133,12 +186,17 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 30px;
-      font-size: 0.94rem;
-      font-weight: 800;
+      gap: 34px;
+      font-size: 1.03rem;
+      font-weight: 500;
+      letter-spacing: 0.015em;
     }
-    .nav-links a { color: rgba(255, 255, 255, 0.9); transition: color 0.2s ease; }
+    .nav-links a { color: rgba(255, 255, 255, 0.92); transition: color .36s ease, opacity .36s ease; }
     .nav-links a:hover { color: var(--mango); }
+    .site-nav.scrolled .nav-shell { color: var(--ink); }
+    .site-nav.scrolled .nav-links a { color: rgba(16, 47, 50, 0.58); }
+    .site-nav.scrolled .nav-links a:first-of-type { color: #dc7d3e; }
+    .site-nav.scrolled .nav-links a:hover { color: var(--coral); }
     .nav-cta, .btn {
       display: inline-flex;
       align-items: center;
@@ -148,8 +206,8 @@
       border: 0;
       border-radius: 999px;
       cursor: pointer;
-      font-weight: 900;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-weight: 700;
+      transition: transform 0.24s ease, box-shadow 0.24s ease, background .36s ease, color .36s ease;
     }
     .nav-cta {
       min-height: 46px;
@@ -192,10 +250,13 @@
       backdrop-filter: blur(12px);
     }
     body.menu-open { overflow: hidden; }
+    body.site-loading .hero {
+      visibility: hidden;
+    }
 
     .hero {
       position: relative;
-      min-height: 100svh;
+      min-height: calc(100svh + 90px);
       display: grid;
       align-items: end;
       overflow: hidden;
@@ -203,14 +264,14 @@
       padding: 112px 0 clamp(118px, 14vh, 176px);
       color: var(--white);
       text-align: center;
-      background: var(--hero-image) center / cover;
+      background: transparent;
     }
     .hero::before {
       content: "";
       position: absolute;
       inset: 0;
       z-index: -1;
-      background: linear-gradient(180deg, rgba(5, 36, 42, 0.10), rgba(5, 36, 42, 0.42) 48%, rgba(5, 36, 42, 0.48));
+      background: linear-gradient(180deg, rgba(5, 36, 42, 0.04), rgba(5, 36, 42, 0.22) 48%, rgba(5, 36, 42, 0.30));
       pointer-events: none;
     }
     .hero::after {
@@ -219,11 +280,9 @@
       left: 0;
       right: 0;
       bottom: -1px;
-      height: 92px;
+      height: clamp(96px, 14vh, 190px);
       z-index: 0;
-      background:
-        radial-gradient(90% 82px at 48% 100%, var(--paper) 0 55%, rgba(255, 250, 242, 0) 56%),
-        linear-gradient(180deg, rgba(255, 250, 242, 0), var(--paper));
+      background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.04) 46%, rgba(255,255,255,.34) 78%, var(--paper) 100%);
       pointer-events: none;
     }
     .hero-media {
@@ -231,18 +290,18 @@
       inset: 0;
       z-index: -2;
       overflow: hidden;
-      background: var(--hero-image) center / cover;
+      background: #092f37;
     }
     .hero-media-item {
       position: absolute;
       inset: 0;
       opacity: 0;
-      transform: scale(1.04);
-      transition: opacity 1.2s ease, transform 7s ease;
+      transform: none;
+      transition: opacity 1.2s ease;
     }
     .hero-media-item.active {
       opacity: 1;
-      transform: scale(1.1);
+      transform: none;
     }
     .hero-media img,
     .hero-media video {
@@ -250,7 +309,21 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
+      background: #0b3b44;
+      filter: saturate(1.08) contrast(1.04);
+      transform: translateZ(0);
     }
+    .hero-media.video-waiting::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background: transparent;
+      opacity: 0;
+      transition: opacity .75s ease;
+      pointer-events: none;
+    }
+    .hero-media.video-ready::after { opacity: 0; }
     .hero-grid {
       position: relative;
       z-index: 1;
@@ -490,9 +563,105 @@
     }
     .reserve-hint { margin-top: 12px; color: var(--muted); font-size: .92rem; line-height: 1.5; }
 
+    .intro {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .intro::before {
+      content: "";
+      position: absolute;
+      width: min(46vw, 620px);
+      height: min(46vw, 620px);
+      top: 6%;
+      left: -18%;
+      z-index: -1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,127,141,.11), rgba(0,127,141,0) 62%);
+      pointer-events: none;
+    }
     .intro-grid, .dining-grid, .contact-grid { display: grid; grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr); gap: 58px; align-items: center; }
+    .intro-copy {
+      position: relative;
+      z-index: 2;
+    }
+    .intro-copy .eyebrow {
+      opacity: 0;
+      transform: translateY(30px);
+      filter: blur(10px);
+    }
+    .intro-reading-line {
+      display: block;
+      opacity: 0;
+      transform: translateY(26px);
+      filter: blur(9px);
+      will-change: opacity, transform, filter;
+    }
+    .intro.show .intro-copy .eyebrow {
+      animation: welcomeTextIn .85s cubic-bezier(.2,.8,.2,1) .05s forwards;
+    }
+    .intro.show .intro-reading-line {
+      animation: welcomeTextIn .88s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+    @keyframes welcomeTextIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+    .intro-birds {
+      position: absolute;
+      top: clamp(34px, 8vw, 92px);
+      left: -180px;
+      z-index: 1;
+      width: min(48vw, 520px);
+      height: 170px;
+      pointer-events: none;
+      opacity: .78;
+      animation: birdsCross 18s linear infinite;
+    }
+    .intro-birds span {
+      position: absolute;
+      width: 48px;
+      height: 26px;
+      animation: birdWing 1.7s ease-in-out infinite;
+    }
+    .intro-birds span::before,
+    .intro-birds span::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      width: 26px;
+      height: 16px;
+      border-top: 3px solid rgba(16,47,50,.50);
+      border-radius: 50%;
+    }
+    .intro-birds span::before {
+      left: 0;
+      transform: rotate(18deg);
+    }
+    .intro-birds span::after {
+      right: 0;
+      transform: rotate(-18deg);
+    }
+    .intro-birds span:nth-child(1) { left: 66%; top: 38%; transform: scale(1.55); animation-delay: 0s; }
+    .intro-birds span:nth-child(2) { left: 36%; top: 16%; transform: scale(.82); animation-delay: -.45s; opacity: .72; }
+    .intro-birds span:nth-child(3) { left: 18%; top: 56%; transform: scale(.62); animation-delay: -.88s; opacity: .58; }
+    @keyframes birdsCross {
+      0% { translate: -8vw 18px; opacity: 0; }
+      8% { opacity: .78; }
+      50% { translate: 54vw -12px; opacity: .78; }
+      92% { opacity: .72; }
+      100% { translate: 116vw 8px; opacity: 0; }
+    }
+    @keyframes birdWing {
+      0%, 100% { rotate: -2deg; }
+      50% { rotate: 5deg; }
+    }
     .intro-copy .lead, .dining-copy .lead, .contact .lead { margin-top: 22px; }
     .signature { margin-top: 26px; display: flex; align-items: center; gap: 14px; color: var(--leaf); font-weight: 900; }
+    .signature:has(p:empty) { display: none; }
     .signature span, .experience-icon, .dining-item span, .feature-tile span, .contact-row span {
       display: grid;
       place-items: center;
@@ -502,48 +671,76 @@
       background: rgba(0, 127, 141, 0.10);
     }
     .signature span { width: 56px; height: 56px; color: var(--teal-dark); background: #f8df9e; }
-    .experience-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .experience-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
     .experience {
       position: relative;
-      min-height: 204px;
+      min-height: 430px;
       overflow: hidden;
-      padding: 26px;
-      border: 1px solid rgba(16, 47, 50, 0.13);
-      border-radius: 26px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.34)),
-        radial-gradient(circle at 18% 10%, rgba(244,197,111,.20), transparent 34%),
-        radial-gradient(circle at 88% 78%, rgba(0,127,141,.12), transparent 32%);
-      box-shadow: 0 18px 48px rgba(8, 42, 48, 0.10);
-      backdrop-filter: blur(18px);
+      padding: 0;
+      border: 0;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 22px 58px rgba(8, 42, 48, 0.13);
       transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
       isolation: isolate;
     }
-    .experience::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      opacity: .55;
-      background: linear-gradient(115deg, rgba(255,255,255,.55), transparent 34% 70%, rgba(255,255,255,.22));
-      pointer-events: none;
-    }
     .experience:hover {
       transform: translateY(-5px);
-      border-color: rgba(0,127,141,.24);
       box-shadow: 0 24px 58px rgba(8, 42, 48, 0.16);
     }
-    .experience-icon {
-      width: 54px;
-      height: 54px;
-      margin-bottom: 22px;
-      color: var(--teal-dark);
-      background: rgba(255,255,255,.64);
-      border: 1px solid rgba(255,255,255,.72);
-      box-shadow: inset 0 0 0 1px rgba(0,127,141,.08), 0 12px 30px rgba(8,42,48,.08);
+    .experience:hover .experience-photo img { transform: scale(1.06); }
+    .experience-photo {
+      height: 152px;
+      overflow: hidden;
+      background: #dcefed;
     }
-    .experience h3 { font-size: 1.08rem; line-height: 1.25; letter-spacing: 0; }
-    .experience p { margin-top: 12px; color: rgba(16,47,50,.68); font-size: 0.95rem; line-height: 1.72; }
+    .experience-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .75s ease;
+    }
+    .experience-body {
+      min-height: 278px;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .experience.no-photo .experience-body {
+      min-height: 430px;
+      justify-content: flex-end;
+      background:
+        radial-gradient(circle at 22% 18%, rgba(244,197,111,.22), transparent 32%),
+        linear-gradient(180deg, #ffffff, #f7fbf8);
+    }
+    .experience-icon {
+      width: 46px;
+      height: 46px;
+      margin-bottom: 20px;
+      color: var(--teal-dark);
+      background: #fff;
+      border: 1px solid rgba(16,47,50,.12);
+      box-shadow: 0 12px 28px rgba(8,42,48,.08);
+    }
+    .experience h3 { color: #7ab3df; font-size: 1.44rem; font-weight: 500; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; }
+    .experience p { margin-top: 18px; color: rgba(16,47,50,.62); font-size: 1rem; line-height: 1.78; }
+    .experience-link {
+      margin-top: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 22px;
+      border-radius: 999px;
+      color: #fff;
+      background: #df7b3f;
+      box-shadow: 0 10px 22px rgba(223,123,63,.26);
+      font-size: .9rem;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
 
     .travel {
       position: relative;
@@ -1055,15 +1252,14 @@
     .rooms {
       position: relative;
       overflow: hidden;
-      background: linear-gradient(180deg, #eef9f7, #fffaf2);
+      background: var(--paper);
     }
     .rooms.section { padding: 92px 0; }
     .rooms::before {
       content: "";
       position: absolute;
       inset: 0;
-      opacity: .42;
-      background: radial-gradient(circle at 18% 16%, rgba(244,197,111,.22), transparent 32%), radial-gradient(circle at 84% 54%, rgba(0,127,141,.16), transparent 35%);
+      display: none;
       pointer-events: none;
     }
     .rooms > .container { position: relative; z-index: 1; }
@@ -1145,12 +1341,12 @@
       max-width: 100%;
       min-width: 0;
       overflow: hidden;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: 30px;
-      background: rgba(255,255,255,.74);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
       cursor: pointer;
       text-align: left;
     }
@@ -1160,32 +1356,33 @@
       min-height: clamp(360px, 48vw, 640px);
       aspect-ratio: 16 / 9;
       overflow: hidden;
-      border-radius: 24px;
+      border-radius: 28px;
       color: #fff;
-      background: #071f28;
+      background: transparent;
+      box-shadow: 0 32px 90px rgba(8,42,48,.18);
       isolation: isolate;
     }
     .single-room-slides {
       position: absolute;
-      inset: 18px;
+      inset: 0;
       display: grid;
       grid-template-columns: 1.45fr .8fr .8fr;
       grid-template-rows: 1fr 1fr;
-      gap: 14px;
+      gap: clamp(8px, 1vw, 14px);
       z-index: 1;
       overflow: hidden;
-      border-radius: 18px;
+      border-radius: 28px;
     }
     .room-gallery-card {
       position: relative;
       min-width: 0;
       overflow: hidden;
-      border-radius: 22px;
+      border-radius: 20px;
       background: #171b20;
       opacity: 0;
       transform: translateY(26px) scale(.97);
       animation: roomPanelReveal .85s cubic-bezier(.2,.8,.2,1) forwards;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 22px 54px rgba(0,0,0,.24);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.10), 0 18px 44px rgba(0,0,0,.20);
     }
     .room-gallery-card:nth-child(1) { grid-row: 1 / 3; animation-delay: .05s; }
     .room-gallery-card:nth-child(2) { animation-delay: .14s; }
@@ -1548,15 +1745,90 @@
     .dining-list { margin-top: 28px; display: grid; gap: 12px; }
     .dining-item { display: flex; align-items: center; gap: 12px; color: var(--teal-dark); font-weight: 850; }
     .dining-item span, .contact-row span { width: 42px; height: 42px; }
-    .dining-mosaic { position: relative; overflow: hidden; display: grid; gap: 16px; }
-    .dining-slider { width: 100%; overflow: hidden; border-radius: 28px; }
-    .dining-track { display: flex; width: max-content; gap: 16px; animation: diningSlide 42s linear infinite; }
-    .dining-slider:hover .dining-track { animation-play-state: paused; }
-    .dining-photo, .feature-tile { overflow: hidden; border-radius: 26px; box-shadow: var(--soft-shadow); }
-    .dining-photo { width: clamp(250px, 28vw, 410px); height: 310px; flex: 0 0 auto; }
-    .dining-photo:nth-child(3n + 1) { width: clamp(280px, 34vw, 520px); }
-    .dining-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .75s ease; }
-    .dining-photo:hover img { transform: scale(1.06); }
+    .dining-mosaic { position: relative; overflow: visible; }
+    .dining-suite-stage {
+      display: grid;
+      grid-template-columns: minmax(280px, 1.18fr) repeat(2, minmax(140px, .65fr));
+      grid-template-rows: repeat(2, minmax(210px, 1fr));
+      gap: 10px;
+      min-height: 520px;
+      padding: 10px;
+      border-radius: 30px;
+      background: rgba(6, 60, 68, .08);
+    }
+    .dining-gallery-card,
+    .feature-tile {
+      overflow: hidden;
+      border-radius: 26px;
+      box-shadow: var(--soft-shadow);
+    }
+    .dining-gallery-card {
+      position: relative;
+      background: var(--teal-dark);
+      isolation: isolate;
+      animation: roomCardEnter .78s ease both;
+    }
+    .dining-gallery-card.large { grid-column: 1; grid-row: 1 / 3; }
+    .dining-gallery-card:nth-child(2) { grid-column: 2; grid-row: 1; }
+    .dining-gallery-card:nth-child(3) { grid-column: 3; grid-row: 1; }
+    .dining-gallery-card:nth-child(4) { grid-column: 2; grid-row: 2; }
+    .dining-gallery-card:nth-child(5) { grid-column: 3; grid-row: 2; }
+    .dining-gallery-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.09);
+      transition: opacity 1.1s ease, transform 6.2s cubic-bezier(.2,.78,.22,1);
+    }
+    .dining-gallery-card img.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .dining-gallery-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(180deg, rgba(5,36,42,.04), rgba(5,36,42,.18));
+      pointer-events: none;
+    }
+    .dining-gallery-card.large::after {
+      background: linear-gradient(180deg, rgba(5,36,42,.06), rgba(5,36,42,.24) 38%, rgba(5,36,42,.86));
+    }
+    .dining-card-copy {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2;
+      padding: 30px;
+      color: #fff;
+    }
+    .dining-card-copy h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 4vw, 3.7rem);
+      font-weight: 500;
+      line-height: .98;
+    }
+    .dining-card-copy p {
+      max-width: 560px;
+      margin-top: 12px;
+      color: rgba(255,255,255,.84);
+      line-height: 1.65;
+    }
+    .dining-card-copy .room-link {
+      position: static;
+      width: auto;
+      height: auto;
+      margin-top: 15px;
+      display: inline-flex;
+      color: var(--mango);
+      background: transparent;
+      font-size: .98rem;
+    }
     @keyframes diningSlide {
       from { transform: translateX(0); }
       to { transform: translateX(-50%); }
@@ -1872,6 +2144,68 @@
     .review-card p { margin-top: 22px; color: var(--muted); font-size: 1.02rem; line-height: 1.85; }
     .review-card h3 { margin-top: 18px; font-size: 1rem; }
     .review-actions { margin-top: 30px; display: flex; justify-content: center; }
+    .guest-enquire {
+      max-width: 920px;
+      margin: 46px auto 0;
+      overflow: hidden;
+      padding: clamp(16px, 3vw, 28px);
+      border: 1px solid rgba(16, 47, 50, 0.10);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 14% 6%, rgba(244,197,111,.24), transparent 32%),
+        radial-gradient(circle at 92% 18%, rgba(0,127,141,.14), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,250,242,.90));
+      box-shadow: 0 24px 68px rgba(8,42,48,.15);
+      backdrop-filter: blur(16px);
+      text-align: center;
+    }
+    .guest-enquire-head {
+      display: block;
+      max-width: 660px;
+      margin: 0 auto 18px;
+      padding: 0;
+      color: var(--ink);
+      background: transparent;
+    }
+    .guest-enquire-head .eyebrow { justify-content: center; color: var(--teal); }
+    .guest-enquire h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      margin-top: 10px;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 500;
+      line-height: 1;
+    }
+    .guest-enquire p {
+      max-width: 520px;
+      margin: 12px auto 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .guest-enquire-pill {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      color: var(--teal-dark);
+      background: var(--mango);
+      font-weight: 950;
+      white-space: nowrap;
+    }
+    .guest-enquire-frame-wrap {
+      overflow: hidden;
+      border: 1px solid rgba(16,47,50,.12);
+      border-radius: 18px;
+      background: #f4f1eb;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.72);
+    }
+    .guest-enquire iframe {
+      display: block;
+      width: 100%;
+      min-height: 800px;
+      background: #f4f1eb;
+    }
     .review-modal {
       position: fixed;
       inset: 0;
@@ -2023,6 +2357,14 @@
         background: transparent;
         box-shadow: none;
         backdrop-filter: none;
+        transition: background .24s ease, box-shadow .24s ease, padding .24s ease;
+      }
+      .site-nav.scrolled {
+        min-height: 0;
+        padding-top: 28px;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
       }
       .nav-shell {
         width: 100%;
@@ -2044,12 +2386,32 @@
         justify-self: center;
         font-size: 0;
       }
+      .brand-birds {
+        left: 32px;
+        top: 0;
+        transform: scale(.82);
+      }
       .brand-mark {
         width: 62px;
         height: 46px;
         border-radius: 0;
       }
-      .menu-toggle { display: grid; grid-column: 1; grid-row: 1; justify-self: start; }
+      .site-nav.scrolled .nav-shell { min-height: 54px; }
+      .menu-toggle {
+        display: grid;
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: end;
+        color: #fff;
+        background: rgba(5,36,42,.14);
+        border: 1px solid rgba(255,255,255,.42);
+        box-shadow: 0 12px 28px rgba(5,36,42,.14);
+      }
+      .site-nav.scrolled .menu-toggle {
+        color: #fff;
+        background: rgba(5,36,42,.14);
+        border: 1px solid rgba(255,255,255,.42);
+      }
       .nav-links {
         position: fixed;
         inset: 0;
@@ -2082,7 +2444,7 @@
         padding: 92px 0 72px;
         background-position: center center;
       }
-      .hero::after { height: 70px; }
+      .hero::after { bottom: -1px; height: clamp(58px, 9vh, 110px); }
       .hero-grid {
         width: min(100% - 28px, var(--max));
         display: grid;
@@ -2170,7 +2532,16 @@
       .reserve-picker-body { padding: 18px; }
       .reserve-calendar-grid { grid-template-columns: 1fr; }
       .reserve-picker-actions { flex-direction: column; }
-      .booking-form, .experience-grid, .review-grid, .comfort-grid { grid-template-columns: 1fr; }
+      .booking-form, .review-grid, .comfort-grid { grid-template-columns: 1fr; }
+      .experience-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .experience { min-height: 300px; border-radius: 16px; }
+      .experience-photo { height: 96px; }
+      .experience-body { min-height: 204px; padding: 16px 14px; }
+      .experience-icon { width: 38px; height: 38px; margin-bottom: 14px; }
+      .experience-icon .icon { width: 17px; height: 17px; }
+      .experience h3 { font-size: .96rem; line-height: 1.12; }
+      .experience p { margin-top: 10px; font-size: .82rem; line-height: 1.5; }
+      .experience-link { min-height: 34px; padding: 0 14px; font-size: .72rem; }
       .room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
       .rooms .section-head { display: block; }
       .rooms-home-card,
@@ -2194,10 +2565,10 @@
         height: 34px;
       }
       .home-room-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-      .single-room-card { grid-column: 1 / -1; padding: 10px; border-radius: 22px; }
-      .single-room-hero { min-height: 430px; aspect-ratio: auto; border-radius: 18px; }
+      .single-room-card { grid-column: 1 / -1; padding: 0; border-radius: 0; }
+      .single-room-hero { min-height: 430px; aspect-ratio: auto; border-radius: 22px; }
       .single-room-slides {
-        inset: 8px;
+        inset: 0;
         grid-template-columns: 1.25fr .85fr;
         grid-template-rows: 1fr 1fr 1fr;
         gap: 7px;
@@ -2208,7 +2579,7 @@
       .room-gallery-card:nth-child(4) { grid-column: 2; grid-row: 3; }
       .room-gallery-card:nth-child(5) { display: none; }
       .room-gallery-card { border-radius: 14px; }
-      .single-room-copy { max-width: 76%; padding: 22px; }
+      .single-room-copy { max-width: 88%; padding: 22px; }
       .single-room-side { grid-template-columns: repeat(2, minmax(0,1fr)); }
       .single-room-side img { min-height: 120px; border-radius: 14px; }
       .room-card, .room-card.wide { grid-column: auto; min-height: 260px; border-radius: 8px; }
@@ -2228,8 +2599,24 @@
         background: rgba(0,0,0,.24);
         font-size: 0;
       }
-      .dining-mosaic { grid-template-columns: 1fr; grid-auto-rows: 235px; }
-      .dining-photo.tall { grid-row: auto; }
+      .dining-suite-stage {
+        grid-template-columns: 1.25fr .85fr;
+        grid-template-rows: repeat(3, minmax(88px, 1fr));
+        gap: 7px;
+        min-height: 0;
+        padding: 7px;
+        border-radius: 22px;
+      }
+      .dining-gallery-card.large { grid-column: 1; grid-row: 1 / 4; }
+      .dining-gallery-card:nth-child(2) { grid-column: 2; grid-row: 1; }
+      .dining-gallery-card:nth-child(3) { grid-column: 2; grid-row: 2; }
+      .dining-gallery-card:nth-child(4) { grid-column: 2; grid-row: 3; }
+      .dining-gallery-card:nth-child(5) { display: none; }
+      .dining-gallery-card,
+      .feature-tile { border-radius: 18px; }
+      .dining-card-copy { padding: 18px; }
+      .dining-card-copy h3 { font-size: 2rem; }
+      .dining-card-copy p { font-size: .9rem; line-height: 1.5; }
       .gallery-track { gap: 10px; animation-duration: 45s; }
       .dream-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
       .dream-gallery-grid img { height: 145px; }
@@ -2268,6 +2655,11 @@
       .review-grid { display: flex; }
       .review-card { display: block; min-height: 280px; text-align: left; color: var(--ink); background: #fff; border-color: transparent; box-shadow: var(--soft-shadow); }
       .review-card p { color: var(--muted); }
+      .guest-enquire { margin-top: 34px; padding: 12px; border-radius: 20px; }
+      .guest-enquire-head { padding: 8px 6px 2px; text-align: center; }
+      .guest-enquire p { margin: 10px auto 16px; }
+      .guest-enquire-frame-wrap { border-radius: 14px; }
+      .guest-enquire iframe { min-height: 760px; }
       .stars { margin-top: 22px; color: var(--mango); }
       .rooms-page-hero { min-height: auto; padding: 112px 0 44px; }
       .activity-detail-hero { min-height: 280px; padding: 0; background-position: center; }
@@ -2490,10 +2882,11 @@
     }
   </style>
 </head>
-<body>
+<body class="site-loading">
   <nav class="site-nav" aria-label="Main navigation">
     <div class="nav-shell">
       <a class="brand" href="#home" aria-label="Feeali Buddies Inn home">
+        <span class="brand-birds" aria-hidden="true"><span></span><span></span><span></span></span>
         <span class="brand-mark" aria-hidden="true"><img class="brand-logo" src="feeali-buddies-logo-nav.png" alt=""></span>
         <span data-brand-name>Feeali Buddies Inn</span>
       </a>
@@ -2515,21 +2908,12 @@
   </nav>
 
   <header class="hero" id="home">
-    <div class="hero-media" id="heroMedia" aria-hidden="true">
-      <div class="hero-media-item active">
-        <video muted playsinline autoplay loop preload="auto">
-          <source src="FeealiBeach.MP4" type="">
-        </video>
-      </div>
-    </div>
+    <div class="hero-media" id="heroMedia" aria-hidden="true"></div>
     <div class="container hero-grid">
       <div class="hero-copy">
         <span class="hero-badge"><i data-lucide="map-pin" class="icon"></i> <span id="heroBadge"></span></span>
         <h1 id="heroTitle"></h1>
         <p class="hero-text" id="heroText"></p>
-        <div class="hero-actions">
-          <a class="btn btn-sun" href="#booking"><i data-lucide="calendar-days" class="icon"></i>Plan your visit</a>
-        </div>
         <div class="quick-facts" id="heroFacts" aria-label="Guest house highlights"></div>
       </div>
 
@@ -2552,6 +2936,7 @@
 
   <main>
     <section class="section intro reveal" id="about">
+      <div class="intro-birds" aria-hidden="true"><span></span><span></span><span></span></div>
       <div class="container intro-grid">
         <div class="intro-copy">
           <span class="eyebrow" id="aboutEyebrow"></span>
@@ -2806,6 +3191,9 @@
           <h2 class="section-title" id="diningTitle"></h2>
           <p class="lead" id="diningText"></p>
           <div class="dining-list" id="diningItems"></div>
+          <div class="contact-actions">
+            <a class="btn btn-sun" href="#restaurant-detail"><i data-lucide="arrow-right" class="icon"></i>Explore More</a>
+          </div>
         </div>
         <div class="dining-mosaic" id="diningMosaic" aria-label="Restaurant photos"></div>
       </div>
@@ -2940,6 +3328,19 @@
         <div class="review-actions">
           <button class="btn btn-sun" id="openReviewForm" type="button"><i data-lucide="star" class="icon"></i>Give a Review</button>
         </div>
+        <div class="guest-enquire" aria-label="Feeali Buddies Inn enquiry form">
+          <div class="guest-enquire-head">
+            <div>
+              <span class="eyebrow">Enquire</span>
+              <h3>Enquire: FEEALI BUDDIES INN</h3>
+            </div>
+            <p>Send your stay enquiry directly and our team will follow up with availability.</p>
+            <span class="guest-enquire-pill"><i data-lucide="send" class="icon"></i>Secure Enquiry Form</span>
+          </div>
+          <div class="guest-enquire-frame-wrap">
+            <iframe src="https://beds24.com/booking2.php?page=enquire&amp;hideback=yes&amp;propid=343797" width="800" height="800" style="max-width:100%;border:none;overflow:auto;" title="Enquire: FEEALI BUDDIES INN"><p><a href="https://beds24.com/booking2.php?page=enquire&amp;hideback=yes&amp;propid=343797" title="Book Now">Book Now</a></p></iframe>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -3053,9 +3454,7 @@
         badge: "Slow island days",
         titleLines: ["Real Maldivian Life"],
         text: "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.",
-        media: [
-          { type: "video", url: "FeealiBeach.MP4", portraitUrl: "FeealiBeach.MP4", alt: "Feeali Buddies Inn hero video" }
-        ],
+        media: [],
         facts: [
           { title: "F. Feeali", text: "Peaceful local island setting" },
           { title: "Lagoon", text: "Snorkeling, sandbank and boat trips" },
@@ -3068,7 +3467,7 @@
       about: {
         eyebrow: "Welcome to Feeali",
         title: "A guest house made for slow mornings, clear water, and easy island living.",
-        text: "Stay close to the heart of F. Feeali, where friendly local service, comfortable rooms, and ocean experiences come together.",
+        text: "Located in beautiful F. Feeali, our guesthouse offers an authentic Maldivian local island experience with traditional culture, modern comfort, ocean adventures, and white sand beach moments.",
         signature: "",
         amenities: [
           { icon: "wifi", title: "Fast Wi-Fi", text: "Stay connected for work, travel plans, calls, and sharing holiday moments." },
@@ -3159,10 +3558,10 @@
         items: [
           {
             title: "Morning Fishing",
-            price: "$175",
+            price: "$120",
             priceNote: "Group price (min. 2 people)",
             image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1000&q=86",
-            shortText: "Start your day with traditional Maldivian fishing in the pristine waters around Feeali.",
+            shortText: "Morning fishing or night fishing in the pristine waters around Feeali.",
             detailText: "Head out in the morning calm with local guidance, simple equipment, and clear water all around. This trip is relaxed, scenic, and great for guests who want a real island fishing experience.",
             gallery: [
               "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1000&q=86",
@@ -3195,7 +3594,7 @@
           },
           {
             title: "Night Fishing",
-            price: "$150",
+            price: "$120",
             priceNote: "Group price (min. 2 people)",
             image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=86",
             shortText: "Experience the thrill of night fishing under the starlit Maldivian sky.",
@@ -3264,6 +3663,24 @@
               { icon: "waves", title: "Swimming time", text: "Relax in shallow turquoise water." },
               { icon: "camera", title: "Best photos", text: "A must-do Maldives scene." }
             ]
+          },
+          {
+            title: "Shark Point to V. Atoll",
+            price: "$350",
+            priceNote: "Group price (min. 6 people)",
+            image: "https://images.unsplash.com/photo-1560275619-4662e36fa65c?auto=format&fit=crop&w=1000&q=86",
+            shortText: "A full-day special marine adventure with shark watching and atoll exploration.",
+            detailText: "Experience the ultimate marine adventure with shark watching and V. Atoll exploration. This full-day group trip is arranged for guests who want a bigger ocean experience.",
+            gallery: [
+              "https://images.unsplash.com/photo-1560275619-4662e36fa65c?auto=format&fit=crop&w=1000&q=86",
+              "https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?auto=format&fit=crop&w=1000&q=86",
+              "https://images.unsplash.com/photo-1540202404-a2f29016b523?auto=format&fit=crop&w=1000&q=86"
+            ],
+            highlights: [
+              { icon: "fish", title: "Shark point", text: "Special full-day marine adventure." },
+              { icon: "map", title: "V. Atoll route", text: "Explore beyond Feeali waters." },
+              { icon: "users", title: "Group price", text: "Minimum 6 people." }
+            ]
           }
         ]
       },
@@ -3302,7 +3719,7 @@
         text: "Tell us your dates, number of guests, and travel plans. We will help with availability, room options, transfers, meals, and excursion ideas.",
         location: "Feeali Buddies Inn, F. Feeali, Maldives",
         travelText: "Ask about speedboat transfers and island arrival times.",
-        email: "reservations@feealibuddiesinn.com",
+        email: "feealibuddieshotel@gmail.com",
         footerText: "Feeali Buddies Inn provides comfortable guest house accommodation in F. Feeali, close to island beaches, local dining, and lagoon experiences.",
         footerBackgroundImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2200&q=86",
         footerBackgroundOpacity: "0.22",
@@ -3317,6 +3734,12 @@
     const navLinks = document.getElementById("navLinks");
     const menuToggle = document.getElementById("menuToggle");
     const menuClose = document.getElementById("menuClose");
+    const siteNav = document.querySelector(".site-nav");
+    const updateNavScrollState = () => {
+      if (siteNav) siteNav.classList.toggle("scrolled", window.scrollY > 12);
+    };
+    updateNavScrollState();
+    window.addEventListener("scroll", updateNavScrollState, { passive: true });
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     const isReloadNavigation = (() => {
       const navEntry = performance.getEntriesByType?.("navigation")?.[0];
@@ -3353,6 +3776,20 @@
       if (travelPageSection) travelSection.after(travelPageSection);
     }
     const renderIcons = () => window.lucide && window.lucide.createIcons();
+    const SITE_CONTENT_CACHE_KEY = "feealiBuddiesInn.siteContent.v1";
+    const readCachedSiteContent = () => {
+      try {
+        const cached = localStorage.getItem(SITE_CONTENT_CACHE_KEY);
+        return cached ? JSON.parse(cached) : null;
+      } catch {
+        return null;
+      }
+    };
+    const writeCachedSiteContent = (content) => {
+      try {
+        localStorage.setItem(SITE_CONTENT_CACHE_KEY, JSON.stringify(content));
+      } catch {}
+    };
     const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
     const cleanText = (value) => String(value ?? "").trim();
     const parseMoney = (value) => {
@@ -3484,6 +3921,24 @@
         });
       }, 4800);
     };
+    let diningSuiteTimer;
+    const setupDiningSuiteAnimation = () => {
+      clearInterval(diningSuiteTimer);
+      const stage = document.querySelector("[data-dining-suite-stage]");
+      if (!stage) return;
+      const cards = [...stage.querySelectorAll(".dining-gallery-card")];
+      if (!cards.length) return;
+      let index = 0;
+      const cycleCount = Math.max(...cards.map((card) => card.querySelectorAll("img").length), 1);
+      diningSuiteTimer = setInterval(() => {
+        index = (index + 1) % cycleCount;
+        cards.forEach((card, cardIndex) => {
+          const imgs = [...card.querySelectorAll("img")];
+          imgs.forEach((img) => img.classList.remove("active"));
+          imgs[(index + cardIndex) % imgs.length]?.classList.add("active");
+        });
+      }, 4600);
+    };
 
     const setText = (id, value) => {
       const el = document.getElementById(id);
@@ -3510,9 +3965,27 @@
       if (typeof item === "string") return "";
       return (isPortraitHero() && item?.posterPortrait) ? item.posterPortrait : item?.poster || "";
     };
+    const keepHeroVideoAlive = (video) => {
+      if (!video) return;
+      video.muted = true;
+      video.playsInline = true;
+      const tryPlay = () => video.play().catch(() => {});
+      const recovery = () => {
+        if (video.readyState < 2) video.load();
+        tryPlay();
+      };
+      video.addEventListener("canplay", tryPlay, { once: true });
+      video.addEventListener("stalled", recovery);
+      video.addEventListener("waiting", () => setTimeout(recovery, 900));
+      video.addEventListener("error", recovery);
+      requestAnimationFrame(tryPlay);
+      setTimeout(() => {
+        if (video.paused || video.readyState < 2) recovery();
+      }, 900);
+    };
     const isCustomHeroMedia = (item) => {
       const url = getHeroMediaUrl(item);
-      return Boolean(url && url !== DEFAULT_HERO_STOCK_IMAGE);
+      return Boolean(url && url !== DEFAULT_HERO_STOCK_IMAGE && !String(url).includes("FeealiBeach.MP4"));
     };
     const isDefaultRoomImage = (url = "") => DEFAULT_ROOM_IMAGE_PATTERNS.some((pattern) => String(url).includes(pattern));
     const hasCustomRoomImage = (room = {}) => [
@@ -3526,6 +3999,8 @@
       if (!holder) return;
       clearInterval(heroMediaTimer);
       heroMediaTimer = null;
+      holder.classList.add("video-waiting");
+      holder.classList.remove("video-ready");
       const cleanMedia = (Array.isArray(media) ? media : [])
         .map((item) => {
           if (typeof item === "string") return { type: "image", url: item, alt: fallbackAlt };
@@ -3535,6 +4010,8 @@
       const slides = cleanMedia;
       if (!slides.length) {
         holder.innerHTML = "";
+        holder.classList.add("video-ready");
+        holder.classList.remove("video-waiting");
         return;
       }
       holder.innerHTML = slides.map((item, index) => {
@@ -3550,7 +4027,16 @@
       }).join("");
       const renderedSlides = [...holder.querySelectorAll(".hero-media-item")];
       holder.querySelectorAll("video").forEach((video, index) => {
-        if (index === 0) video.play().catch(() => {});
+        if (index === 0) {
+          const markReady = () => {
+            holder.classList.add("video-ready");
+            holder.classList.remove("video-waiting");
+          };
+          video.addEventListener("playing", markReady, { once: true });
+          video.addEventListener("canplay", markReady, { once: true });
+          setTimeout(markReady, 1200);
+          keepHeroVideoAlive(video);
+        }
       });
       if (renderedSlides.length > 1) {
         let activeIndex = 0;
@@ -3563,10 +4049,24 @@
           const video = renderedSlides[activeIndex].querySelector("video");
           if (video) {
             video.currentTime = 0;
-            video.play().catch(() => {});
+            keepHeroVideoAlive(video);
           }
         }, 8200);
       }
+    };
+    const renderReadingText = (id, text = "", options = {}) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const baseDelay = Number(options.baseDelay || 0.18);
+      const step = Number(options.step || 0.16);
+      const className = options.className || "intro-reading-line";
+      const parts = String(text)
+        .split(options.splitter || /(?<=,)|(?<=\.)\s+/)
+        .map((part) => part.trim())
+        .filter(Boolean);
+      el.innerHTML = parts.map((part, index) => (
+        `<span class="${className}" style="animation-delay:${(baseDelay + index * step).toFixed(2)}s">${escapeHtml(part)}</span>`
+      )).join("");
     };
 
     const applyContent = (content) => {
@@ -3574,12 +4074,24 @@
       c.hero.badge = "Slow island days";
       c.hero.titleLines = ["Real Maldivian Life"];
       c.hero.text = "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.";
-      if (!Array.isArray(c.hero.media) || !c.hero.media.some((item) => isCustomHeroMedia(item))) {
-        c.hero.media = window.DEFAULT_SITE_CONTENT.hero.media;
-      }
+      if (!Array.isArray(c.hero.media)) c.hero.media = [];
       const incomingRooms = content && content !== window.DEFAULT_SITE_CONTENT && Array.isArray(content.rooms?.items) ? content.rooms.items : [];
       c.rooms.items = incomingRooms.filter((room) => room && hasCustomRoomImage(room));
       c.activities.items = mergeList(window.DEFAULT_SITE_CONTENT.activities.items, c.activities.items);
+      const pdfActivityPrices = {
+        "Morning Fishing": "$120",
+        "Night Fishing": "$120",
+        "Snorkeling Trip": "$250",
+        "Island Excursion": "$180",
+        "Sandbank Trip": "$100"
+      };
+      c.activities.items.forEach((activity) => {
+        if (pdfActivityPrices[activity.title]) activity.price = pdfActivityPrices[activity.title];
+      });
+      const sharkPointActivity = window.DEFAULT_SITE_CONTENT.activities.items.find((activity) => activity.title === "Shark Point to V. Atoll");
+      if (sharkPointActivity && !c.activities.items.some((activity) => activity.title === "Shark Point to V. Atoll")) {
+        c.activities.items.push(sharkPointActivity);
+      }
       c.travel.routes = mergeList(window.DEFAULT_SITE_CONTENT.travel.routes, c.travel?.routes);
       c.travel.speedboats = Array.isArray(c.travel?.speedboats) ? c.travel.speedboats : [];
       c.island.sliderImages = mergeList(window.DEFAULT_SITE_CONTENT.island.sliderImages, c.island.sliderImages);
@@ -3616,13 +4128,17 @@
       document.getElementById("heroFacts").innerHTML = c.hero.facts.map((item) => `<div class="fact"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.text)}</span></div>`).join("");
 
       setText("aboutEyebrow", c.about.eyebrow);
-      setText("aboutTitle", c.about.title);
-      setText("aboutText", c.about.text);
-      document.getElementById("amenitiesGrid").innerHTML = c.about.amenities.map((item) => `
-        <article class="experience">
-          <span class="experience-icon"><i data-lucide="${escapeHtml(item.icon || "sparkles")}" class="icon"></i></span>
-          <h3>${escapeHtml(item.title)}</h3>
-          <p>${escapeHtml(item.text)}</p>
+      renderReadingText("aboutTitle", c.about.title, { baseDelay: 0.18, step: 0.17, splitter: /(?<=,)|(?<=\.)\s+/ });
+      renderReadingText("aboutText", c.about.text, { baseDelay: 0.92, step: 0.14, splitter: /(?<=,)|(?<=\.)\s+/ });
+      document.getElementById("amenitiesGrid").innerHTML = c.about.amenities.map((item, index) => `
+        <article class="experience ${item.image ? "" : "no-photo"}">
+          ${item.image ? `<div class="experience-photo"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" /></div>` : ""}
+          <div class="experience-body">
+            <span class="experience-icon"><i data-lucide="${escapeHtml(item.icon || "sparkles")}" class="icon"></i></span>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.text)}</p>
+            <span class="experience-link">Explore</span>
+          </div>
         </article>`).join("");
 
       setText("travelEyebrow", c.travel.eyebrow);
@@ -3676,13 +4192,27 @@
       setText("diningTitle", c.dining.title);
       setText("diningText", c.dining.text);
       document.getElementById("diningItems").innerHTML = c.dining.items.map((item) => `<div class="dining-item"><span><i data-lucide="${escapeHtml(item.icon || "utensils")}" class="icon"></i></span>${escapeHtml(item.text)}</div>`).join("");
-      const diningPhotos = [...(c.dining.photos || []), ...(c.dining.photos || [])];
+      const diningPhotos = uniquePhotos(
+        (c.dining.photos && c.dining.photos.length ? c.dining.photos : window.DEFAULT_SITE_CONTENT.dining.photos) || [],
+        "Restaurant photo"
+      );
+      const diningVideoPhotos = diningPhotos.length
+        ? Array.from({ length: Math.max(10, diningPhotos.length * 2) }, (_, index) => diningPhotos[index % diningPhotos.length])
+        : [];
+      const diningPanelHtml = [0, 1, 2, 3, 4].map((panelIndex) => {
+        const panelPhotos = Array.from({ length: Math.min(4, Math.max(1, diningVideoPhotos.length)) }, (_, imageIndex) => diningVideoPhotos[(panelIndex + imageIndex) % diningVideoPhotos.length]).filter(Boolean);
+        return `
+          <article class="dining-gallery-card ${panelIndex === 0 ? "large" : ""}">
+            ${panelPhotos.map((photo, imageIndex) => `<img class="${imageIndex === 0 ? "active" : ""}" src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || "Restaurant photo")}" />`).join("")}
+            ${panelIndex === 0 ? `<div class="dining-card-copy"><h3>${escapeHtml(c.dining.eyebrow || "Restaurant")}</h3><p>${escapeHtml(c.dining.featureText || c.dining.text || "")}</p><span class="room-link">Explore restaurant <i data-lucide="arrow-right" class="icon"></i></span></div>` : ""}
+          </article>`;
+      }).join("");
       document.getElementById("diningMosaic").innerHTML = `
-        <div class="dining-slider"><div class="dining-track">
-          ${diningPhotos.map((photo) => `<div class="dining-photo"><img src="${escapeHtml(photo.image)}" alt="${escapeHtml(photo.alt || "Restaurant photo")}" /></div>`).join("")}
-        </div></div>
-        <div class="feature-tile"><span><i data-lucide="chef-hat" class="icon"></i></span><h3>${escapeHtml(c.dining.featureTitle)}</h3><p>${escapeHtml(c.dining.featureText)}</p></div>
+        <a class="dining-suite-stage" href="#restaurant-detail" data-dining-suite-stage aria-label="Explore restaurant">
+          ${diningPanelHtml}
+        </a>
       `;
+      setupDiningSuiteAnimation();
       renderRestaurantDetail(c);
 
       setText("islandEyebrow", c.island.eyebrow);
@@ -3753,6 +4283,7 @@
         <div class="contact-row"><span><i data-lucide="ship" class="icon"></i></span><div><strong>Travel Support</strong><p>${escapeHtml(c.contact.travelText)}</p></div></div>`;
 
       window.currentSiteContent = c;
+      document.body.classList.remove("site-loading");
       renderRoomDetailFromHash();
       if (isReloadNavigation) {
         requestAnimationFrame(forceHeroOnReload);
@@ -4520,7 +5051,10 @@
       entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add("show"); });
     }, { threshold: 0.14 });
     document.querySelectorAll(".reveal").forEach((section) => observer.observe(section));
-    applyContent(window.DEFAULT_SITE_CONTENT);
+    const cachedSiteContent = readCachedSiteContent();
+    if (cachedSiteContent) {
+      applyContent(cachedSiteContent);
+    }
     window.addEventListener("load", () => {
       renderIcons();
       forceHeroOnReload();
@@ -4569,12 +5103,19 @@
 
     onValue(siteRef, (snapshot) => {
       if (snapshot.exists()) {
-        applyContent(snapshot.val());
+        const firebaseContent = snapshot.val();
+        writeCachedSiteContent(firebaseContent);
+        applyContent(firebaseContent);
       } else {
         set(siteRef, window.DEFAULT_SITE_CONTENT);
       }
     }, () => {
-      applyContent(window.DEFAULT_SITE_CONTENT);
+      const cached = readCachedSiteContent();
+      if (cached) {
+        applyContent(cached);
+      } else {
+        applyContent(window.DEFAULT_SITE_CONTENT);
+      }
     });
     onValue(bookingsRef, (snapshot) => {
       window.currentBookings = snapshot.val() || {};
