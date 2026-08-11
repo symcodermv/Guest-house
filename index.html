@@ -21,7 +21,7 @@
   <meta name="twitter:title" content="Feeali Buddies Inn | Guest House in F. Feeali" />
   <meta name="twitter:description" content="Comfortable guest house accommodation in F. Feeali, Maldives." />
   <meta name="twitter:image" content="https://feealibuddiesinn.com/feeali-buddies-logo.png" />
-  <link rel="preload" as="video" href="assets/hero-feeali-video.mp4" type="video/mp4" />
+  <link rel="preload" as="video" href="hero-feeali-video.mp4" type="video/mp4" />
   <link rel="preconnect" href="https://images.unsplash.com" />
   <link rel="preconnect" href="https://unpkg.com" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
@@ -63,10 +63,23 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; overflow-x: hidden; }
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
     body {
       min-width: 320px;
       overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
       color: var(--ink);
       background: var(--paper);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
@@ -300,13 +313,14 @@
       padding: 112px 0 clamp(118px, 14vh, 176px);
       color: var(--white);
       text-align: center;
-      background: var(--hero-image) center / cover no-repeat;
+      background: #000;
     }
+    .hero:not(.has-hero-media) .hero-copy { opacity: 0; }
     .hero::before {
       content: "";
       position: absolute;
       inset: 0;
-      z-index: -1;
+      z-index: 1;
       background: linear-gradient(180deg, rgba(5, 36, 42, 0.04), rgba(5, 36, 42, 0.22) 48%, rgba(5, 36, 42, 0.30));
       pointer-events: none;
     }
@@ -317,17 +331,18 @@
       right: 0;
       bottom: -1px;
       height: clamp(96px, 14vh, 190px);
-      z-index: 0;
+      z-index: 2;
       background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.04) 46%, rgba(255,255,255,.34) 78%, var(--paper) 100%);
       pointer-events: none;
     }
     .hero-media {
       position: absolute;
       inset: 0;
-      z-index: -2;
+      z-index: 0;
       overflow: hidden;
-      background: var(--hero-image) center / cover no-repeat;
+      background: #000;
     }
+    .hero-media:empty { display: none; }
     .hero-media-item {
       position: absolute;
       inset: 0;
@@ -371,7 +386,7 @@
     .hero-media.video-ready::after { opacity: 0; }
     .hero-grid {
       position: relative;
-      z-index: 1;
+      z-index: 3;
       display: grid;
       grid-template-columns: 1fr;
       place-items: center;
@@ -3607,7 +3622,23 @@
         badge: "Slow island days",
         titleLines: ["Real Maldivian Life"],
         text: "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.",
-        media: [],
+        media: [
+          {
+            type: "video",
+            url: "IMG_5102.MP4",
+            portraitUrl: "IMG_5102.MP4",
+            poster: "",
+            alt: "Feeali Buddies Inn hero video",
+            rotate: "0",
+            mobileRotate: "0",
+            focusX: "50",
+            focusY: "50",
+            mobileFocusX: "50",
+            mobileFocusY: "50",
+            zoom: "1",
+            mobileZoom: "1"
+          }
+        ],
         facts: [
           { title: "F. Feeali", text: "Peaceful local island setting" },
           { title: "Lagoon", text: "Snorkeling, sandbank and boat trips" },
@@ -4108,33 +4139,66 @@
       "images.unsplash.com/photo-1566665797739",
       "images.unsplash.com/photo-1596394516093"
     ];
-    const cleanMediaUrl = (url = "") => String(url || "").trim().replace(/&amp;/g, "&");
+    const cleanMediaUrl = (url = "") => {
+      const textarea = document.createElement("textarea");
+      textarea.innerHTML = String(url || "").trim();
+      return textarea.value.replace(/^["']|["']$/g, "").trim();
+    };
+    const BAD_HERO_MEDIA_VALUES = new Set(["FeealiBeach.MP4", "./FeealiBeach.MP4", "assets/FeealiBeach.MP4"]);
+    const isBadHeroMediaUrl = (url = "") => {
+      const cleanUrl = cleanMediaUrl(url);
+      return !cleanUrl || BAD_HERO_MEDIA_VALUES.has(cleanUrl) || cleanUrl === DEFAULT_HERO_STOCK_IMAGE;
+    };
+    const isValidHeroMediaUrl = (url = "") => {
+      const cleanUrl = cleanMediaUrl(url);
+      if (isBadHeroMediaUrl(cleanUrl)) return false;
+      return /^(https?:|data:|blob:|\/|\.\/|assets\/)/i.test(cleanUrl) ||
+        /\.(m3u8|mp4|webm|mov|m4v|png|jpe?g|webp|gif|avif)(?:[?#].*)?$/i.test(cleanUrl);
+    };
+    const decodeMediaUrl = (url = "") => {
+      const cleanUrl = cleanMediaUrl(url);
+      try { return decodeURIComponent(cleanUrl); }
+      catch { return cleanUrl; }
+    };
+    const heroLandscapeUrl = (item = {}) => {
+      if (typeof item === "string") return cleanMediaUrl(item);
+      return cleanMediaUrl(item?.url || item?.landscapeUrl || item?.desktopUrl || item?.landscapeMedia || item?.desktopMedia || item?.src || item?.image || item?.video || "");
+    };
+    const heroPortraitUrl = (item = {}) => {
+      if (typeof item === "string") return "";
+      return cleanMediaUrl(item?.portraitUrl || item?.mobileUrl || item?.portraitMedia || item?.mobileMedia || item?.portrait || item?.mobile || "");
+    };
     const getHeroMediaUrl = (item) => {
       if (typeof item === "string") return cleanMediaUrl(item);
-      return cleanMediaUrl(item?.url || item?.portraitUrl || item?.poster || item?.posterPortrait || "");
+      return heroLandscapeUrl(item) || heroPortraitUrl(item) || cleanMediaUrl(item?.poster || item?.posterPortrait || "");
     };
     const isPortraitHero = () => (
       (window.matchMedia && window.matchMedia("(orientation: portrait)").matches) ||
       window.innerWidth <= 760
     );
-    const getHeroMediaUrlForViewport = (item, preferPortrait = isPortraitHero()) => {
+    const getHeroMediaUrlForViewport = (item, preferPortrait = isPortraitHero(), allowFallback = true) => {
       if (typeof item === "string") return cleanMediaUrl(item);
-      const landscapeUrl = cleanMediaUrl(item?.url || "");
-      const portraitUrl = cleanMediaUrl(item?.portraitUrl || "");
-      return preferPortrait ? (portraitUrl || landscapeUrl) : landscapeUrl;
+      const landscapeUrl = heroLandscapeUrl(item);
+      const portraitUrl = heroPortraitUrl(item);
+      return preferPortrait ? (portraitUrl || (allowFallback ? landscapeUrl : "")) : (landscapeUrl || (allowFallback ? portraitUrl : ""));
     };
-    const getResponsiveHeroMediaUrl = (item) => {
+    const getResponsiveHeroMediaUrl = (item, allowFallback = true) => {
       if (typeof item === "string") return cleanMediaUrl(item);
-      return getHeroMediaUrlForViewport(item);
+      return getHeroMediaUrlForViewport(item, isPortraitHero(), allowFallback);
     };
     const getResponsiveHeroPoster = (item) => {
       if (typeof item === "string") return "";
-      return cleanMediaUrl((isPortraitHero() && item?.posterPortrait) ? item.posterPortrait : item?.poster || "");
+      return cleanMediaUrl(isPortraitHero()
+        ? (item?.posterPortrait || item?.portraitPoster || item?.mobilePoster || item?.poster || "")
+        : (item?.poster || item?.landscapePoster || item?.desktopPoster || ""));
     };
     const keepHeroVideoAlive = (video) => {
       if (!video) return;
       video.muted = true;
       video.playsInline = true;
+      video.setAttribute("playsinline", "");
+      video.setAttribute("webkit-playsinline", "");
+      video.controls = false;
       const tryPlay = () => video.play().catch(() => {});
       const recovery = () => {
         if (video.readyState < 2) video.load();
@@ -4149,7 +4213,7 @@
         if (video.paused || video.readyState < 2) recovery();
       }, 900);
     };
-    const isCustomHeroMedia = (item) => Boolean(getHeroMediaUrl(item));
+    const isCustomHeroMedia = (item) => isValidHeroMediaUrl(getHeroMediaUrl(item));
     const isLegacyDefaultHeroMedia = (item) => (
       item?.url === "FeealiBeach.MP4" &&
       item?.portraitUrl === "FeealiBeach.MP4" &&
@@ -4157,11 +4221,14 @@
     );
     const toHeroMediaList = (media) => {
       if (Array.isArray(media)) {
-        const entries = media.filter((item) => item && (typeof item === "string" || typeof item === "object"));
+        const entries = media.filter((item) => item && (
+          (typeof item === "string" && isValidHeroMediaUrl(item)) ||
+          (typeof item === "object" && isCustomHeroMedia(item))
+        ));
         if (entries.length) return entries;
         return getHeroMediaUrl(media) ? [{ ...media }] : [];
       }
-      if (typeof media === "string") return cleanMediaUrl(media) ? [media] : [];
+      if (typeof media === "string") return isValidHeroMediaUrl(media) ? [media] : [];
       if (media && typeof media === "object") return getHeroMediaUrl(media) ? [media] : [];
       return [];
     };
@@ -4179,8 +4246,25 @@
       const rotate = clampNumber(isMobile ? item.mobileRotate ?? item.rotate : item.rotate, -270, 270, 0);
       return `--hero-focus-x:${focusX}%;--hero-focus-y:${focusY}%;--hero-zoom:${zoom};--hero-rotate:${rotate}deg;--hero-fit:cover;`;
     };
-    const isHlsUrl = (url = "") => /\.m3u8(?:[?#].*)?$/i.test(cleanMediaUrl(url));
-    const isVideoUrl = (url = "") => /\.(mp4|webm|mov|m4v)(?:[?#].*)?$/i.test(cleanMediaUrl(url));
+    const isHlsUrl = (url = "") => {
+      const cleanUrl = cleanMediaUrl(url).toLowerCase();
+      return /\.m3u8(?:[?#].*)?$/.test(cleanUrl) || cleanUrl.includes(".m3u8?");
+    };
+    const isVideoUrl = (url = "") => {
+      const cleanUrl = decodeMediaUrl(cleanMediaUrl(url)).toLowerCase();
+      const pathOnly = cleanUrl.split("?")[0].split("#")[0];
+      return /\.(mp4|webm|mov|m4v)$/.test(pathOnly) ||
+        /\.(mp4|webm|mov|m4v)(?:[?#]|$)/.test(cleanUrl) ||
+        cleanUrl.includes("/videos/") ||
+        cleanUrl.includes("contenttype=video");
+    };
+    const videoMimeForUrl = (url = "") => {
+      const cleanUrl = decodeMediaUrl(cleanMediaUrl(url)).toLowerCase();
+      if (/\.webm(?:[?#]|$)/.test(cleanUrl)) return "video/webm";
+      if (/\.mov(?:[?#]|$)/.test(cleanUrl)) return "video/quicktime";
+      if (/\.m4v(?:[?#]|$)/.test(cleanUrl)) return "video/x-m4v";
+      return "video/mp4";
+    };
     const attachHeroHls = (video, url) => {
       if (!video || !url) return;
       if (video.canPlayType("application/vnd.apple.mpegurl")) {
@@ -4216,6 +4300,7 @@
     const renderHeroMedia = (media = [], fallbackImage = "", fallbackAlt = "Feeali Buddies Inn") => {
       const holder = document.getElementById("heroMedia");
       if (!holder) return;
+      const heroEl = document.getElementById("home");
       clearInterval(heroMediaTimer);
       heroMediaTimer = null;
       holder.classList.add("video-waiting");
@@ -4227,14 +4312,20 @@
       const preferPortraitMedia = isPortraitHero();
       const preparedMedia = toHeroMediaList(media)
         .map((item) => {
-          if (typeof item === "string") return { type: "image", url: item, alt: fallbackAlt };
-          return item || {};
+          if (typeof item === "string") {
+            const url = cleanMediaUrl(item);
+            return { type: isHlsUrl(url) ? "hls" : isVideoUrl(url) ? "video" : "image", url, alt: fallbackAlt };
+          }
+          const copy = item || {};
+          const viewportUrl = getHeroMediaUrlForViewport(copy, preferPortraitMedia);
+          const inferredType = isHlsUrl(viewportUrl) ? "hls" : isVideoUrl(viewportUrl) ? "video" : String(copy.type || "image").toLowerCase();
+          return { ...copy, type: inferredType };
         })
         .filter((item) => isCustomHeroMedia(item) && !isLegacyDefaultHeroMedia(item));
       let cleanMedia = preparedMedia
-        .filter((item) => getHeroMediaUrlForViewport(item, preferPortraitMedia));
-      if (preferPortraitMedia && !cleanMedia.length) {
-        cleanMedia = preparedMedia.filter((item) => cleanMediaUrl(item?.url || ""));
+        .filter((item) => isValidHeroMediaUrl(getHeroMediaUrlForViewport(item, preferPortraitMedia, false)));
+      if (!cleanMedia.length) {
+        cleanMedia = preparedMedia.filter((item) => isValidHeroMediaUrl(getHeroMediaUrlForViewport(item, preferPortraitMedia, true)));
       }
       let slides = cleanMedia;
       if (!slides.length && fallbackImage && fallbackImage !== DEFAULT_HERO_STOCK_IMAGE) {
@@ -4243,11 +4334,25 @@
       }
       if (!slides.length) {
         holder.innerHTML = "";
+        holder.style.backgroundImage = "";
+        heroEl?.classList.remove("has-hero-media");
         markHeroReady();
         return;
       }
+      heroEl?.classList.add("has-hero-media");
+      const firstPreview = (() => {
+        const first = slides[0] || {};
+        const url = getResponsiveHeroMediaUrl(first);
+        const poster = getResponsiveHeroPoster(first);
+        const typeValue = String(first.type || "").toLowerCase();
+        const isVideo = typeValue.includes("video") || typeValue.includes("hls") || isVideoUrl(url) || isHlsUrl(url);
+        return poster || (!isVideo ? url : "");
+      })();
+      holder.style.backgroundImage = firstPreview ? `url("${firstPreview.replace(/"/g, "%22")}")` : "var(--hero-image)";
+      markHeroReady();
       holder.innerHTML = slides.map((item, index) => {
         const rawUrl = getResponsiveHeroMediaUrl(item);
+        if (!isValidHeroMediaUrl(rawUrl)) return "";
         const typeValue = String(item.type || "").toLowerCase();
         const hls = typeValue === "hls" || typeValue.includes("hls") || isHlsUrl(rawUrl);
         const type = typeValue === "video" || typeValue.includes("video") || hls || isVideoUrl(rawUrl) ? "video" : "image";
@@ -4260,10 +4365,11 @@
         const end = 0;
         if (type === "video") {
           const hlsAttr = hls ? ` data-hls="${url}"` : "";
-          const source = hls ? "" : `<source src="${url}">`;
-          return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><video muted playsinline autoplay loop preload="${index === 0 ? "auto" : "metadata"}" data-start="${start}" data-end="${end}"${hlsAttr}${poster}>${source}</video></div>`;
+          const source = hls ? "" : `<source src="${url}" type="${escapeHtml(videoMimeForUrl(rawUrl))}">`;
+          const srcAttr = hls ? "" : ` src="${url}"`;
+          return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><video${srcAttr} muted playsinline webkit-playsinline autoplay loop preload="${index === 0 ? "auto" : "metadata"}" data-start="${start}" data-end="${end}"${hlsAttr}${poster}>${source}</video></div>`;
         }
-        return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><img src="${url}" alt="${alt}" /></div>`;
+        return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><img src="${url}" alt="${alt}" loading="${index === 0 ? "eager" : "lazy"}" ${index === 0 ? 'fetchpriority="high"' : ""} /></div>`;
       }).join("");
       const renderedSlides = [...holder.querySelectorAll(".hero-media-item")];
       const activateNextHeroSlide = (currentSlide) => {
@@ -4290,12 +4396,19 @@
       });
       holder.querySelectorAll("video").forEach((video, index) => {
         if (video.dataset.hls) attachHeroHls(video, video.dataset.hls);
-        video.addEventListener("error", () => activateNextHeroSlide(video.closest(".hero-media-item")), { once: true });
+        video.addEventListener("error", () => {
+          const slide = video.closest(".hero-media-item");
+          if (renderedSlides.length > 1) activateNextHeroSlide(slide);
+          else markHeroReady();
+        }, { once: true });
         if (index === 0) {
           video.addEventListener("playing", markHeroReady, { once: true });
           video.addEventListener("canplay", markHeroReady, { once: true });
-          setTimeout(markHeroReady, 1200);
+          video.addEventListener("loadeddata", markHeroReady, { once: true });
+          video.addEventListener("loadedmetadata", markHeroReady, { once: true });
+          if (video.readyState >= 2) markHeroReady();
           keepHeroVideoAlive(video);
+          setTimeout(markHeroReady, 500);
         }
       });
       if (renderedSlides.length > 1) {
@@ -4334,7 +4447,20 @@
       c.hero.badge = "Slow island days";
       c.hero.titleLines = ["Real Maldivian Life"];
       c.hero.text = "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.";
-      c.hero.media = toHeroMediaList(c.hero.media);
+      const defaultHeroMedia = toHeroMediaList(window.DEFAULT_SITE_CONTENT.hero.media);
+      const remoteImageHeroMedia = toHeroMediaList(c.hero.media).filter((item) => {
+        const landscapeUrl = getHeroMediaUrlForViewport(item, false);
+        const portraitUrl = getHeroMediaUrlForViewport(item, true);
+        const typeValue = String(item?.type || "").toLowerCase();
+        const isVideoMedia = typeValue.includes("video") ||
+          typeValue.includes("hls") ||
+          isVideoUrl(landscapeUrl) ||
+          isVideoUrl(portraitUrl) ||
+          isHlsUrl(landscapeUrl) ||
+          isHlsUrl(portraitUrl);
+        return !isVideoMedia && isCustomHeroMedia(item) && !isLegacyDefaultHeroMedia(item);
+      });
+      c.hero.media = [...defaultHeroMedia, ...remoteImageHeroMedia];
       const incomingRooms = content && content !== window.DEFAULT_SITE_CONTENT && Array.isArray(content.rooms?.items) ? content.rooms.items : [];
       c.rooms.items = incomingRooms.filter((room) => room && hasCustomRoomImage(room));
       c.activities.items = mergeList(window.DEFAULT_SITE_CONTENT.activities.items, c.activities.items);
@@ -5185,7 +5311,8 @@
     }, { threshold: 0.14 });
     document.querySelectorAll(".reveal").forEach((section) => observer.observe(section));
     const cachedSiteContent = readCachedSiteContent();
-    applyContent(cachedSiteContent || window.DEFAULT_SITE_CONTENT);
+    const cachedHasHeroMedia = toHeroMediaList(cachedSiteContent?.hero?.media).some(isCustomHeroMedia);
+    applyContent(cachedHasHeroMedia ? cachedSiteContent : window.DEFAULT_SITE_CONTENT);
     let lastHeroPortraitMode = isPortraitHero();
     const refreshHeroForScreenMode = () => {
       const nextHeroPortraitMode = isPortraitHero();
@@ -5252,3 +5379,4 @@
   </script>
 </body>
 </html>
+
