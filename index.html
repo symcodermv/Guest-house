@@ -58,8 +58,8 @@
       --shadow: 0 24px 70px rgba(8, 42, 48, 0.18);
       --soft-shadow: 0 14px 38px rgba(8, 42, 48, 0.10);
       --max: 1180px;
-      --hero-fallback-image: url("https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=2400&q=88");
-      --hero-image: var(--hero-fallback-image);
+      --hero-fallback-image: none;
+      --hero-image: none;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -337,6 +337,7 @@
       --hero-focus-x: 50%;
       --hero-focus-y: 50%;
       --hero-zoom: 1;
+      --hero-rotate: 0deg;
       --hero-fit: cover;
     }
     .hero-media-item.active {
@@ -345,13 +346,16 @@
     }
     .hero-media img,
     .hero-media video {
+      display: block;
       width: 100%;
       height: 100%;
-      object-fit: var(--hero-fit);
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
       object-position: var(--hero-focus-x) var(--hero-focus-y);
       background: transparent;
       filter: saturate(1.08) contrast(1.04);
-      transform: scale(var(--hero-zoom)) translateZ(0);
+      transform: scale(var(--hero-zoom)) rotate(var(--hero-rotate)) translateZ(0);
       transform-origin: var(--hero-focus-x) var(--hero-focus-y);
     }
     .hero-media.video-waiting::after {
@@ -2045,12 +2049,14 @@
     .activity-carousel {
       position: relative;
       margin-top: 10px;
-      padding: 0 52px;
-      width: 100%;
-      --activity-card-w: clamp(250px, 28vw, 370px);
-      --activity-overlap: -44px;
-      --activity-center-scale: 1.18;
-      --activity-side-pad: 52px;
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      padding: 0;
+      --activity-card-w: clamp(280px, 30vw, 430px);
+      --activity-overlap: -28px;
+      --activity-center-scale: 1.12;
     }
     .activity-grid {
       display: flex;
@@ -2058,10 +2064,14 @@
       gap: 0;
       overflow-x: auto;
       overflow-y: hidden;
-      padding: 68px max(20px, calc((100vw - (var(--activity-side-pad) * 2) - var(--activity-card-w)) / 2)) 82px;
+      width: 100%;
+      padding: 68px calc((100vw - var(--activity-card-w)) / 2) 82px;
       scroll-snap-type: x mandatory;
+      scroll-padding-inline: calc((100vw - var(--activity-card-w)) / 2);
+      scroll-behavior: smooth;
       scrollbar-width: none;
       perspective: 900px;
+      overscroll-behavior-inline: contain;
     }
     .activity-grid::-webkit-scrollbar { display: none; }
     .activity-card {
@@ -3000,40 +3010,33 @@
       .footer-links { grid-template-columns: 1fr; }
       .footer-logo { width: 140px; }
     }
-    /* Keep the Ocean Adventures feature card visually centered on landscape screens. */
+    /* Keep Ocean Adventures as a true centered scroll rail on landscape screens. */
     @media (orientation: landscape) and (min-width: 700px) {
-      .activities .activity-grid,
-      .activities .activity-carousel,
-      .activities .activities-carousel,
-      .activities .activity-deck,
-      .activities .activities-deck,
-      .activities .activity-stack,
-      .activities .activities-stack {
+      .activities .activity-carousel {
         width: 100vw !important;
         max-width: none !important;
         margin-left: calc(50% - 50vw) !important;
         margin-right: calc(50% - 50vw) !important;
-        justify-content: center !important;
-        align-items: center !important;
-        overflow: hidden !important;
+        overflow: visible !important;
       }
 
-      .activities .activity-track,
-      .activities .activities-track,
-      .activities .activity-carousel-track,
-      .activities .activities-carousel-track {
-        left: 50% !important;
-        right: auto !important;
-        transform-origin: center center !important;
+      .activities .activity-grid {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        justify-content: flex-start !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding-left: calc((100vw - var(--activity-card-w)) / 2) !important;
+        padding-right: calc((100vw - var(--activity-card-w)) / 2) !important;
+        scroll-padding-inline: calc((100vw - var(--activity-card-w)) / 2) !important;
       }
 
       .activities .activity-card.is-active,
       .activities .activity-card.active,
       .activities .activity-card.center,
       .activities .activity-card.featured {
-        left: 50% !important;
-        right: auto !important;
-        transform: translateX(-50%) scale(1) !important;
+        transform: scale(var(--activity-center-scale)) translateY(0) !important;
         z-index: 8 !important;
       }
     }
@@ -3065,11 +3068,7 @@
   </nav>
 
   <header class="hero" id="home">
-    <div class="hero-media video-ready" id="heroMedia" aria-hidden="true">
-      <div class="hero-media-item active">
-        <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=2400&q=88" alt="">
-      </div>
-    </div>
+    <div class="hero-media video-ready" id="heroMedia" aria-hidden="true"></div>
     <div class="container hero-grid">
       <div class="hero-copy">
         <span class="hero-badge"><i data-lucide="map-pin" class="icon"></i> <span id="heroBadge"></span></span>
@@ -4109,19 +4108,28 @@
       "images.unsplash.com/photo-1566665797739",
       "images.unsplash.com/photo-1596394516093"
     ];
+    const cleanMediaUrl = (url = "") => String(url || "").trim().replace(/&amp;/g, "&");
     const getHeroMediaUrl = (item) => {
-      if (typeof item === "string") return item;
-      return item?.url || item?.portraitUrl || item?.poster || item?.posterPortrait || "";
+      if (typeof item === "string") return cleanMediaUrl(item);
+      return cleanMediaUrl(item?.url || item?.portraitUrl || item?.poster || item?.posterPortrait || "");
     };
-    const isPortraitHero = () => window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
+    const isPortraitHero = () => (
+      (window.matchMedia && window.matchMedia("(orientation: portrait)").matches) ||
+      window.innerWidth <= 760
+    );
+    const getHeroMediaUrlForViewport = (item, preferPortrait = isPortraitHero()) => {
+      if (typeof item === "string") return cleanMediaUrl(item);
+      const landscapeUrl = cleanMediaUrl(item?.url || "");
+      const portraitUrl = cleanMediaUrl(item?.portraitUrl || "");
+      return preferPortrait ? (portraitUrl || landscapeUrl) : landscapeUrl;
+    };
     const getResponsiveHeroMediaUrl = (item) => {
-      if (typeof item === "string") return item;
-      if (isPortraitHero() && item?.portraitUrl) return item.portraitUrl;
-      return item?.url || item?.portraitUrl || item?.poster || item?.posterPortrait || "";
+      if (typeof item === "string") return cleanMediaUrl(item);
+      return getHeroMediaUrlForViewport(item);
     };
     const getResponsiveHeroPoster = (item) => {
       if (typeof item === "string") return "";
-      return (isPortraitHero() && item?.posterPortrait) ? item.posterPortrait : item?.poster || "";
+      return cleanMediaUrl((isPortraitHero() && item?.posterPortrait) ? item.posterPortrait : item?.poster || "");
     };
     const keepHeroVideoAlive = (video) => {
       if (!video) return;
@@ -4147,6 +4155,16 @@
       item?.portraitUrl === "FeealiBeach.MP4" &&
       item?.alt === "Feeali Buddies Inn hero video"
     );
+    const toHeroMediaList = (media) => {
+      if (Array.isArray(media)) {
+        const entries = media.filter((item) => item && (typeof item === "string" || typeof item === "object"));
+        if (entries.length) return entries;
+        return getHeroMediaUrl(media) ? [{ ...media }] : [];
+      }
+      if (typeof media === "string") return cleanMediaUrl(media) ? [media] : [];
+      if (media && typeof media === "object") return getHeroMediaUrl(media) ? [media] : [];
+      return [];
+    };
     const isDefaultRoomImage = (url = "") => DEFAULT_ROOM_IMAGE_PATTERNS.some((pattern) => String(url).includes(pattern));
     const clampNumber = (value, min, max, fallback) => {
       const number = Number(value);
@@ -4158,12 +4176,11 @@
       const focusX = clampNumber(isMobile ? item.mobileFocusX ?? item.focusX : item.focusX, 0, 100, 50);
       const focusY = clampNumber(isMobile ? item.mobileFocusY ?? item.focusY : item.focusY, 0, 100, 50);
       const zoom = clampNumber(isMobile ? item.mobileZoom ?? item.zoom : item.zoom, 1, 2.4, 1);
-      const fitValue = String(isMobile ? item.mobileFit ?? item.fit : item.fit || "cover").toLowerCase();
-      const fit = fitValue === "contain" ? "contain" : "cover";
-      return `--hero-focus-x:${focusX}%;--hero-focus-y:${focusY}%;--hero-zoom:${zoom};--hero-fit:${fit};`;
+      const rotate = clampNumber(isMobile ? item.mobileRotate ?? item.rotate : item.rotate, -270, 270, 0);
+      return `--hero-focus-x:${focusX}%;--hero-focus-y:${focusY}%;--hero-zoom:${zoom};--hero-rotate:${rotate}deg;--hero-fit:cover;`;
     };
-    const isHlsUrl = (url = "") => /\.m3u8(?:[?#].*)?$/i.test(String(url).trim());
-    const isVideoUrl = (url = "") => /\.(mp4|webm|mov|m4v)(?:[?#].*)?$/i.test(String(url).trim());
+    const isHlsUrl = (url = "") => /\.m3u8(?:[?#].*)?$/i.test(cleanMediaUrl(url));
+    const isVideoUrl = (url = "") => /\.(mp4|webm|mov|m4v)(?:[?#].*)?$/i.test(cleanMediaUrl(url));
     const attachHeroHls = (video, url) => {
       if (!video || !url) return;
       if (video.canPlayType("application/vnd.apple.mpegurl")) {
@@ -4203,35 +4220,44 @@
       heroMediaTimer = null;
       holder.classList.add("video-waiting");
       holder.classList.remove("video-ready");
-      const cleanMedia = (Array.isArray(media) ? media : [])
+      const markHeroReady = () => {
+        holder.classList.add("video-ready");
+        holder.classList.remove("video-waiting");
+      };
+      const preferPortraitMedia = isPortraitHero();
+      const preparedMedia = toHeroMediaList(media)
         .map((item) => {
           if (typeof item === "string") return { type: "image", url: item, alt: fallbackAlt };
           return item || {};
         })
         .filter((item) => isCustomHeroMedia(item) && !isLegacyDefaultHeroMedia(item));
+      let cleanMedia = preparedMedia
+        .filter((item) => getHeroMediaUrlForViewport(item, preferPortraitMedia));
+      if (preferPortraitMedia && !cleanMedia.length) {
+        cleanMedia = preparedMedia.filter((item) => cleanMediaUrl(item?.url || ""));
+      }
       let slides = cleanMedia;
-      if (!slides.length && fallbackImage) {
+      if (!slides.length && fallbackImage && fallbackImage !== DEFAULT_HERO_STOCK_IMAGE) {
         const fallbackType = isHlsUrl(fallbackImage) ? "hls" : isVideoUrl(fallbackImage) ? "video" : "image";
         slides = [{ type: fallbackType, url: fallbackImage, alt: fallbackAlt }];
       }
       if (!slides.length) {
-        holder.innerHTML = `<div class="hero-media-item active"><img src="${DEFAULT_HERO_STOCK_IMAGE}" alt="${escapeHtml(fallbackAlt)}" /></div>`;
-        holder.classList.add("video-ready");
-        holder.classList.remove("video-waiting");
+        holder.innerHTML = "";
+        markHeroReady();
         return;
       }
       holder.innerHTML = slides.map((item, index) => {
         const rawUrl = getResponsiveHeroMediaUrl(item);
         const typeValue = String(item.type || "").toLowerCase();
-        const hls = typeValue === "hls" || isHlsUrl(rawUrl);
-        const type = typeValue === "video" || hls ? "video" : "image";
+        const hls = typeValue === "hls" || typeValue.includes("hls") || isHlsUrl(rawUrl);
+        const type = typeValue === "video" || typeValue.includes("video") || hls || isVideoUrl(rawUrl) ? "video" : "image";
         const alt = escapeHtml(item.alt || fallbackAlt);
         const url = escapeHtml(rawUrl);
         const posterUrl = getResponsiveHeroPoster(item);
         const poster = posterUrl ? ` poster="${escapeHtml(posterUrl)}"` : "";
         const cropStyle = escapeHtml(getHeroCropStyle(item));
-        const start = clampNumber(item.startTime, 0, 99999, 0);
-        const end = clampNumber(item.endTime, 0, 99999, 0);
+        const start = 0;
+        const end = 0;
         if (type === "video") {
           const hlsAttr = hls ? ` data-hls="${url}"` : "";
           const source = hls ? "" : `<source src="${url}">`;
@@ -4240,29 +4266,35 @@
         return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><img src="${url}" alt="${alt}" /></div>`;
       }).join("");
       const renderedSlides = [...holder.querySelectorAll(".hero-media-item")];
+      const activateNextHeroSlide = (currentSlide) => {
+        const currentIndex = renderedSlides.indexOf(currentSlide);
+        const nextSlide = renderedSlides.find((slide, index) => index !== currentIndex && slide.isConnected);
+        if (!nextSlide) {
+          currentSlide?.remove();
+          markHeroReady();
+          return;
+        }
+        currentSlide?.classList.remove("active");
+        nextSlide.classList.add("active");
+        markHeroReady();
+      };
+      holder.querySelectorAll("img").forEach((image, index) => {
+        const slide = image.closest(".hero-media-item");
+        const readyImage = () => {
+          if (index === 0 || slide?.classList.contains("active")) markHeroReady();
+        };
+        image.addEventListener("load", readyImage, { once: true });
+        image.addEventListener("error", () => activateNextHeroSlide(slide), { once: true });
+        if (image.complete && image.naturalWidth > 0) readyImage();
+        if (index === 0) setTimeout(markHeroReady, 700);
+      });
       holder.querySelectorAll("video").forEach((video, index) => {
         if (video.dataset.hls) attachHeroHls(video, video.dataset.hls);
-        const start = Number(video.dataset.start || 0);
-        const end = Number(video.dataset.end || 0);
-        const applyStart = () => {
-          if (Number.isFinite(start) && start > 0 && video.currentTime < start) video.currentTime = start;
-        };
-        const enforceSegment = () => {
-          if (Number.isFinite(end) && end > 0 && video.currentTime >= end) {
-            video.currentTime = Number.isFinite(start) && start > 0 ? start : 0;
-            video.play().catch(() => {});
-          }
-        };
-        video.addEventListener("loadedmetadata", applyStart);
-        video.addEventListener("timeupdate", enforceSegment);
+        video.addEventListener("error", () => activateNextHeroSlide(video.closest(".hero-media-item")), { once: true });
         if (index === 0) {
-          const markReady = () => {
-            holder.classList.add("video-ready");
-            holder.classList.remove("video-waiting");
-          };
-          video.addEventListener("playing", markReady, { once: true });
-          video.addEventListener("canplay", markReady, { once: true });
-          setTimeout(markReady, 1200);
+          video.addEventListener("playing", markHeroReady, { once: true });
+          video.addEventListener("canplay", markHeroReady, { once: true });
+          setTimeout(markHeroReady, 1200);
           keepHeroVideoAlive(video);
         }
       });
@@ -4302,7 +4334,7 @@
       c.hero.badge = "Slow island days";
       c.hero.titleLines = ["Real Maldivian Life"];
       c.hero.text = "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.";
-      if (!Array.isArray(c.hero.media)) c.hero.media = [];
+      c.hero.media = toHeroMediaList(c.hero.media);
       const incomingRooms = content && content !== window.DEFAULT_SITE_CONTENT && Array.isArray(content.rooms?.items) ? content.rooms.items : [];
       c.rooms.items = incomingRooms.filter((room) => room && hasCustomRoomImage(room));
       c.activities.items = mergeList(window.DEFAULT_SITE_CONTENT.activities.items, c.activities.items);
@@ -4324,14 +4356,7 @@
       c.travel.speedboats = Array.isArray(c.travel?.speedboats) ? c.travel.speedboats : [];
       c.island.sliderImages = mergeList(window.DEFAULT_SITE_CONTENT.island.sliderImages, c.island.sliderImages);
       document.title = `${c.site.name} | Guest House in ${c.site.island}`;
-      const firstHeroImage = (Array.isArray(c.hero.media) ? c.hero.media : []).find((item) => {
-        const url = getHeroMediaUrl(item);
-        const type = typeof item === "string" ? "image" : String(item?.type || "image").toLowerCase();
-        return isCustomHeroMedia(item) && type !== "video" && type !== "hls" && !isVideoUrl(url) && !isHlsUrl(url) && url;
-      });
-      const firstHeroImageUrl = getHeroMediaUrl(firstHeroImage);
-      const cssHeroImage = firstHeroImageUrl || (!isVideoUrl(c.site.heroImage) && !isHlsUrl(c.site.heroImage) && c.site.heroImage ? c.site.heroImage : DEFAULT_HERO_STOCK_IMAGE);
-      document.documentElement.style.setProperty("--hero-image", `url("${cssHeroImage}")`);
+      document.documentElement.style.setProperty("--hero-image", "none");
       document.documentElement.style.setProperty("--island-image", `url("${c.island.image}")`);
       document.documentElement.style.setProperty("--activities-bg-image", `url("${c.activities.backgroundImage || c.activities.items?.[0]?.image || c.site.heroImage}")`);
       document.documentElement.style.setProperty("--activities-bg-opacity", c.activities.backgroundOpacity || "0.18");
@@ -4346,7 +4371,7 @@
       document.getElementById("travel").style.setProperty("--travel-bg-opacity", c.travel.backgroundOpacity || "0.82");
       document.querySelectorAll("[data-brand-name]").forEach((el) => { el.textContent = c.site.name; });
       setText("heroBadge", c.hero.badge);
-      renderHeroMedia(c.hero.media, c.site.heroImage, c.site.name);
+      renderHeroMedia(c.hero.media, "", c.site.name);
       document.getElementById("heroTitle").innerHTML = `
         <span class="desktop-break">${c.hero.titleLines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</span>
         <span class="mobile-break">${c.hero.titleLines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</span>`;
@@ -4912,18 +4937,31 @@
       cards.forEach((card) => card.classList.toggle("featured", card === closest));
     };
 
+    const centerActivityCard = (card, behavior = "smooth") => {
+      const grid = document.getElementById("activitiesGrid");
+      if (!grid || !card) return;
+      const target = card.offsetLeft - ((grid.clientWidth - card.offsetWidth) / 2);
+      grid.scrollTo({ left: Math.max(0, target), behavior });
+    };
+
     const setupActivityCarousel = () => {
       const grid = document.getElementById("activitiesGrid");
       if (!grid) return;
       if (!grid.dataset.boundCenter) {
         grid.dataset.boundCenter = "true";
         grid.addEventListener("scroll", () => window.requestAnimationFrame(updateActivityFeatured), { passive: true });
+        grid.addEventListener("wheel", (event) => {
+          if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+            event.preventDefault();
+            grid.scrollLeft += event.deltaY;
+          }
+        }, { passive: false });
         window.addEventListener("resize", updateActivityFeatured);
       }
       requestAnimationFrame(() => {
         const cards = [...grid.querySelectorAll(".activity-card")];
-        const startCard = cards[Math.min(2, Math.max(0, Math.floor((cards.length - 1) / 2)))] || cards[0];
-        startCard?.scrollIntoView({ behavior: "auto", inline: "center", block: "nearest" });
+        const startCard = cards[Math.max(0, Math.floor(cards.length / 2))] || cards[0];
+        centerActivityCard(startCard, "auto");
         requestAnimationFrame(updateActivityFeatured);
       });
     };
@@ -5027,7 +5065,7 @@
         const cards = [...grid.querySelectorAll(".activity-card")];
         const activeIndex = Math.max(0, cards.findIndex((card) => card.classList.contains("featured")));
         const nextIndex = Math.min(cards.length - 1, Math.max(0, activeIndex + direction));
-        cards[nextIndex]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        centerActivityCard(cards[nextIndex], "smooth");
         setTimeout(updateActivityFeatured, 320);
       } else if (roomButton) {
         const index = Number(roomButton.dataset.roomIndex);
@@ -5036,7 +5074,7 @@
         document.getElementById("roomDetail").scrollIntoView({ behavior: "smooth", block: "start" });
       } else if (activityButton) {
         if (!activityButton.classList.contains("featured")) {
-          activityButton.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+          centerActivityCard(activityButton, "smooth");
           setTimeout(updateActivityFeatured, 280);
           return;
         }
@@ -5148,6 +5186,16 @@
     document.querySelectorAll(".reveal").forEach((section) => observer.observe(section));
     const cachedSiteContent = readCachedSiteContent();
     applyContent(cachedSiteContent || window.DEFAULT_SITE_CONTENT);
+    let lastHeroPortraitMode = isPortraitHero();
+    const refreshHeroForScreenMode = () => {
+      const nextHeroPortraitMode = isPortraitHero();
+      if (nextHeroPortraitMode === lastHeroPortraitMode) return;
+      lastHeroPortraitMode = nextHeroPortraitMode;
+      const content = window.currentSiteContent || readCachedSiteContent() || window.DEFAULT_SITE_CONTENT;
+      renderHeroMedia(toHeroMediaList(content.hero?.media), "", content.site?.name || "Feeali Buddies Inn");
+    };
+    window.addEventListener("resize", refreshHeroForScreenMode);
+    window.addEventListener("orientationchange", () => setTimeout(refreshHeroForScreenMode, 180));
     window.addEventListener("load", () => {
       renderIcons();
       forceHeroOnReload();
