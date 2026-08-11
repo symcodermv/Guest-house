@@ -21,9 +21,11 @@
   <meta name="twitter:title" content="Feeali Buddies Inn | Guest House in F. Feeali" />
   <meta name="twitter:description" content="Comfortable guest house accommodation in F. Feeali, Maldives." />
   <meta name="twitter:image" content="https://feealibuddiesinn.com/feeali-buddies-logo.png" />
+  <link rel="preload" as="video" href="assets/hero-feeali-video.mp4" type="video/mp4" />
   <link rel="preconnect" href="https://images.unsplash.com" />
   <link rel="preconnect" href="https://unpkg.com" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.18/dist/hls.min.js" defer></script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -56,6 +58,8 @@
       --shadow: 0 24px 70px rgba(8, 42, 48, 0.18);
       --soft-shadow: 0 14px 38px rgba(8, 42, 48, 0.10);
       --max: 1180px;
+      --hero-fallback-image: url("https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=2400&q=88");
+      --hero-image: var(--hero-fallback-image);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -68,6 +72,10 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
     }
     body.menu-open { overflow: hidden; }
+    html.menu-open {
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
     button, input, select { font: inherit; }
@@ -292,7 +300,7 @@
       padding: 112px 0 clamp(118px, 14vh, 176px);
       color: var(--white);
       text-align: center;
-      background: transparent;
+      background: var(--hero-image) center / cover no-repeat;
     }
     .hero::before {
       content: "";
@@ -318,7 +326,7 @@
       inset: 0;
       z-index: -2;
       overflow: hidden;
-      background: #092f37;
+      background: var(--hero-image) center / cover no-repeat;
     }
     .hero-media-item {
       position: absolute;
@@ -326,6 +334,10 @@
       opacity: 0;
       transform: none;
       transition: opacity 1.2s ease;
+      --hero-focus-x: 50%;
+      --hero-focus-y: 50%;
+      --hero-zoom: 1;
+      --hero-fit: cover;
     }
     .hero-media-item.active {
       opacity: 1;
@@ -335,11 +347,12 @@
     .hero-media video {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      object-position: center;
-      background: #0b3b44;
+      object-fit: var(--hero-fit);
+      object-position: var(--hero-focus-x) var(--hero-focus-y);
+      background: transparent;
       filter: saturate(1.08) contrast(1.04);
-      transform: translateZ(0);
+      transform: scale(var(--hero-zoom)) translateZ(0);
+      transform-origin: var(--hero-focus-x) var(--hero-focus-y);
     }
     .hero-media.video-waiting::after {
       content: "";
@@ -2508,18 +2521,24 @@
       .nav-links {
         position: fixed;
         inset: 0;
+        width: 100vw;
+        height: 100dvh;
+        max-height: 100dvh;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         gap: 18px;
-        padding: 70px 28px;
+        padding: 76px 28px 34px;
         border: 0;
         border-radius: 0;
         background:
-          linear-gradient(rgba(5,42,48,var(--menu-opacity)), rgba(5,42,48,var(--menu-opacity))),
+          linear-gradient(rgba(5,42,48,.92), rgba(5,42,48,.92)),
           var(--menu-image) center / cover;
         box-shadow: 0 24px 64px rgba(0, 0, 0, 0.24);
+        overflow: hidden;
+        overscroll-behavior: contain;
+        touch-action: none;
         opacity: 0;
         visibility: hidden;
         transform: translateY(-10px);
@@ -2981,6 +3000,43 @@
       .footer-links { grid-template-columns: 1fr; }
       .footer-logo { width: 140px; }
     }
+    /* Keep the Ocean Adventures feature card visually centered on landscape screens. */
+    @media (orientation: landscape) and (min-width: 700px) {
+      .activities .activity-grid,
+      .activities .activity-carousel,
+      .activities .activities-carousel,
+      .activities .activity-deck,
+      .activities .activities-deck,
+      .activities .activity-stack,
+      .activities .activities-stack {
+        width: 100vw !important;
+        max-width: none !important;
+        margin-left: calc(50% - 50vw) !important;
+        margin-right: calc(50% - 50vw) !important;
+        justify-content: center !important;
+        align-items: center !important;
+        overflow: hidden !important;
+      }
+
+      .activities .activity-track,
+      .activities .activities-track,
+      .activities .activity-carousel-track,
+      .activities .activities-carousel-track {
+        left: 50% !important;
+        right: auto !important;
+        transform-origin: center center !important;
+      }
+
+      .activities .activity-card.is-active,
+      .activities .activity-card.active,
+      .activities .activity-card.center,
+      .activities .activity-card.featured {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) scale(1) !important;
+        z-index: 8 !important;
+      }
+    }
   </style>
 </head>
 <body class="site-loading">
@@ -3009,7 +3065,11 @@
   </nav>
 
   <header class="hero" id="home">
-    <div class="hero-media" id="heroMedia" aria-hidden="true"></div>
+    <div class="hero-media video-ready" id="heroMedia" aria-hidden="true">
+      <div class="hero-media-item active">
+        <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=2400&q=88" alt="">
+      </div>
+    </div>
     <div class="container hero-grid">
       <div class="hero-copy">
         <span class="hero-badge"><i data-lucide="map-pin" class="icon"></i> <span id="heroBadge"></span></span>
@@ -3540,7 +3600,7 @@
         island: "F. Feeali",
         whatsapp: "9609131220",
         phoneDisplay: "+960 913 1220",
-        heroImage: "",
+        heroImage: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=2400&q=88",
         menuImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=86",
         menuOpacity: "0.78"
       },
@@ -4082,7 +4142,54 @@
       }, 900);
     };
     const isCustomHeroMedia = (item) => Boolean(getHeroMediaUrl(item));
+    const isLegacyDefaultHeroMedia = (item) => (
+      item?.url === "FeealiBeach.MP4" &&
+      item?.portraitUrl === "FeealiBeach.MP4" &&
+      item?.alt === "Feeali Buddies Inn hero video"
+    );
     const isDefaultRoomImage = (url = "") => DEFAULT_ROOM_IMAGE_PATTERNS.some((pattern) => String(url).includes(pattern));
+    const clampNumber = (value, min, max, fallback) => {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return fallback;
+      return Math.min(max, Math.max(min, number));
+    };
+    const getHeroCropStyle = (item = {}) => {
+      const isMobile = window.matchMedia("(max-width: 760px)").matches;
+      const focusX = clampNumber(isMobile ? item.mobileFocusX ?? item.focusX : item.focusX, 0, 100, 50);
+      const focusY = clampNumber(isMobile ? item.mobileFocusY ?? item.focusY : item.focusY, 0, 100, 50);
+      const zoom = clampNumber(isMobile ? item.mobileZoom ?? item.zoom : item.zoom, 1, 2.4, 1);
+      const fitValue = String(isMobile ? item.mobileFit ?? item.fit : item.fit || "cover").toLowerCase();
+      const fit = fitValue === "contain" ? "contain" : "cover";
+      return `--hero-focus-x:${focusX}%;--hero-focus-y:${focusY}%;--hero-zoom:${zoom};--hero-fit:${fit};`;
+    };
+    const isHlsUrl = (url = "") => /\.m3u8(?:[?#].*)?$/i.test(String(url).trim());
+    const isVideoUrl = (url = "") => /\.(mp4|webm|mov|m4v)(?:[?#].*)?$/i.test(String(url).trim());
+    const attachHeroHls = (video, url) => {
+      if (!video || !url) return;
+      if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = url;
+        video.load();
+        return;
+      }
+      const setupHls = () => {
+        if (window.Hls && window.Hls.isSupported()) {
+          if (video._heroHls) video._heroHls.destroy();
+          const hls = new window.Hls({
+            enableWorker: true,
+            lowLatencyMode: false,
+            backBufferLength: 30
+          });
+          video._heroHls = hls;
+          hls.loadSource(url);
+          hls.attachMedia(video);
+        } else {
+          video.src = url;
+          video.load();
+        }
+      };
+      if (window.Hls) setupHls();
+      else window.addEventListener("load", setupHls, { once: true });
+    };
     const hasCustomRoomImage = (room = {}) => [
       room.image,
       ...((room.gallery || [])),
@@ -4101,27 +4208,53 @@
           if (typeof item === "string") return { type: "image", url: item, alt: fallbackAlt };
           return item || {};
         })
-        .filter((item) => isCustomHeroMedia(item));
-      const slides = cleanMedia;
+        .filter((item) => isCustomHeroMedia(item) && !isLegacyDefaultHeroMedia(item));
+      let slides = cleanMedia;
+      if (!slides.length && fallbackImage) {
+        const fallbackType = isHlsUrl(fallbackImage) ? "hls" : isVideoUrl(fallbackImage) ? "video" : "image";
+        slides = [{ type: fallbackType, url: fallbackImage, alt: fallbackAlt }];
+      }
       if (!slides.length) {
-        holder.innerHTML = "";
+        holder.innerHTML = `<div class="hero-media-item active"><img src="${DEFAULT_HERO_STOCK_IMAGE}" alt="${escapeHtml(fallbackAlt)}" /></div>`;
         holder.classList.add("video-ready");
         holder.classList.remove("video-waiting");
         return;
       }
       holder.innerHTML = slides.map((item, index) => {
-        const type = String(item.type || "").toLowerCase() === "video" ? "video" : "image";
+        const rawUrl = getResponsiveHeroMediaUrl(item);
+        const typeValue = String(item.type || "").toLowerCase();
+        const hls = typeValue === "hls" || isHlsUrl(rawUrl);
+        const type = typeValue === "video" || hls ? "video" : "image";
         const alt = escapeHtml(item.alt || fallbackAlt);
-        const url = escapeHtml(getResponsiveHeroMediaUrl(item));
+        const url = escapeHtml(rawUrl);
         const posterUrl = getResponsiveHeroPoster(item);
         const poster = posterUrl ? ` poster="${escapeHtml(posterUrl)}"` : "";
+        const cropStyle = escapeHtml(getHeroCropStyle(item));
+        const start = clampNumber(item.startTime, 0, 99999, 0);
+        const end = clampNumber(item.endTime, 0, 99999, 0);
         if (type === "video") {
-          return `<div class="hero-media-item ${index === 0 ? "active" : ""}"><video muted playsinline autoplay loop preload="${index === 0 ? "auto" : "metadata"}"${poster}><source src="${url}"></video></div>`;
+          const hlsAttr = hls ? ` data-hls="${url}"` : "";
+          const source = hls ? "" : `<source src="${url}">`;
+          return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><video muted playsinline autoplay loop preload="${index === 0 ? "auto" : "metadata"}" data-start="${start}" data-end="${end}"${hlsAttr}${poster}>${source}</video></div>`;
         }
-        return `<div class="hero-media-item ${index === 0 ? "active" : ""}"><img src="${url}" alt="${alt}" /></div>`;
+        return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><img src="${url}" alt="${alt}" /></div>`;
       }).join("");
       const renderedSlides = [...holder.querySelectorAll(".hero-media-item")];
       holder.querySelectorAll("video").forEach((video, index) => {
+        if (video.dataset.hls) attachHeroHls(video, video.dataset.hls);
+        const start = Number(video.dataset.start || 0);
+        const end = Number(video.dataset.end || 0);
+        const applyStart = () => {
+          if (Number.isFinite(start) && start > 0 && video.currentTime < start) video.currentTime = start;
+        };
+        const enforceSegment = () => {
+          if (Number.isFinite(end) && end > 0 && video.currentTime >= end) {
+            video.currentTime = Number.isFinite(start) && start > 0 ? start : 0;
+            video.play().catch(() => {});
+          }
+        };
+        video.addEventListener("loadedmetadata", applyStart);
+        video.addEventListener("timeupdate", enforceSegment);
         if (index === 0) {
           const markReady = () => {
             holder.classList.add("video-ready");
@@ -4143,7 +4276,7 @@
           renderedSlides[activeIndex].classList.add("active");
           const video = renderedSlides[activeIndex].querySelector("video");
           if (video) {
-            video.currentTime = 0;
+            video.currentTime = Number(video.dataset.start || 0) || 0;
             keepHeroVideoAlive(video);
           }
         }, 8200);
@@ -4194,10 +4327,11 @@
       const firstHeroImage = (Array.isArray(c.hero.media) ? c.hero.media : []).find((item) => {
         const url = getHeroMediaUrl(item);
         const type = typeof item === "string" ? "image" : String(item?.type || "image").toLowerCase();
-        return isCustomHeroMedia(item) && type !== "video" && url;
+        return isCustomHeroMedia(item) && type !== "video" && type !== "hls" && !isVideoUrl(url) && !isHlsUrl(url) && url;
       });
       const firstHeroImageUrl = getHeroMediaUrl(firstHeroImage);
-      document.documentElement.style.setProperty("--hero-image", firstHeroImageUrl ? `url("${firstHeroImageUrl}")` : "linear-gradient(135deg, #0b3038, #102f32)");
+      const cssHeroImage = firstHeroImageUrl || (!isVideoUrl(c.site.heroImage) && !isHlsUrl(c.site.heroImage) && c.site.heroImage ? c.site.heroImage : DEFAULT_HERO_STOCK_IMAGE);
+      document.documentElement.style.setProperty("--hero-image", `url("${cssHeroImage}")`);
       document.documentElement.style.setProperty("--island-image", `url("${c.island.image}")`);
       document.documentElement.style.setProperty("--activities-bg-image", `url("${c.activities.backgroundImage || c.activities.items?.[0]?.image || c.site.heroImage}")`);
       document.documentElement.style.setProperty("--activities-bg-opacity", c.activities.backgroundOpacity || "0.18");
@@ -4826,9 +4960,27 @@
       menuToggle.innerHTML = `<i data-lucide="${name}" class="icon" aria-hidden="true"></i>`;
       renderIcons();
     };
+    let menuScrollY = 0;
     const setMenu = (isOpen) => {
       navLinks.classList.toggle("open", isOpen);
       document.body.classList.toggle("menu-open", isOpen);
+      document.documentElement.classList.toggle("menu-open", isOpen);
+      if (isOpen) {
+        menuScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${menuScrollY}px`;
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.width = "100%";
+      } else {
+        const shouldRestore = document.body.style.position === "fixed";
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+        if (shouldRestore) window.scrollTo(0, menuScrollY);
+      }
       menuToggle.setAttribute("aria-expanded", String(isOpen));
       menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
       renderMenuIcon(isOpen ? "x" : "menu");
@@ -4995,9 +5147,7 @@
     }, { threshold: 0.14 });
     document.querySelectorAll(".reveal").forEach((section) => observer.observe(section));
     const cachedSiteContent = readCachedSiteContent();
-    if (cachedSiteContent) {
-      applyContent(cachedSiteContent);
-    }
+    applyContent(cachedSiteContent || window.DEFAULT_SITE_CONTENT);
     window.addEventListener("load", () => {
       renderIcons();
       forceHeroOnReload();
