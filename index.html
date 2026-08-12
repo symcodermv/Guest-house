@@ -359,6 +359,19 @@
       opacity: 1;
       transform: none;
     }
+    .hero-media-item.manual-hero-video video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      height: 100svh;
+      min-width: 100vw;
+      min-height: 100svh;
+      max-width: none;
+      max-height: none;
+      transform: translate(-50%, -50%) scale(var(--hero-zoom)) rotate(var(--hero-rotate)) translateZ(0);
+      transform-origin: center center;
+    }
     .hero-media img,
     .hero-media video {
       display: block;
@@ -3608,6 +3621,24 @@
   </footer>
 
   <script>
+    // Manual hero video setup:
+    // Put videos in this website folder, then change only these paths.
+    // Landscape is used on laptop/TV. Portrait is used on mobile.
+    window.MANUAL_HERO_VIDEO = {
+      landscape: "#",
+      portrait: "#",
+      landscapePoster: "",
+      portraitPoster: "",
+      landscapeZoom: "3.25",
+      portraitZoom: "1",
+      landscapeFocusX: "50",
+      landscapeFocusY: "50",
+      portraitFocusX: "50",
+      portraitFocusY: "50",
+      landscapeRotate: "0",
+      portraitRotate: "0"
+    };
+
     window.DEFAULT_SITE_CONTENT = {
       site: {
         name: "Feeali Buddies Inn",
@@ -3625,18 +3656,20 @@
         media: [
           {
             type: "video",
-            url: "IMG_5102.MP4",
-            portraitUrl: "IMG_5102.MP4",
-            poster: "",
+            url: window.MANUAL_HERO_VIDEO.landscape,
+            portraitUrl: window.MANUAL_HERO_VIDEO.portrait,
+            poster: window.MANUAL_HERO_VIDEO.landscapePoster,
+            posterPortrait: window.MANUAL_HERO_VIDEO.portraitPoster,
             alt: "Feeali Buddies Inn hero video",
-            rotate: "0",
-            mobileRotate: "0",
-            focusX: "50",
-            focusY: "50",
-            mobileFocusX: "50",
-            mobileFocusY: "50",
-            zoom: "1",
-            mobileZoom: "1"
+            manualHeroVideo: true,
+            rotate: window.MANUAL_HERO_VIDEO.landscapeRotate,
+            mobileRotate: window.MANUAL_HERO_VIDEO.portraitRotate,
+            focusX: window.MANUAL_HERO_VIDEO.landscapeFocusX,
+            focusY: window.MANUAL_HERO_VIDEO.landscapeFocusY,
+            mobileFocusX: window.MANUAL_HERO_VIDEO.portraitFocusX,
+            mobileFocusY: window.MANUAL_HERO_VIDEO.portraitFocusY,
+            zoom: window.MANUAL_HERO_VIDEO.landscapeZoom,
+            mobileZoom: window.MANUAL_HERO_VIDEO.portraitZoom
           }
         ],
         facts: [
@@ -4242,7 +4275,7 @@
       const isMobile = window.matchMedia("(max-width: 760px)").matches;
       const focusX = clampNumber(isMobile ? item.mobileFocusX ?? item.focusX : item.focusX, 0, 100, 50);
       const focusY = clampNumber(isMobile ? item.mobileFocusY ?? item.focusY : item.focusY, 0, 100, 50);
-      const zoom = clampNumber(isMobile ? item.mobileZoom ?? item.zoom : item.zoom, 1, 2.4, 1);
+      const zoom = clampNumber(isMobile ? item.mobileZoom ?? item.zoom : item.zoom, 1, 4, 1);
       const rotate = clampNumber(isMobile ? item.mobileRotate ?? item.rotate : item.rotate, -270, 270, 0);
       return `--hero-focus-x:${focusX}%;--hero-focus-y:${focusY}%;--hero-zoom:${zoom};--hero-rotate:${rotate}deg;--hero-fit:cover;`;
     };
@@ -4367,7 +4400,7 @@
           const hlsAttr = hls ? ` data-hls="${url}"` : "";
           const source = hls ? "" : `<source src="${url}" type="${escapeHtml(videoMimeForUrl(rawUrl))}">`;
           const srcAttr = hls ? "" : ` src="${url}"`;
-          return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><video${srcAttr} muted playsinline webkit-playsinline autoplay loop preload="${index === 0 ? "auto" : "metadata"}" data-start="${start}" data-end="${end}"${hlsAttr}${poster}>${source}</video></div>`;
+          return `<div class="hero-media-item ${item.manualHeroVideo ? "manual-hero-video" : ""} ${index === 0 ? "active" : ""}" style="${cropStyle}"><video${srcAttr} muted playsinline webkit-playsinline autoplay loop preload="${index === 0 ? "auto" : "metadata"}" data-start="${start}" data-end="${end}"${hlsAttr}${poster}>${source}</video></div>`;
         }
         return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><img src="${url}" alt="${alt}" loading="${index === 0 ? "eager" : "lazy"}" ${index === 0 ? 'fetchpriority="high"' : ""} /></div>`;
       }).join("");
@@ -5379,4 +5412,3 @@
   </script>
 </body>
 </html>
-
