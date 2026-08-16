@@ -1,4 +1,3 @@
-
     // Manual hero video setup:
     // Place two video files in the site folder and set these file names.
     // Example: set `landscape: 'hero-landscape.mp4'` and `portrait: 'hero-portrait.mp4'`.
@@ -337,3 +336,4 @@
         tiktokUrl: "https://www.tiktok.com/"
       }
     };
+  

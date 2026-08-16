@@ -1,5 +1,3 @@
-
-
     const navLinks = document.getElementById("navLinks");
     const menuToggle = document.getElementById("menuToggle");
     const menuClose = document.getElementById("menuClose");
@@ -464,7 +462,7 @@
         const alt = escapeHtml(item.alt || fallbackAlt);
         const url = escapeHtml(rawUrl);
         const posterUrl = getResponsiveHeroPoster(item);
-        const poster = posterUrl ? ` poster="${escapeHtml(posterUrl)}"` : "";
+        const poster = ` poster="${escapeHtml(posterUrl || "6264577403631898423.jpg")}"`;
         const cropStyle = escapeHtml(getHeroCropStyle(item));
         const start = 0;
         const end = 0;
@@ -474,7 +472,7 @@
           const srcAttr = hls ? "" : ` src="${url}"`;
           return `<div class="hero-media-item ${item.manualHeroVideo ? "manual-hero-video" : ""} ${index === 0 ? "active" : ""}" style="${cropStyle}"><video${srcAttr} muted playsinline webkit-playsinline autoplay preload="${index === 0 ? "auto" : "metadata"}" data-start="${start}" data-end="${end}"${hlsAttr}${poster}>${source}</video></div>`;
         }
-        return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><img src="${url}" alt="${alt}" loading="${index === 0 ? "eager" : "lazy"}" ${index === 0 ? 'fetchpriority="high"' : ""} /></div>`;
+        return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><img src="${url}" alt="${alt}" loading="eager" decoding="async" fetchpriority="${index <= 2 ? "high" : "auto"}" draggable="false" /></div>`;
       }).join("");
       const renderedSlides = [...holder.querySelectorAll(".hero-media-item")];
       const activateNextHeroSlide = (currentSlide) => {
@@ -1614,13 +1612,4 @@
         }
       }));
     }).observe(document.body, { childList: true, subtree: true });
-
-    window.SiteApp = Object.freeze({
-      readCachedSiteContent,
-      writeCachedSiteContent,
-      applyContent
-    });
-    window.dispatchEvent(new Event("site-app-ready"));
-
-
- 
+  
