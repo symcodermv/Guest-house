@@ -21,8 +21,9 @@
   <meta name="twitter:title" content="Feeali Buddies Inn | Guest House in F. Feeali" />
   <meta name="twitter:description" content="Comfortable guest house accommodation in F. Feeali, Maldives." />
   <meta name="twitter:image" content="https://feealibuddiesinn.com/feeali-buddies-logo.png" />
-  <link rel="preload" as="video" href="original.webm" type="video/webm" media="(orientation: landscape)" />
-  <link rel="preload" as="video" href="hero-portrait.webm" type="video/webm" media="(orientation: portrait)" />
+  <link rel="preload" as="image" href="6264577403631898423.jpg" fetchpriority="high" />
+  <link rel="preload" as="video" href="original.webm" type="video/webm" media="(orientation: landscape)" fetchpriority="high" />
+  <link rel="preload" as="video" href="hero-portrait.webm" type="video/webm" media="(orientation: portrait)" fetchpriority="high" />
   <link rel="preconnect" href="https://images.unsplash.com" />
   <link rel="preconnect" href="https://unpkg.com" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
@@ -4686,8 +4687,11 @@
     }
     /* One responsive hero video: upright in portrait and rotated to fill landscape. */
     .hero {
-      background-color: #000 !important;
-      background-image: none !important;
+      background-color: #0a5965 !important;
+      background-image: url("6264577403631898423.jpg") !important;
+      background-position: center center !important;
+      background-size: cover !important;
+      background-repeat: no-repeat !important;
     }
     .hero > .container {
       position: relative;
@@ -4701,7 +4705,7 @@
       overflow: hidden;
       opacity: 1 !important;
       visibility: visible !important;
-      background: transparent;
+      background: #0a5965 url("6264577403631898423.jpg") center / cover no-repeat;
       container-type: size;
     }
     #heroMedia.hero-media picture,
@@ -4772,6 +4776,7 @@
     img,
     video {
       -webkit-user-drag: none;
+      -webkit-touch-callout: none;
       user-drag: none;
     }
     @media print {
@@ -4805,7 +4810,14 @@
   </nav>
 
   <header class="hero" id="home">
-    <div class="hero-media video-ready" id="heroMedia" aria-hidden="true"></div>
+    <div class="hero-media video-ready" id="heroMedia" aria-hidden="true">
+      <div class="hero-media-item manual-hero-video active hero-bootstrap-video">
+        <video muted autoplay loop playsinline webkit-playsinline preload="auto" poster="6264577403631898423.jpg" controlslist="nodownload noremoteplayback nofullscreen" disablepictureinpicture>
+          <source src="original.webm" type="video/webm" media="(orientation: landscape)">
+          <source src="hero-portrait.webm" type="video/webm" media="(orientation: portrait)">
+        </video>
+      </div>
+    </div>
     <div class="container hero-grid">
       <div class="hero-copy">
         <span class="hero-badge"><i data-lucide="map-pin" class="icon"></i> <span id="heroBadge"></span></span>
@@ -6142,7 +6154,7 @@
         const alt = escapeHtml(item.alt || fallbackAlt);
         const url = escapeHtml(rawUrl);
         const posterUrl = getResponsiveHeroPoster(item);
-        const poster = posterUrl ? ` poster="${escapeHtml(posterUrl)}"` : "";
+        const poster = ` poster="${escapeHtml(posterUrl || "6264577403631898423.jpg")}"`;
         const cropStyle = escapeHtml(getHeroCropStyle(item));
         const start = 0;
         const end = 0;
@@ -6152,7 +6164,7 @@
           const srcAttr = hls ? "" : ` src="${url}"`;
           return `<div class="hero-media-item ${item.manualHeroVideo ? "manual-hero-video" : ""} ${index === 0 ? "active" : ""}" style="${cropStyle}"><video${srcAttr} muted playsinline webkit-playsinline autoplay preload="${index === 0 ? "auto" : "metadata"}" data-start="${start}" data-end="${end}"${hlsAttr}${poster}>${source}</video></div>`;
         }
-        return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><img src="${url}" alt="${alt}" loading="${index === 0 ? "eager" : "lazy"}" ${index === 0 ? 'fetchpriority="high"' : ""} /></div>`;
+        return `<div class="hero-media-item ${index === 0 ? "active" : ""}" style="${cropStyle}"><img src="${url}" alt="${alt}" loading="eager" decoding="async" fetchpriority="${index <= 2 ? "high" : "auto"}" draggable="false" /></div>`;
       }).join("");
       const renderedSlides = [...holder.querySelectorAll(".hero-media-item")];
       const activateNextHeroSlide = (currentSlide) => {
