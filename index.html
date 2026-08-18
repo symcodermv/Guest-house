@@ -26,6 +26,9 @@
   <link rel="preload" as="video" href="hero-portrait.webm" type="video/webm" media="(orientation: portrait)" fetchpriority="high" />
   <link rel="preconnect" href="https://images.unsplash.com" />
   <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.18/dist/hls.min.js" defer></script>
   <script type="application/ld+json">
@@ -537,6 +540,20 @@
       </div>
     </div>
 
+    <section class="amenity-detail-page" id="amenityDetailPage" aria-live="polite">
+      <div class="amenity-page-banner" id="amenityPageBanner" aria-hidden="true"></div>
+      <div class="amenity-page-hero">
+        <div class="container amenity-page-heading">
+          <button class="amenity-page-back" type="button" data-close-amenity-detail><i data-lucide="arrow-left" class="icon"></i>Back to Amenities</button>
+          <span class="amenity-script-title">Amenities And Services</span>
+          <h2 id="amenityDetailTitle"></h2>
+          <p id="amenityDetailText"></p>
+          <ul class="amenity-page-highlights" id="amenityDetailHighlights"></ul>
+          <a class="btn btn-primary" id="amenityDetailLink" href="#" target="_blank" rel="noopener" hidden><i data-lucide="external-link" class="icon"></i><span>Learn More</span></a>
+        </div>
+      </div>
+      <div class="amenity-page-sections" id="amenityDetailSections"></div>
+    </section>
     <div class="reserve-modal" id="reserveModal" aria-hidden="true">
       <div class="reserve-picker" role="dialog" aria-modal="true" aria-labelledby="reservePickerTitle">
         <div class="reserve-picker-hero" id="reservePickerHero">
@@ -608,6 +625,7 @@
         </div>
       </div>
       <div class="copyright">&copy; 2026 Feeali Buddies Inn. All rights reserved.</div>
+      <div class="developer-credit">Developed by <span>symcodermv</span></div>
     </div>
   </footer>
 
