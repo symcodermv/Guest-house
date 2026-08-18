@@ -32,7 +32,7 @@
         menuOpacity: "0.78"
       },
       hero: {
-        badge: "Slow island days",
+        badge: "Welcome to Feeali Buddies Inn",
         titleLines: ["Real Maldivian Life"],
         text: "Sandy palm-shaded lanes, home-cooked meals, blue lagoons, and sunset trips from a welcoming guest house in F. Feeali.",
         media: [
