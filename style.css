@@ -4845,6 +4845,22 @@
   hyphens: auto;
 }
 
+#about .about-paragraphs {
+  display: grid;
+  gap: 1.15rem;
+}
+
+#about .about-paragraphs .about-paragraph {
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  line-height: 1.8;
+  text-align: justify;
+  text-align-last: center;
+  text-wrap: pretty;
+  hyphens: auto;
+}
+
 @media (max-width: 640px) {
   #about .intro-copy .lead {
     max-width: 34rem;
