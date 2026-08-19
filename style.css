@@ -4861,7 +4861,42 @@
   hyphens: auto;
 }
 
+/* Animate every backend-managed About paragraph on refresh and on scroll. */
+#about .about-paragraphs .about-paragraph.intro-reading-line {
+  opacity: 0;
+  transform: translateY(30px);
+  filter: blur(8px);
+  animation: none;
+  transition:
+    opacity .85s cubic-bezier(.2,.8,.2,1) var(--about-line-delay, 0ms),
+    transform .85s cubic-bezier(.2,.8,.2,1) var(--about-line-delay, 0ms),
+    filter .85s cubic-bezier(.2,.8,.2,1) var(--about-line-delay, 0ms);
+}
+
+#about .about-paragraphs .about-paragraph.about-paragraph-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #about .about-paragraphs .about-paragraph.intro-reading-line {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
+
 @media (max-width: 640px) {
+  #about .about-paragraphs {
+    gap: 2rem;
+  }
+
+  #about .about-paragraphs .about-paragraph + .about-paragraph {
+    margin-top: .35rem;
+  }
+
   #about .intro-copy .lead {
     max-width: 34rem;
     text-align: justify;
