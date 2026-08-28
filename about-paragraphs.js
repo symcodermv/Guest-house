@@ -1,3 +1,34 @@
+/* Open every section/detail immediately instead of smooth scrolling. */
+(() => {
+  const nativeScrollIntoView = Element.prototype.scrollIntoView;
+  Element.prototype.scrollIntoView = function (options) {
+    if (options && typeof options === "object") {
+      return nativeScrollIntoView.call(this, { ...options, behavior: "auto" });
+    }
+    return nativeScrollIntoView.call(this, options);
+  };
+
+  const nativeWindowScrollTo = window.scrollTo.bind(window);
+  window.scrollTo = (first, second) => {
+    if (first && typeof first === "object") {
+      return nativeWindowScrollTo({ ...first, behavior: "auto" });
+    }
+    return nativeWindowScrollTo(first, second);
+  };
+})();
+
+/* Remove the old public content cache after Shark Point is deleted in Backend. */
+(() => {
+  const removed = localStorage.getItem("feealiBuddiesInn.sharkPointRemoved.v1") === "true";
+  const cacheKey = "feealiBuddiesInn.siteContent.v1";
+  if (!removed || !localStorage.getItem(cacheKey)) return;
+  localStorage.removeItem(cacheKey);
+  if (sessionStorage.getItem("feealiBuddiesInn.sharkCacheReloaded.v1") !== "true") {
+    sessionStorage.setItem("feealiBuddiesInn.sharkCacheReloaded.v1", "true");
+    location.reload();
+  }
+})();
+
 (() => {
   "use strict";
   const holder = document.getElementById("aboutText");
@@ -253,6 +284,45 @@
   window.setInterval(enhanceCards, 1000);
 })();
 
+/* Permanently suppress the deleted Shark Point activity on the public website. */
+(() => {
+  const grid = document.getElementById("activitiesGrid");
+  if (!grid) return;
+  const sharkTitle = /shark\s+point\s+to\s+v\.?\s*atol+l?/i;
+
+  const removeSharkCard = () => {
+    const items = window.currentSiteContent?.activities?.items || window.DEFAULT_SITE_CONTENT?.activities?.items || [];
+    const removedIndexes = new Set(items.map((item, index) => sharkTitle.test(String(item?.title || "")) ? index : -1).filter((index) => index >= 0));
+    let removedCard = false;
+    grid.querySelectorAll(".activity-card[data-activity-index]").forEach((card) => {
+      const index = Number(card.dataset.activityIndex);
+      const displayedTitle = card.querySelector("h3")?.textContent || "";
+      if (removedIndexes.has(index) || sharkTitle.test(displayedTitle)) {
+        card.remove();
+        removedCard = true;
+      }
+    });
+    if (removedCard) {
+      window.dispatchEvent(new Event("resize"));
+      grid.dispatchEvent(new Event("mouseleave"));
+    }
+
+    const hashMatch = location.hash.match(/^#activity-(\d+)$/);
+    if (hashMatch && removedIndexes.has(Number(hashMatch[1]))) {
+      history.replaceState(null, "", "#activities");
+      document.body.classList.remove("detail-mode");
+      document.getElementById("activityDetail")?.classList.remove("active-detail");
+      document.getElementById("activities")?.scrollIntoView({ behavior: "auto", block: "start" });
+    }
+  };
+
+  new MutationObserver(removeSharkCard).observe(grid, { childList: true, subtree: true });
+  window.addEventListener("load", removeSharkCard);
+  window.addEventListener("hashchange", removeSharkCard);
+  removeSharkCard();
+  window.setInterval(removeSharkCard, 700);
+})();
+
 /* Selectable activity price options on each Discover page. */
 (() => {
   const detail = document.getElementById("activityDetail");
@@ -304,4 +374,47 @@
   window.addEventListener("hashchange", () => setTimeout(renderOptions, 80));
   new MutationObserver(() => setTimeout(renderOptions, 0)).observe(detail, { attributes: true, attributeFilter: ["class"] });
   setTimeout(renderOptions, 250);
+})();
+
+/* Equal-size moving home gallery with click-to-view and click-again close. */
+(() => {
+  const gallery = document.getElementById("galleryStrip");
+  if (!gallery) return;
+
+  const lightbox = document.createElement("div");
+  lightbox.className = "home-gallery-lightbox";
+  lightbox.setAttribute("aria-hidden", "true");
+  lightbox.setAttribute("role", "dialog");
+  lightbox.setAttribute("aria-label", "Gallery image viewer");
+  lightbox.innerHTML = `<button class="home-gallery-lightbox-close" type="button" aria-label="Close gallery image">×</button><img alt="">`;
+  document.body.append(lightbox);
+
+  const viewerImage = lightbox.querySelector("img");
+  const closeViewer = () => {
+    lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden", "true");
+    gallery.classList.remove("gallery-viewing");
+    gallery.classList.add("gallery-force-running");
+    document.body.style.overflow = "";
+    viewerImage.removeAttribute("src");
+  };
+  const openViewer = (image) => {
+    viewerImage.src = image.currentSrc || image.src;
+    viewerImage.alt = image.alt || "Feeali Buddies Inn gallery image";
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+    gallery.classList.add("gallery-viewing");
+    gallery.classList.remove("gallery-force-running");
+    document.body.style.overflow = "hidden";
+  };
+
+  gallery.addEventListener("click", (event) => {
+    const image = event.target.closest(".gallery-track img");
+    if (image) openViewer(image);
+  });
+  gallery.addEventListener("mouseleave", () => gallery.classList.remove("gallery-force-running"));
+  lightbox.addEventListener("click", closeViewer);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && lightbox.classList.contains("open")) closeViewer();
+  });
 })();
