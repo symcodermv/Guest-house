@@ -381,6 +381,37 @@
   const gallery = document.getElementById("galleryStrip");
   if (!gallery) return;
 
+  const renderSeparateGalleryRows = () => {
+    const tracks = [...gallery.querySelectorAll(".gallery-track")];
+    if (tracks.length < 2) return;
+
+    const galleryContent = window.currentSiteContent?.gallery || {};
+    const hasSeparateRows = Array.isArray(galleryContent.row1Images) || Array.isArray(galleryContent.row2Images);
+    if (!hasSeparateRows) return;
+
+    const normalizeImages = (items) => (Array.isArray(items) ? items : [])
+      .map((item) => typeof item === "string" ? { image: item, alt: "Gallery image" } : item)
+      .filter((item) => item?.image);
+    const rows = [normalizeImages(galleryContent.row1Images), normalizeImages(galleryContent.row2Images)];
+    const signature = JSON.stringify(rows);
+    if (tracks.slice(0, 2).every((track) => track.dataset.separateRowsSignature === signature)) return;
+
+    rows.forEach((items, rowIndex) => {
+      const images = items.map((item) => {
+        const image = document.createElement("img");
+        image.src = item.image;
+        image.alt = item.alt || `Gallery row ${rowIndex + 1} image`;
+        image.loading = "lazy";
+        return image;
+      });
+      tracks[rowIndex].replaceChildren(...images, ...images.map((image) => image.cloneNode(true)));
+      tracks[rowIndex].dataset.separateRowsSignature = signature;
+    });
+  };
+
+  renderSeparateGalleryRows();
+  new MutationObserver(renderSeparateGalleryRows).observe(gallery, { childList: true, subtree: true });
+
   const lightbox = document.createElement("div");
   lightbox.className = "home-gallery-lightbox";
   lightbox.setAttribute("aria-hidden", "true");
