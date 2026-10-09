@@ -385,16 +385,43 @@
     const tracks = [...gallery.querySelectorAll(".gallery-track")];
     if (tracks.length < 2) return;
 
-    const galleryContent = window.currentSiteContent?.gallery || {};
+    const galleryContent = window.currentSiteContent?.gallery || window.DEFAULT_SITE_CONTENT?.gallery || {};
     const hasSeparateRows = Array.isArray(galleryContent.row1Images) || Array.isArray(galleryContent.row2Images);
-    if (!hasSeparateRows) return;
 
+    const seenImages = new Set();
     const normalizeImages = (items) => (Array.isArray(items) ? items : [])
       .map((item) => typeof item === "string" ? { image: item, alt: "Gallery image" } : item)
-      .filter((item) => item?.image);
-    const rows = [normalizeImages(galleryContent.row1Images), normalizeImages(galleryContent.row2Images)];
-    const signature = JSON.stringify(rows);
-    if (tracks.slice(0, 2).every((track) => track.dataset.separateRowsSignature === signature)) return;
+      .filter((item) => {
+        const source = String(item?.image || "").trim();
+        if (!source) return false;
+        let key = source.toLowerCase();
+        try {
+          const url = new URL(source, document.baseURI);
+          key = `${url.origin}${url.pathname}`.toLowerCase();
+        } catch {}
+        if (seenImages.has(key)) return false;
+        seenImages.add(key);
+        return true;
+      });
+    const legacyImages = Array.isArray(galleryContent.images) ? galleryContent.images : [];
+    const useSeparateRows = hasSeparateRows && (galleryContent.row1Images?.length || galleryContent.row2Images?.length || !legacyImages.length);
+    const rows = useSeparateRows
+      ? [normalizeImages(galleryContent.row1Images), normalizeImages(galleryContent.row2Images)]
+      : [normalizeImages(legacyImages.filter((_, index) => index % 2 === 0)),
+        normalizeImages(legacyImages.filter((_, index) => index % 2 === 1))];
+    const viewportWidth = gallery.clientWidth || window.innerWidth;
+    const signature = JSON.stringify([rows, viewportWidth, window.innerWidth]);
+    const speeds = [
+      Math.min(180, Math.max(15, Number(galleryContent.row1SpeedSeconds) || 55)),
+      Math.min(180, Math.max(15, Number(galleryContent.row2SpeedSeconds) || 62))
+    ];
+    tracks.slice(0, 2).forEach((track, index) => {
+      track.style.animationDuration = `${speeds[index]}s`;
+      track.style.setProperty("--gallery-duration", `${speeds[index]}s`);
+    });
+    if (tracks.slice(0, 2).every((track, index) => track.dataset.separateRowsSignature === signature
+      && track.querySelectorAll("img").length === rows[index].length
+      && (!rows[index].length || track.querySelector(".gallery-loop-group")))) return;
 
     rows.forEach((items, rowIndex) => {
       const images = items.map((item) => {
@@ -404,13 +431,40 @@
         image.loading = "lazy";
         return image;
       });
-      tracks[rowIndex].replaceChildren(...images, ...images.map((image) => image.cloneNode(true)));
+      const track = tracks[rowIndex];
+      track.hidden = !images.length;
+      if (!images.length) {
+        track.replaceChildren();
+        track.dataset.separateRowsSignature = signature;
+        return;
+      }
+      const group = document.createElement("div");
+      group.className = "gallery-loop-group";
+      group.append(...images);
+      track.replaceChildren(group);
+      // Each saved photo wraps only after leaving the viewport, without adding copies.
+      const imageStyle = getComputedStyle(images[0]);
+      const imageWidth = parseFloat(imageStyle.width);
+      const gap = parseFloat(getComputedStyle(track).gap) || 12;
+      const step = imageWidth + gap;
+      const groupWidth = images.length * step - gap;
+      const distance = Math.max(viewportWidth + step, images.length * step);
+      const initialLeft = Math.max(0, (viewportWidth - groupWidth) / 2);
+      track.style.setProperty("--gallery-height", imageStyle.height);
+      track.style.setProperty("--gallery-start", `${viewportWidth}px`);
+      track.style.setProperty("--gallery-end", `${viewportWidth - distance}px`);
+      images.forEach((image, index) => {
+        const phase = (viewportWidth - initialLeft - index * step) / distance;
+        const directedPhase = rowIndex === 1 ? 1 - phase : phase;
+        image.style.setProperty("--gallery-phase", ((directedPhase % 1) + 1) % 1);
+      });
       tracks[rowIndex].dataset.separateRowsSignature = signature;
     });
   };
 
   renderSeparateGalleryRows();
   new MutationObserver(renderSeparateGalleryRows).observe(gallery, { childList: true, subtree: true });
+  new ResizeObserver(renderSeparateGalleryRows).observe(gallery);
 
   const lightbox = document.createElement("div");
   lightbox.className = "home-gallery-lightbox";
